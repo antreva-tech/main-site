@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+/**
+ * Antreva Tech Brand Colors
+ * - Midnight Navy: #0B132B (primary dark)
+ * - Tech Blue: #1C6ED5 (accent)
+ * - Slate Gray: #8A8F98 (secondary text)
+ * - White: #FFFFFF (background/text)
+ */
+:root {
+  /* Brand Colors */
+  --color-midnight-navy: #0b132b;
+  --color-tech-blue: #1c6ed5;
+  --color-slate-gray: #8a8f98;
+  --color-white: #ffffff;
+
+  /* Semantic Colors */
+  --background: var(--color-white);
+  --foreground: var(--color-midnight-navy);
+  --accent: var(--color-tech-blue);
+  --muted: var(--color-slate-gray);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+
+  /* Brand color utilities */
+  --color-midnight-navy: #0b132b;
+  --color-tech-blue: #1c6ed5;
+  --color-slate-gray: #8a8f98;
+
+  /* Font families */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-heading: var(--font-sora), system-ui, sans-serif;
+  --font-secondary: var(--font-roboto), system-ui, sans-serif;
+}
+
+/* Base body styles */
+body {
+  background: var(--color-midnight-navy);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Heading styles using Sora */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection styling with brand colors */
+::selection {
+  background-color: var(--color-tech-blue);
+  color: var(--color-white);
+}
+
+/* Background pattern - subtle grid */
+.bg-grid-pattern {
+  background-image: linear-gradient(
+      to right,
+      rgba(28, 110, 213, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(28, 110, 213, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Background pattern - dots */
+.bg-dot-pattern {
+  background-image: radial-gradient(
+    rgba(28, 110, 213, 0.15) 1px,
+    transparent 1px
+  );
+  background-size: 20px 20px;
+}
+
+/* Gradient overlays */
+.gradient-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(11, 19, 43, 0.02) 0%,
+    rgba(28, 110, 213, 0.05) 100%
+  );
+}
+
+/* Decorative blob animations */
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -20px) scale(1.05);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+.animate-blob {
+  animation: blob 20s ease-in-out infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}

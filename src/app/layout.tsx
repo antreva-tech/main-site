@@ -1,0 +1,135 @@
+import type { Metadata } from "next";
+import { Inter, Sora, Roboto } from "next/font/google";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import { SITE_URL, SITE_NAME, DEFAULT_LOCALE } from "@/lib/seo";
+import {
+  getOrganizationSchema,
+  getLocalBusinessSchema,
+  getFAQSchema,
+} from "@/lib/structuredData";
+import "./globals.css";
+
+/**
+ * Primary font - Inter for body text and general UI
+ */
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+/**
+ * Primary font - Sora for headings and emphasis
+ */
+const sora = Sora({
+  variable: "--font-sora",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+/**
+ * Secondary font - Roboto for secondary text elements
+ */
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
+});
+
+const defaultTitle = `${SITE_NAME} — Ingeniería de Inteligencia Digital`;
+const defaultDescription =
+  "Antreva Tech es una empresa de tecnología enfocada en desarrollo de software, inteligencia artificial, ciberseguridad, soluciones en la nube y plataformas digitales. San Pedro de Macorís, República Dominicana.";
+const defaultKeywords = [
+  "desarrollo de software",
+  "inteligencia artificial",
+  "IA",
+  "ciberseguridad",
+  "soluciones en la nube",
+  "plataformas digitales",
+  "tecnología para restaurantes",
+  "San Pedro de Macorís",
+  "República Dominicana",
+  "Antreva Tech",
+];
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: { default: defaultTitle, template: `%s | ${SITE_NAME}` },
+  description: defaultDescription,
+  keywords: defaultKeywords,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  openGraph: {
+    type: "website",
+    locale: "es_DO",
+    alternateLocale: "en_US",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: defaultTitle,
+    description: defaultDescription,
+    images: [
+      {
+        url: "/Antreva Tech Transparente.png",
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} - Engineering Digital Intelligence`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: defaultTitle,
+    description: defaultDescription,
+  },
+  alternates: { canonical: SITE_URL },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  verification: {},
+};
+
+/**
+ * Root layout component that wraps all pages
+ * Applies brand fonts, base styling, and language provider
+ * Defaults to Spanish (es)
+ */
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const orgSchema = getOrganizationSchema();
+  const localSchema = getLocalBusinessSchema();
+  const faqSchema = getFAQSchema(DEFAULT_LOCALE as "es" | "en");
+
+  return (
+    <html lang="es">
+      <body
+        className={`${inter.variable} ${sora.variable} ${roboto.variable} antialiased`}
+      >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-tech-blue focus:text-white focus:rounded-lg"
+        >
+          Skip to main content
+        </a>
+        <LanguageProvider defaultLocale="es">{children}</LanguageProvider>
+      </body>
+    </html>
+  );
+}

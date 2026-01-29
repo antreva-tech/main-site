@@ -1,0 +1,103 @@
+{
+  "nav": {
+    "services": "Services",
+    "plans": "Plans",
+    "contact": "Contact",
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "tagline": "Engineering Digital Intelligence",
+    "title": "Transform Your Business with",
+    "titleHighlight": "Technology",
+    "description": "We help businesses grow through software development, digital platforms, AI solutions, and cybersecurity.",
+    "about": "Antreva Tech is a technology company focused on software development, artificial intelligence, cybersecurity, cloud solutions, and digital platforms—based in San Pedro de Macorís, Dominican Republic.",
+    "viewPlans": "View Plans",
+    "contactUs": "Contact Us"
+  },
+  "services": {
+    "tagline": "Beyond the Plans",
+    "title": "Custom Services On Request",
+    "description": "Beyond our restaurant plans, Antreva Tech offers a wide range of technology services. Whether you need software development, AI integration, cloud solutions, or enhanced cybersecurity, we can build a custom solution for your business.",
+    "addOnsTitle": "Available Add-ons:",
+    "discussProject": "Discuss your project",
+    "softwareDev": "Software Development",
+    "softwareDevDesc": "Custom applications tailored to your needs",
+    "aiSolutions": "AI Solutions",
+    "aiSolutionsDesc": "Intelligent automation and analytics",
+    "cybersecurity": "Cybersecurity",
+    "cybersecurityDesc": "Protect your digital assets",
+    "cloudSolutions": "Cloud Solutions",
+    "cloudSolutionsDesc": "Scalable infrastructure and hosting"
+  },
+  "plans": {
+    "tagline": "Our Plans",
+    "title": "Restaurant Solutions",
+    "description": "Comprehensive digital solutions designed for restaurants in San Pedro de Macorís. Choose the plan that fits your needs.",
+    "mostPopular": "Most Popular",
+    "perMonth": "per month",
+    "allPlansInclude": "All plans include onboarding support and monthly maintenance.",
+    "needCustom": "Need something custom?",
+    "contactUs": "Contact us",
+    "forTailored": "for a tailored solution.",
+    "start": {
+      "name": "Restaurant START",
+      "description": "Perfect for restaurants starting their digital journey with essential tools."
+    },
+    "pro": {
+      "name": "Restaurant PRO",
+      "description": "For growing restaurants ready to automate and create engaging content."
+    },
+    "premium": {
+      "name": "Restaurant PREMIUM",
+      "description": "Full-service solution with advanced automation, campaigns, and security."
+    },
+    "features": {
+      "whatsappSetup": "WhatsApp Business setup",
+      "digitalMenu": "Digital menu with QR code",
+      "basicWebsite": "Basic website with WhatsApp button",
+      "instagramOpt": "Instagram profile optimization",
+      "monthlySupport": "Monthly support included",
+      "advancedWhatsapp": "Advanced WhatsApp flows",
+      "contentCreation": "Content creation",
+      "digitalCampaigns": "Digital campaigns",
+      "everythingStart": "Everything in START",
+      "whatsappAutomation": "Advanced WhatsApp automation",
+      "monthlyContent": "Monthly Instagram content pack",
+      "websiteOrderForm": "Website with order form",
+      "basicSecurity": "Basic cybersecurity checklist",
+      "multiPageWebsite": "Multi-page website",
+      "securityMonitoring": "Security monitoring",
+      "everythingPro": "Everything in PRO",
+      "semiAutomatedWa": "Semi-automated WhatsApp",
+      "campaignSetup": "Campaign setup & reporting",
+      "reinforcedSecurity": "Reinforced cybersecurity",
+      "prioritySupport": "Priority support",
+      "customIntegrations": "Custom integrations"
+    }
+  },
+  "addOns": {
+    "photography": "Professional photography",
+    "adsManagement": "Paid ads management",
+    "extraContent": "Extra content packs",
+    "extraPages": "Additional pages / e-commerce",
+    "extraSecurity": "Extended cybersecurity services"
+  },
+  "footer": {
+    "title": "Let's Work Together",
+    "description": "Ready to transform your business? Get in touch and let's discuss how Antreva Tech can help you achieve your digital goals.",
+    "location": "San Pedro de Macorís, Dominican Republic",
+    "whatsappCta": "Message us on WhatsApp",
+    "formTitle": "Send us a message",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "message": "Message",
+    "messagePlaceholder": "Tell us about your project...",
+    "sendMessage": "Send Message",
+    "rights": "All rights reserved."
+  },
+  "language": {
+    "switch": "Español"
+  }
+}
