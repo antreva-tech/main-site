@@ -31,8 +31,10 @@ export function Header() {
               alt="Antreva Tech"
               width={220}
               height={55}
+              sizes="(max-width: 1024px) 176px, 220px"
+              quality={80}
+              loading="lazy"
               className="h-14 lg:h-16 w-auto"
-              priority
             />
           </a>
           {/* Home icon for mobile */}

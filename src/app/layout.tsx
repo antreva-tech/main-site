@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Sora, Roboto } from "next/font/google";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import { SITE_URL, SITE_NAME, DEFAULT_LOCALE } from "@/lib/seo";
+import { SITE_URL, SITE_NAME, DEFAULT_LOCALE, OG_IMAGE_URL } from "@/lib/seo";
 import {
   getOrganizationSchema,
   getLocalBusinessSchema,
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     description: defaultDescription,
     images: [
       {
-        url: "/Antreva Tech Transparente.png",
+        url: OG_IMAGE_URL,
         width: 1200,
         height: 630,
         alt: `${SITE_NAME} - Engineering Digital Intelligence`,
@@ -81,6 +81,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: defaultTitle,
     description: defaultDescription,
+    images: [OG_IMAGE_URL],
   },
   alternates: { canonical: SITE_URL },
   robots: {

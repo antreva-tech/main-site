@@ -134,8 +134,10 @@ export function CustomServices() {
                 alt="Custom Solutions - software, cloud, security, analytics"
                 width={450}
                 height={350}
+                sizes="(max-width: 640px) 320px, (max-width: 768px) 384px, 448px"
+                quality={75}
+                loading="lazy"
                 className="relative rounded-xl w-full h-auto object-contain"
-                unoptimized
               />
             </div>
           </div>

@@ -73,7 +73,7 @@ export function Plans() {
   return (
     <section
       id="plans"
-      className="relative py-12 sm:py-16 lg:py-20 bg-slate-gray/5 overflow-hidden"
+      className="relative py-12 sm:py-16 lg:py-20 bg-white overflow-hidden"
     >
       {/* Background decorations */}
       <div className="absolute inset-0 bg-grid-pattern" />

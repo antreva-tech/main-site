@@ -85,6 +85,9 @@ export function Footer() {
               alt="Antreva Tech"
               width={180}
               height={45}
+              sizes="144px"
+              quality={80}
+              loading="lazy"
               className="h-10 sm:h-12 w-auto"
             />
             <p className="text-slate-gray text-xs sm:text-sm text-center">

@@ -35,8 +35,10 @@ export function Hero() {
               alt="Antreva Tech"
               width={500}
               height={400}
-              className="w-full max-w-sm sm:max-w-sm md:max-w-md lg:max-w-lg"
+              sizes="(max-width: 640px) 384px, (max-width: 768px) 384px, (max-width: 1024px) 448px, 512px"
+              quality={82}
               priority
+              className="w-full max-w-sm sm:max-w-sm md:max-w-md lg:max-w-lg"
             />
           </div>
 

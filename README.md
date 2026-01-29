@@ -46,6 +46,11 @@ src/
 - **Colors:** Midnight Navy (#0B132B), Tech Blue (#1C6ED5), Slate Gray (#8A8F98), White (#FFFFFF)
 - **Typography:** Inter / Sora (primary), Roboto (secondary)
 
+## Low mobile data
+
+- **Images:** Next.js Image with AVIF/WebP, responsive `sizes`, and `quality` 75–82. Only the hero logo uses `priority`; others lazy-load.
+- **Config:** `next.config.ts` sets `deviceSizes` / `imageSizes` and 30-day image cache. No `unoptimized` images.
+
 ## SEO & AI Discoverability
 
 - **Metadata:** Open Graph, Twitter cards, canonical URL, `metadataBase` for absolute URLs.
