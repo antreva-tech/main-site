@@ -99,5 +99,111 @@
   },
   "language": {
     "switch": "English"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "signOut": "Cerrar sesión",
+    "nav": {
+      "overview": "Resumen",
+      "pipeline": "Pipeline",
+      "clients": "Clientes",
+      "payments": "Pagos",
+      "tickets": "Tickets",
+      "credentials": "Credenciales",
+      "whatsapp": "WhatsApp"
+    },
+    "settings": "Configuración",
+    "settingsNav": {
+      "users": "Usuarios",
+      "bankAccounts": "Cuentas bancarias",
+      "auditLog": "Registro de auditoría",
+      "profile": "Perfil"
+    },
+    "overview": {
+      "title": "Resumen",
+      "pipeline": "Pipeline",
+      "clients": "Clientes",
+      "payments": "Pagos",
+      "tickets": "Tickets",
+      "activeLeads": "Leads activos",
+      "active": "Activos",
+      "pendingConfirmation": "Pendiente de confirmación",
+      "open": "Abiertos",
+      "recentLeads": "Leads recientes",
+      "pendingPayments": "Pagos pendientes de confirmar"
+    },
+    "common": {
+      "back": "Volver",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "add": "Añadir",
+      "confirm": "Confirmar",
+      "reject": "Rechazar",
+      "new": "Nuevo",
+      "view": "Ver",
+      "createLead": "Crear lead",
+      "typeMessage": "Escribe un mensaje...",
+      "addComment": "Añadir un comentario...",
+      "reasonRejection": "Motivo del rechazo..."
+    },
+    "pipeline": {
+      "salesPipeline": "Pipeline de ventas",
+      "backToPipeline": "Volver al pipeline",
+      "newLead": "Nuevo lead",
+      "convertToClient": "Convertir a cliente",
+      "stages": {
+        "new": "Nuevo",
+        "qualified": "Calificado",
+        "proposal": "Propuesta",
+        "negotiation": "Negociación",
+        "won": "Ganado",
+        "lost": "Perdido"
+      },
+      "contactName": "Nombre del contacto",
+      "companyName": "Nombre de la empresa",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "estimatedValue": "Valor estimado",
+      "notes": "Notas adicionales..."
+    },
+    "clients": {
+      "newClient": "Nuevo cliente",
+      "clientName": "Nombre del cliente",
+      "company": "Nombre de la empresa",
+      "phone": "Teléfono",
+      "cedula": "Cédula",
+      "rnc": "RNC",
+      "notes": "Notas adicionales...",
+      "editClient": "Editar cliente"
+    },
+    "payments": {
+      "confirmPayment": "Confirmar pago",
+      "rejectPayment": "Rechazar pago"
+    },
+    "tickets": {
+      "statuses": {
+        "open": "Abierto",
+        "in_progress": "En progreso",
+        "waiting": "En espera",
+        "resolved": "Resuelto",
+        "closed": "Cerrado"
+      }
+    },
+    "profile": {
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "title": "Cargo",
+      "role": "Rol",
+      "currentPassword": "Contraseña actual",
+      "newPassword": "Nueva contraseña",
+      "changePassword": "Cambiar contraseña",
+      "mfa": "Autenticación en dos factores"
+    },
+    "users": {
+      "addUser": "Añadir usuario"
+    },
+    "bankAccounts": {
+      "addAccount": "Añadir cuenta bancaria"
+    }
   }
 }

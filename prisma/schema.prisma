@@ -1,0 +1,549 @@
+// Antreva CRM - Prisma Schema
+// SOC 2 compliant design with RBAC, audit logging, and encryption
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// IDENTITY AND ACCESS MANAGEMENT (SOC 2: Security)
+// =============================================================================
+
+/// Internal staff with CRM access
+model User {
+  id                  String    @id @default(cuid())
+  email               String    @unique
+  name                String
+  title               String?   // Display label: CEO, CTO, Manager, Support
+  passwordHash        String
+  roleId              String
+  role                Role      @relation(fields: [roleId], references: [id])
+  status              UserStatus @default(active)
+  lastLoginAt         DateTime?
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+  mfaSecret           String?   // Encrypted TOTP secret
+  mfaSecretIv         String?   // IV for mfaSecret encryption
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  // Relations
+  sessions            Session[]
+  auditLogs           AuditLog[]
+  assignedTickets     Ticket[]  @relation("AssignedTickets")
+  createdTickets      Ticket[]  @relation("CreatedTickets")
+  ticketComments      TicketComment[]
+  confirmedPayments   Payment[] @relation("ConfirmedPayments")
+
+  @@index([email])
+  @@index([roleId])
+  @@index([status])
+}
+
+enum UserStatus {
+  active
+  suspended
+  deactivated
+}
+
+/// RBAC permissions
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique // admin, manager, support, readonly
+  permissions Json     // Array of permission strings
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       User[]
+}
+
+/// Active login sessions for SOC 2 monitoring
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   // Hashed session token
+  ipAddress String?
+  userAgent String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([token])
+}
+
+// =============================================================================
+// SALES PIPELINE
+// =============================================================================
+
+/// Pre-sales contact moving through pipeline
+model Lead {
+  id                String      @id @default(cuid())
+  name              String
+  email             String?
+  company           String?
+  phone             String?
+  source            LeadSource  @default(other)
+  notes             String?     @db.Text
+  stage             LeadStage   @default(new)
+  lostReason        String?
+  expectedValue     Decimal?    @db.Decimal(12, 2)
+  convertedClientId String?     @unique
+  convertedClient   Client?     @relation("ConvertedLead", fields: [convertedClientId], references: [id])
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // Relations
+  whatsAppConversations WhatsAppConversation[]
+
+  @@index([stage])
+  @@index([source])
+  @@index([createdAt(sort: Desc)])
+  @@index([email])
+}
+
+enum LeadSource {
+  website
+  referral
+  whatsapp
+  cold_outreach
+  other
+}
+
+enum LeadStage {
+  new
+  qualified
+  proposal
+  negotiation
+  won
+  lost
+}
+
+// =============================================================================
+// CORE ENTITIES
+// =============================================================================
+
+/// Converted from won Lead, or direct entry
+model Client {
+  id        String       @id @default(cuid())
+  leadId    String?      @unique
+  lead      Lead?        @relation("ConvertedLead")
+  name      String
+  email     String       @unique
+  company   String?
+  phone     String?
+  cedula    String?      @unique // Dominican national ID
+  rnc       String?      // Business tax ID (RNC)
+  notes     String?      @db.Text
+  status    ClientStatus @default(active)
+  startedAt DateTime     @default(now())
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  // Relations
+  subscriptions         ClientSubscription[]
+  supportCredentials    SupportCredential[]
+  tickets               Ticket[]
+  whatsAppConversations WhatsAppConversation[]
+
+  @@index([status])
+  @@index([startedAt(sort: Desc)])
+}
+
+enum ClientStatus {
+  active
+  inactive
+  churned
+}
+
+/// Catalog of offerable services. Pricing and plans follow dev-docs/Phase1.md (Restaurant Plans SPM).
+model Service {
+  id            String      @id @default(cuid())
+  name          String
+  slug          String      @unique
+  description   String?     @db.Text
+  billingType   BillingType @default(recurring)
+  defaultAmount Decimal     @db.Decimal(12, 2) // RD$ per Phase1; add-ons use 0 for quote-based
+  currency      Currency    @default(DOP)
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  subscriptions ClientSubscription[]
+}
+
+enum BillingType {
+  recurring
+  one_time
+}
+
+enum Currency {
+  DOP
+  USD
+}
+
+/// Links clients to services
+model ClientSubscription {
+  id           String             @id @default(cuid())
+  clientId     String
+  client       Client             @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  serviceId    String
+  service      Service            @relation(fields: [serviceId], references: [id])
+  amount       Decimal            @db.Decimal(12, 2)
+  currency     Currency           @default(DOP)
+  billingCycle BillingCycle       @default(monthly)
+  startDate    DateTime
+  endDate      DateTime?
+  status       SubscriptionStatus @default(active)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  paymentSchedules PaymentSchedule[]
+
+  @@index([clientId])
+  @@index([serviceId])
+  @@index([status])
+  @@index([startDate])
+  @@index([clientId, status])
+}
+
+enum BillingCycle {
+  monthly
+  quarterly
+  annual
+  one_time
+}
+
+enum SubscriptionStatus {
+  active
+  paused
+  cancelled
+  expired
+}
+
+// =============================================================================
+// BILLING ENTITIES (Dominican Republic)
+// =============================================================================
+
+/// Antreva's receiving bank accounts
+model BankAccount {
+  id                String      @id @default(cuid())
+  bankName          String      // Banreservas, Banco Popular, BHD León, etc.
+  accountNumber     String      // Encrypted
+  accountNumberIv   String      // IV for encryption
+  accountNumberLast4 String     // Last 4 digits for display
+  accountType       AccountType @default(checking)
+  currency          Currency    @default(DOP)
+  accountHolder     String
+  isActive          Boolean     @default(true)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  receivedPayments  Payment[]
+}
+
+enum AccountType {
+  savings
+  checking
+}
+
+/// Scheduled payments for subscriptions
+model PaymentSchedule {
+  id             String                @id @default(cuid())
+  subscriptionId String
+  subscription   ClientSubscription    @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  dueDate        DateTime
+  amount         Decimal               @db.Decimal(12, 2)
+  currency       Currency              @default(DOP)
+  status         PaymentScheduleStatus @default(pending)
+  paidAt         DateTime?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  payments       Payment[]
+
+  @@index([subscriptionId])
+  @@index([dueDate])
+  @@index([status])
+  @@index([dueDate, status])
+}
+
+enum PaymentScheduleStatus {
+  pending
+  paid
+  overdue
+  cancelled
+}
+
+/// Actual payment records
+model Payment {
+  id                     String        @id @default(cuid())
+  scheduleId             String
+  schedule               PaymentSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  amount                 Decimal       @db.Decimal(12, 2)
+  currency               Currency      @default(DOP)
+  paidAt                 DateTime      @default(now())
+  method                 PaymentMethod @default(bank_transfer)
+  status                 PaymentStatus @default(pending_confirmation)
+  
+  // Bank transfer fields
+  receivingBankAccountId String?
+  receivingBankAccount   BankAccount?  @relation(fields: [receivingBankAccountId], references: [id])
+  senderBankName         String?       // Client's bank
+  senderAccountLast4     String?       // Last 4 digits of client's account
+  transferReference      String?       // Bank confirmation number
+  transferDate           DateTime?     // Date of transfer
+  proofUrl               String?       // Receipt/screenshot URL
+  
+  // Confirmation
+  confirmedById          String?
+  confirmedBy            User?         @relation("ConfirmedPayments", fields: [confirmedById], references: [id])
+  confirmedAt            DateTime?
+  notes                  String?       @db.Text
+  
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  @@index([scheduleId])
+  @@index([paidAt])
+  @@index([method])
+  @@index([status])
+  @@index([transferReference])
+}
+
+enum PaymentMethod {
+  bank_transfer
+  cash
+  card
+  other
+}
+
+enum PaymentStatus {
+  pending_confirmation
+  confirmed
+  rejected
+}
+
+// =============================================================================
+// SUPPORT ENTITIES
+// =============================================================================
+
+/// Encrypted passwords/keys per client
+model SupportCredential {
+  id             String   @id @default(cuid())
+  clientId       String
+  client         Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  label          String   // e.g., "cPanel", "FTP", "SSH"
+  encryptedValue String   // AES-256-GCM encrypted
+  iv             String   // Initialization vector
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([clientId])
+}
+
+/// Support tickets
+model Ticket {
+  id           String         @id @default(cuid())
+  clientId     String
+  client       Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  subject      String
+  status       TicketStatus   @default(open)
+  priority     TicketPriority @default(medium)
+  assignedToId String?
+  assignedTo   User?          @relation("AssignedTickets", fields: [assignedToId], references: [id])
+  createdById  String
+  createdBy    User           @relation("CreatedTickets", fields: [createdById], references: [id])
+  resolvedAt   DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  comments              TicketComment[]
+  whatsAppConversations WhatsAppConversation[]
+
+  @@index([clientId])
+  @@index([status])
+  @@index([priority])
+  @@index([assignedToId])
+  @@index([createdAt(sort: Desc)])
+  @@index([clientId, status])
+}
+
+enum TicketStatus {
+  open
+  in_progress
+  waiting
+  resolved
+  closed
+}
+
+enum TicketPriority {
+  low
+  medium
+  high
+  urgent
+}
+
+/// Ticket comments/replies
+model TicketComment {
+  id         String            @id @default(cuid())
+  ticketId   String
+  ticket     Ticket            @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  content    String            @db.Text
+  authorId   String?           // Null for system messages
+  author     User?             @relation(fields: [authorId], references: [id])
+  authorType TicketAuthorType  @default(staff)
+  createdAt  DateTime          @default(now())
+
+  @@index([ticketId])
+}
+
+enum TicketAuthorType {
+  staff
+  system
+  client
+}
+
+// =============================================================================
+// AUDIT AND COMPLIANCE (SOC 2)
+// =============================================================================
+
+/// Immutable event log for SOC 2 compliance
+model AuditLog {
+  id         String          @id @default(cuid())
+  userId     String?
+  user       User?           @relation(fields: [userId], references: [id])
+  entityType AuditEntityType
+  entityId   String
+  action     AuditAction
+  metadata   Json?           // Old/new values, IP, user agent
+  createdAt  DateTime        @default(now())
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@index([entityType, createdAt])
+  @@index([action])
+}
+
+enum AuditEntityType {
+  user
+  lead
+  client
+  ticket
+  payment
+  subscription
+  credential
+  whatsapp
+  session
+  role
+}
+
+enum AuditAction {
+  create
+  read
+  update
+  delete
+  decrypt
+  login
+  logout
+  failed_login
+}
+
+/// Placeholder for future AI features
+model AIContext {
+  id          String        @id @default(cuid())
+  entityType  AuditEntityType
+  entityId    String
+  contextType AIContextType
+  content     Json
+  createdAt   DateTime      @default(now())
+
+  @@index([entityType, entityId])
+}
+
+enum AIContextType {
+  summary
+  embedding_ref
+}
+
+// =============================================================================
+// WHATSAPP BUSINESS ENTITIES
+// =============================================================================
+
+/// Business phone configuration
+model WhatsAppPhone {
+  id                   String   @id @default(cuid())
+  phoneNumberId        String   @unique // Meta phone number ID
+  displayPhoneNumber   String
+  accessTokenEncrypted String?  // Encrypted access token (optional, use env fallback)
+  accessTokenIv        String?
+  isActive             Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  conversations        WhatsAppConversation[]
+}
+
+/// Meta conversation thread
+model WhatsAppConversation {
+  id              String       @id @default(cuid())
+  whatsAppPhoneId String
+  whatsAppPhone   WhatsAppPhone @relation(fields: [whatsAppPhoneId], references: [id])
+  waId            String       // Recipient phone, normalized E.164
+  conversationId  String?      // Meta conversation.id
+  leadId          String?
+  lead            Lead?        @relation(fields: [leadId], references: [id])
+  clientId        String?
+  client          Client?      @relation(fields: [clientId], references: [id])
+  ticketId        String?
+  ticket          Ticket?      @relation(fields: [ticketId], references: [id])
+  lastMessageAt   DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  messages        WhatsAppMessage[]
+
+  @@unique([whatsAppPhoneId, waId])
+  @@index([waId])
+  @@index([leadId])
+  @@index([clientId])
+  @@index([ticketId])
+  @@index([lastMessageAt(sort: Desc)])
+}
+
+/// WhatsApp messages (incoming/outgoing)
+model WhatsAppMessage {
+  id             String                @id @default(cuid())
+  conversationId String
+  conversation   WhatsAppConversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  wamid          String                @unique // Meta message ID
+  direction      MessageDirection
+  type           String                // text, image, audio, video, document, etc.
+  content        Json                  // Message content (text.body, media IDs, etc.)
+  status         MessageStatus?        // null for inbound, status for outbound
+  timestamp      DateTime              // Meta Unix timestamp
+  createdAt      DateTime              @default(now())
+
+  @@index([conversationId, createdAt])
+  @@index([conversationId])
+}
+
+enum MessageDirection {
+  inbound
+  outbound
+}
+
+enum MessageStatus {
+  sent
+  delivered
+  read
+  failed
+}
