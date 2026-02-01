@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Inter, Sora, Roboto } from "next/font/google";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SITE_URL, SITE_NAME, DEFAULT_LOCALE, OG_IMAGE_URL } from "@/lib/seo";
@@ -92,22 +93,28 @@ export const metadata: Metadata = {
   verification: {},
 };
 
+const LOCALE_COOKIE = "locale";
+
 /**
  * Root layout component that wraps all pages
- * Applies brand fonts, base styling, and language provider
- * Defaults to Spanish (es)
+ * Applies brand fonts, base styling, and language provider.
+ * Reads locale cookie so language is consistent across marketing and dashboard.
  */
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get(LOCALE_COOKIE)?.value;
+  const locale = localeCookie === "en" || localeCookie === "es" ? localeCookie : "es";
+
   const orgSchema = getOrganizationSchema();
   const localSchema = getLocalBusinessSchema();
-  const faqSchema = getFAQSchema(DEFAULT_LOCALE as "es" | "en");
+  const faqSchema = getFAQSchema(locale as "es" | "en");
 
   return (
-    <html lang="es">
+    <html lang={locale}>
       <body
         className={`${inter.variable} ${sora.variable} ${roboto.variable} antialiased`}
       >
@@ -129,7 +136,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <LanguageProvider defaultLocale="es">{children}</LanguageProvider>
+        <LanguageProvider defaultLocale={locale}>{children}</LanguageProvider>
       </body>
     </html>
   );

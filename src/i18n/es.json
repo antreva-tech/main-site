@@ -127,10 +127,18 @@
       "tickets": "Tickets",
       "activeLeads": "Leads activos",
       "active": "Activos",
+      "total": "total",
+      "newThisMonth": "nuevos este mes",
       "pendingConfirmation": "Pendiente de confirmación",
+      "overdue": "vencidos",
+      "dueThisWeek": "vence esta semana",
       "open": "Abiertos",
+      "urgent": "urgentes",
+      "allUnderControl": "Todo bajo control",
       "recentLeads": "Leads recientes",
-      "pendingPayments": "Pagos pendientes de confirmar"
+      "noLeadsYet": "Sin leads aún",
+      "pendingPayments": "Pagos pendientes de confirmar",
+      "noPendingConfirmations": "Sin confirmaciones pendientes"
     },
     "common": {
       "back": "Volver",
@@ -141,16 +149,37 @@
       "reject": "Rechazar",
       "new": "Nuevo",
       "view": "Ver",
+      "viewAll": "Ver todo",
       "createLead": "Crear lead",
+      "creatingLead": "Creando...",
       "typeMessage": "Escribe un mensaje...",
       "addComment": "Añadir un comentario...",
-      "reasonRejection": "Motivo del rechazo..."
+      "reasonRejection": "Motivo del rechazo...",
+      "saveChanges": "Guardar cambios",
+      "remove": "Eliminar",
+      "edit": "Editar",
+      "editUser": "Editar usuario",
+      "editContact": "Editar contacto",
+      "editCredential": "Editar credencial",
+      "editSubscription": "Editar suscripción",
+      "editBankAccount": "Editar cuenta bancaria",
+      "removeContact": "¿Eliminar este contacto?",
+      "removeSubscription": "¿Eliminar esta suscripción? Los programas y registros de pago asociados se eliminarán.",
+      "removeBankAccount": "Eliminar cuenta bancaria",
+      "removeBankAccountMessage": "¿Eliminar esta cuenta bancaria? Los pagos que la usaron ya no mostrarán banco receptor. No se puede deshacer.",
+      "createClient": "Crear cliente",
+      "creatingClient": "Creando..."
     },
     "pipeline": {
       "salesPipeline": "Pipeline de ventas",
       "backToPipeline": "Volver al pipeline",
       "newLead": "Nuevo lead",
       "convertToClient": "Convertir a cliente",
+      "convertDescription": "Este lead se ha ganado. Conviértelo en cliente para gestionar suscripciones y pagos.",
+      "noLeads": "Sin leads",
+      "noLeadsInStage": "Sin leads en",
+      "addLeadOrSwitch": "Añade un lead o cambia de etapa",
+      "createLead": "Crear lead",
       "stages": {
         "new": "Nuevo",
         "qualified": "Calificado",
@@ -163,24 +192,66 @@
       "companyName": "Nombre de la empresa",
       "email": "Correo electrónico",
       "phone": "Teléfono",
-      "estimatedValue": "Valor estimado",
+      "source": "Origen",
+      "estimatedValue": "Valor estimado (RD$)",
       "notes": "Notas adicionales..."
     },
     "clients": {
+      "clients": "Clientes",
       "newClient": "Nuevo cliente",
+      "backToClients": "Volver a clientes",
+      "backToClient": "Volver al cliente",
+      "noClientsFound": "No se encontraron clientes",
+      "viewAll": "Ver todo",
+      "viewCredentials": "Ver credenciales",
+      "viewAllTickets": "Ver todos los tickets",
+      "addCredential": "Añadir credencial",
+      "addContact": "Añadir contacto",
+      "createSupportTicket": "Crear ticket de soporte",
+      "noTicketsYet": "Sin tickets aún",
+      "adminCredentials": "Credenciales de administrador",
+      "adminCredentialsHint": "Guarda credenciales de panel / cPanel / FTP del cliente. Los valores se almacenan cifrados. Descifra desde Credenciales de soporte cuando lo necesites.",
+      "contacts": "Contactos",
+      "subscriptions": "Suscripciones",
+      "recentTickets": "Tickets recientes",
+      "noContactsYet": "Sin contactos adicionales aún.",
+      "noCredentialsYet": "Sin credenciales aún.",
+      "noSubscriptionsYet": "Sin suscripciones aún",
+      "editClientDetails": "Editar datos del cliente",
       "clientName": "Nombre del cliente",
       "company": "Nombre de la empresa",
       "phone": "Teléfono",
       "cedula": "Cédula",
       "rnc": "RNC",
-      "notes": "Notas adicionales...",
-      "editClient": "Editar cliente"
+      "notes": "Notas",
+      "editClient": "Editar cliente",
+      "email": "Correo electrónico",
+      "website": "Sitio web",
+      "started": "Inicio",
+      "source": "Origen",
+      "addSubscription": "Añadir suscripción",
+      "noActiveServices": "No hay servicios activos en el catálogo. Añade servicios en Configuración para ofrecer suscripciones.",
+      "addSubscriptionSubmit": "Añadir suscripción",
+      "addDetails": "Añadir detalles...",
+      "createTicket": "Crear ticket",
+      "label": "Etiqueta",
+      "valuePlaceholder": "Cifrado en reposo",
+      "title": "Cargo",
+      "name": "Nombre"
     },
     "payments": {
       "confirmPayment": "Confirmar pago",
-      "rejectPayment": "Rechazar pago"
+      "rejectPayment": "Rechazar pago",
+      "backToPayments": "Volver a pagos"
     },
     "tickets": {
+      "backToTickets": "Volver a tickets",
+      "noTicketsFound": "No se encontraron tickets",
+      "addComment": "Añadir comentario",
+      "sending": "Enviando...",
+      "subject": "Asunto",
+      "priority": "Prioridad",
+      "initialMessage": "Mensaje inicial (opcional)",
       "statuses": {
         "open": "Abierto",
         "in_progress": "En progreso",
@@ -189,21 +260,34 @@
         "closed": "Cerrado"
       }
     },
+    "credentials": {
+      "addCredentialsFromClient": "Añade credenciales desde la ficha del cliente."
+    },
     "profile": {
+      "profileSettings": "Configuración del perfil",
+      "language": "Idioma",
+      "chooseLanguage": "Elige el idioma del panel.",
+      "accountInformation": "Datos de la cuenta",
+      "contactAdminToChangeEmail": "Contacta al administrador para cambiar el correo",
       "name": "Nombre",
       "email": "Correo electrónico",
       "title": "Cargo",
       "role": "Rol",
       "currentPassword": "Contraseña actual",
       "newPassword": "Nueva contraseña",
+      "confirmNewPassword": "Confirmar nueva contraseña",
       "changePassword": "Cambiar contraseña",
-      "mfa": "Autenticación en dos factores"
+      "mfa": "Autenticación en dos factores",
+      "twoFactorDescription": "Añade una capa extra de seguridad habilitando la autenticación en dos factores"
     },
     "users": {
       "addUser": "Añadir usuario"
     },
     "bankAccounts": {
-      "addAccount": "Añadir cuenta bancaria"
+      "addAccount": "Añadir cuenta bancaria",
+      "addAccountButton": "Añadir cuenta",
+      "noBankAccounts": "No hay cuentas bancarias. Usa \"+ Añadir cuenta\" arriba.",
+      "newToReplace": "Nuevo para reemplazar"
     }
   }
 }

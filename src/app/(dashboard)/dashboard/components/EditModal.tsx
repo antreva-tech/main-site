@@ -71,7 +71,7 @@ export function EditModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition flex-shrink-0"
+            className="min-h-[44px] min-w-[44px] p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition flex-shrink-0 flex items-center justify-center"
             aria-label="Close"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

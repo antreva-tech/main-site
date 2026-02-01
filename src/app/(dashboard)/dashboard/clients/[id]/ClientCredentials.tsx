@@ -81,12 +81,12 @@ export function ClientCredentials({
         {editingCred && (
           <form
             action={updateCredential}
-            className="flex flex-wrap items-end gap-3"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-3"
             onSubmit={() => setEditingCred(null)}
           >
             <input type="hidden" name="credentialId" value={editingCred.id} />
             <input type="hidden" name="clientId" value={clientId} />
-            <div className="min-w-[140px] flex-1">
+            <div>
               <label className="block text-xs text-gray-500 uppercase mb-1">Label *</label>
               <input
                 name="label"
@@ -96,7 +96,7 @@ export function ClientCredentials({
                 placeholder="e.g. Admin panel"
               />
             </div>
-            <div className="min-w-[180px] flex-1">
+            <div>
               <label className="block text-xs text-gray-500 uppercase mb-1">New value (leave blank to keep)</label>
               <input
                 type="password"
@@ -106,19 +106,19 @@ export function ClientCredentials({
                 placeholder="Leave blank to keep current"
               />
             </div>
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                className="px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
-              >
-                Save
-              </button>
+            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:col-span-2">
               <button
                 type="button"
                 onClick={() => setEditingCred(null)}
-                className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition font-medium"
+                className="min-h-[44px] px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition font-medium"
               >
                 Cancel
+              </button>
+              <button
+                type="submit"
+                className="min-h-[44px] px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
+              >
+                Save
               </button>
             </div>
           </form>

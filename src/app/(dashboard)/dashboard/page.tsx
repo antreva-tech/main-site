@@ -1,43 +1,55 @@
 /**
  * Dashboard Overview Page for Antreva CRM
- * Displays key metrics and recent activity.
+ * Displays key metrics and recent activity. Uses locale cookie for translations.
  */
 
 import React, { Suspense, Children } from "react";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "@/i18n";
+import type { Translations } from "@/i18n";
+
+const LOCALE_COOKIE = "locale";
 
 /**
  * Dashboard overview page with parallel-loaded widgets.
  */
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get(LOCALE_COOKIE)?.value;
+  const locale = localeCookie === "en" || localeCookie === "es" ? localeCookie : "es";
+  const t = getTranslations(locale);
+
   return (
     <div>
-      <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Overview</h1>
+      <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">
+        {t.dashboard.overview.title}
+      </h1>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Suspense fallback={<StatCardSkeleton />}>
-          <PipelineStats />
+          <PipelineStats t={t} />
         </Suspense>
         <Suspense fallback={<StatCardSkeleton />}>
-          <ClientStats />
+          <ClientStats t={t} />
         </Suspense>
         <Suspense fallback={<StatCardSkeleton />}>
-          <PaymentStats />
+          <PaymentStats t={t} />
         </Suspense>
         <Suspense fallback={<StatCardSkeleton />}>
-          <TicketStats />
+          <TicketStats t={t} />
         </Suspense>
       </div>
 
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Suspense fallback={<ListSkeleton title="Recent Leads" />}>
-          <RecentLeads />
+        <Suspense fallback={<ListSkeleton title={t.dashboard.overview.recentLeads} />}>
+          <RecentLeads t={t} />
         </Suspense>
-        <Suspense fallback={<ListSkeleton title="Pending Payments" />}>
-          <PendingPayments />
+        <Suspense fallback={<ListSkeleton title={t.dashboard.overview.pendingPayments} />}>
+          <PendingPayments t={t} />
         </Suspense>
       </div>
     </div>
@@ -47,7 +59,7 @@ export default function DashboardPage() {
 /**
  * Pipeline statistics widget.
  */
-async function PipelineStats() {
+async function PipelineStats({ t }: { t: Translations }) {
   const counts = await prisma.lead.groupBy({
     by: ["stage"],
     _count: { id: true },
@@ -60,10 +72,10 @@ async function PipelineStats() {
 
   return (
     <StatCard
-      title="Pipeline"
+      title={t.dashboard.overview.pipeline}
       value={active}
-      label="Active Leads"
-      detail={`${total} total`}
+      label={t.dashboard.overview.activeLeads}
+      detail={`${total} ${t.dashboard.overview.total}`}
       href="/dashboard/pipeline"
       color="blue"
     />
@@ -73,9 +85,8 @@ async function PipelineStats() {
 /**
  * Client statistics widget.
  */
-async function ClientStats() {
-  const [total, active, thisMonth] = await Promise.all([
-    prisma.client.count(),
+async function ClientStats({ t }: { t: Translations }) {
+  const [active, thisMonth] = await Promise.all([
     prisma.client.count({ where: { status: "active" } }),
     prisma.client.count({
       where: {
@@ -88,10 +99,10 @@ async function ClientStats() {
 
   return (
     <StatCard
-      title="Clients"
+      title={t.dashboard.overview.clients}
       value={active}
-      label="Active"
-      detail={`${thisMonth} new this month`}
+      label={t.dashboard.overview.active}
+      detail={`${thisMonth} ${t.dashboard.overview.newThisMonth}`}
       href="/dashboard/clients"
       color="green"
     />
@@ -101,7 +112,7 @@ async function ClientStats() {
 /**
  * Payment statistics widget.
  */
-async function PaymentStats() {
+async function PaymentStats({ t }: { t: Translations }) {
   const now = new Date();
   const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
@@ -122,10 +133,10 @@ async function PaymentStats() {
 
   return (
     <StatCard
-      title="Payments"
+      title={t.dashboard.overview.payments}
       value={pendingConfirmation}
-      label="Pending Confirmation"
-      detail={`${overdue} overdue, ${dueThisWeek} due this week`}
+      label={t.dashboard.overview.pendingConfirmation}
+      detail={`${overdue} ${t.dashboard.overview.overdue}, ${dueThisWeek} ${t.dashboard.overview.dueThisWeek}`}
       href="/dashboard/payments"
       color="yellow"
       alert={overdue > 0}
@@ -136,7 +147,7 @@ async function PaymentStats() {
 /**
  * Ticket statistics widget.
  */
-async function TicketStats() {
+async function TicketStats({ t }: { t: Translations }) {
   const counts = await prisma.ticket.groupBy({
     by: ["status"],
     _count: { id: true },
@@ -152,10 +163,10 @@ async function TicketStats() {
 
   return (
     <StatCard
-      title="Tickets"
+      title={t.dashboard.overview.tickets}
       value={open}
-      label="Open"
-      detail={urgent > 0 ? `${urgent} urgent` : "All under control"}
+      label={t.dashboard.overview.open}
+      detail={urgent > 0 ? `${urgent} ${t.dashboard.overview.urgent}` : t.dashboard.overview.allUnderControl}
       href="/dashboard/tickets"
       color="purple"
       alert={urgent > 0}
@@ -166,7 +177,7 @@ async function TicketStats() {
 /**
  * Recent leads list widget.
  */
-async function RecentLeads() {
+async function RecentLeads({ t }: { t: Translations }) {
   const leads = await prisma.lead.findMany({
     take: 5,
     orderBy: { createdAt: "desc" },
@@ -181,9 +192,10 @@ async function RecentLeads() {
 
   return (
     <ListCard
-      title="Recent Leads"
+      title={t.dashboard.overview.recentLeads}
       href="/dashboard/pipeline"
-      emptyMessage="No leads yet"
+      emptyMessage={t.dashboard.overview.noLeadsYet}
+      viewAllLabel={t.dashboard.common.viewAll}
     >
       {leads.map((lead) => (
         <Link
@@ -193,9 +205,9 @@ async function RecentLeads() {
         >
           <div>
             <p className="font-medium text-gray-900">{lead.name}</p>
-            <p className="text-sm text-gray-500">{lead.company || "No company"}</p>
+            <p className="text-sm text-gray-500">{lead.company || "—"}</p>
           </div>
-          <StageBadge stage={lead.stage} />
+          <StageBadge stage={lead.stage} label={t.dashboard.pipeline.stages[lead.stage as keyof typeof t.dashboard.pipeline.stages]} />
         </Link>
       ))}
     </ListCard>
@@ -205,7 +217,7 @@ async function RecentLeads() {
 /**
  * Pending payments list widget.
  */
-async function PendingPayments() {
+async function PendingPayments({ t }: { t: Translations }) {
   const payments = await prisma.payment.findMany({
     where: { status: "pending_confirmation" },
     take: 5,
@@ -223,9 +235,10 @@ async function PendingPayments() {
 
   return (
     <ListCard
-      title="Pending Payment Confirmations"
+      title={t.dashboard.overview.pendingPayments}
       href="/dashboard/payments?status=pending_confirmation"
-      emptyMessage="No pending confirmations"
+      emptyMessage={t.dashboard.overview.noPendingConfirmations}
+      viewAllLabel={t.dashboard.common.viewAll}
     >
       {payments.map((payment) => (
         <Link
@@ -325,11 +338,13 @@ function ListCard({
   title,
   href,
   emptyMessage,
+  viewAllLabel = "View all",
   children,
 }: {
   title: string;
   href: string;
   emptyMessage: string;
+  viewAllLabel?: string;
   children: React.ReactNode;
 }) {
   const hasItems = Children.count(children) > 0;
@@ -342,7 +357,7 @@ function ListCard({
           href={href}
           className="text-sm text-[#1C6ED5] hover:underline"
         >
-          View all
+          {viewAllLabel}
         </Link>
       </div>
       {hasItems ? (
@@ -381,7 +396,7 @@ function ListSkeleton({ title }: { title: string }) {
 /**
  * Stage badge component.
  */
-function StageBadge({ stage }: { stage: string }) {
+function StageBadge({ stage, label }: { stage: string; label?: string }) {
   const styles: Record<string, string> = {
     new: "bg-blue-100 text-blue-700",
     qualified: "bg-cyan-100 text-cyan-700",
@@ -393,7 +408,7 @@ function StageBadge({ stage }: { stage: string }) {
 
   return (
     <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[stage] || styles.new}`}>
-      {stage}
+      {label ?? stage}
     </span>
   );
 }

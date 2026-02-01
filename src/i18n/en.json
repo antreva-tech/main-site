@@ -127,10 +127,18 @@
       "tickets": "Tickets",
       "activeLeads": "Active Leads",
       "active": "Active",
+      "total": "total",
+      "newThisMonth": "new this month",
       "pendingConfirmation": "Pending Confirmation",
+      "overdue": "overdue",
+      "dueThisWeek": "due this week",
       "open": "Open",
+      "urgent": "urgent",
+      "allUnderControl": "All under control",
       "recentLeads": "Recent Leads",
-      "pendingPayments": "Pending Payment Confirmations"
+      "noLeadsYet": "No leads yet",
+      "pendingPayments": "Pending Payment Confirmations",
+      "noPendingConfirmations": "No pending confirmations"
     },
     "common": {
       "back": "Back",
@@ -141,16 +149,37 @@
       "reject": "Reject",
       "new": "New",
       "view": "View",
+      "viewAll": "View All",
       "createLead": "Create Lead",
+      "creatingLead": "Creating...",
       "typeMessage": "Type a message...",
       "addComment": "Add a comment...",
-      "reasonRejection": "Reason for rejection..."
+      "reasonRejection": "Reason for rejection...",
+      "saveChanges": "Save changes",
+      "remove": "Remove",
+      "edit": "Edit",
+      "editUser": "Edit user",
+      "editContact": "Edit contact",
+      "editCredential": "Edit credential",
+      "editSubscription": "Edit subscription",
+      "editBankAccount": "Edit bank account",
+      "removeContact": "Remove this contact?",
+      "removeSubscription": "Remove this subscription? Schedules and payment records for it will be deleted.",
+      "removeBankAccount": "Remove bank account",
+      "removeBankAccountMessage": "Remove this bank account? Payments that used it will no longer show a receiving bank. This cannot be undone.",
+      "createClient": "Create Client",
+      "creatingClient": "Creating..."
     },
     "pipeline": {
       "salesPipeline": "Sales Pipeline",
       "backToPipeline": "Back to Pipeline",
       "newLead": "New Lead",
       "convertToClient": "Convert to Client",
+      "convertDescription": "This lead has been won. Convert them to a client to start tracking subscriptions and payments.",
+      "noLeads": "No leads",
+      "noLeadsInStage": "No leads in",
+      "addLeadOrSwitch": "Add a lead or switch stage",
+      "createLead": "Create Lead",
       "stages": {
         "new": "New",
         "qualified": "Qualified",
@@ -163,24 +192,66 @@
       "companyName": "Company name",
       "email": "Email",
       "phone": "Phone",
-      "estimatedValue": "Estimated value",
+      "source": "Source",
+      "estimatedValue": "Expected Value (RD$)",
       "notes": "Additional notes..."
     },
     "clients": {
+      "clients": "Clients",
       "newClient": "New Client",
+      "backToClients": "Back to Clients",
+      "backToClient": "Back to Client",
+      "noClientsFound": "No clients found",
+      "viewAll": "View All",
+      "viewCredentials": "View Credentials",
+      "viewAllTickets": "View All Tickets",
+      "addCredential": "Add credential",
+      "addContact": "Add Contact",
+      "createSupportTicket": "Create support ticket",
+      "noTicketsYet": "No tickets yet",
+      "adminCredentials": "Admin credentials",
+      "adminCredentialsHint": "Store client admin panel / cPanel / FTP credentials. Values are encrypted. Decrypt from Support Credentials when needed.",
+      "contacts": "Contacts",
+      "subscriptions": "Subscriptions",
+      "recentTickets": "Recent Tickets",
+      "noContactsYet": "No additional contacts yet.",
+      "noCredentialsYet": "No credentials yet.",
+      "noSubscriptionsYet": "No subscriptions yet",
+      "editClientDetails": "Edit client details",
       "clientName": "Client name",
       "company": "Company name",
       "phone": "Phone",
       "cedula": "Cédula",
       "rnc": "RNC",
-      "notes": "Additional notes...",
-      "editClient": "Edit Client"
+      "notes": "Notes",
+      "editClient": "Edit Client",
+      "email": "Email",
+      "website": "Website",
+      "started": "Started",
+      "source": "Source",
+      "addSubscription": "Add Subscription",
+      "noActiveServices": "No active services in the catalog. Add services in Settings to offer subscriptions.",
+      "addSubscriptionSubmit": "Add subscription",
+      "addDetails": "Add details...",
+      "createTicket": "Create ticket",
+      "label": "Label",
+      "valuePlaceholder": "Encrypted at rest",
+      "title": "Title",
+      "name": "Name"
     },
     "payments": {
       "confirmPayment": "Confirm Payment",
-      "rejectPayment": "Reject Payment"
+      "rejectPayment": "Reject Payment",
+      "backToPayments": "Back to Payments"
     },
     "tickets": {
+      "backToTickets": "Back to Tickets",
+      "noTicketsFound": "No tickets found",
+      "addComment": "Add Comment",
+      "sending": "Sending...",
+      "subject": "Subject",
+      "priority": "Priority",
+      "initialMessage": "Initial message (optional)",
       "statuses": {
         "open": "Open",
         "in_progress": "In Progress",
@@ -189,21 +260,34 @@
         "closed": "Closed"
       }
     },
+    "credentials": {
+      "addCredentialsFromClient": "Add credentials from a client's detail page."
+    },
     "profile": {
+      "profileSettings": "Profile Settings",
+      "language": "Language",
+      "chooseLanguage": "Choose your preferred language for the dashboard.",
+      "accountInformation": "Account Information",
+      "contactAdminToChangeEmail": "Contact admin to change email",
       "name": "Name",
       "email": "Email",
       "title": "Title",
       "role": "Role",
       "currentPassword": "Current password",
-      "newPassword": "New password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm New Password",
       "changePassword": "Change Password",
-      "mfa": "Two-factor authentication"
+      "mfa": "Two-factor authentication",
+      "twoFactorDescription": "Add an extra layer of security to your account by enabling two-factor"
     },
     "users": {
       "addUser": "Add User"
     },
     "bankAccounts": {
-      "addAccount": "Add Bank Account"
+      "addAccount": "Add Bank Account",
+      "addAccountButton": "Add account",
+      "noBankAccounts": "No bank accounts configured. Use \"+ Add Account\" above to add one.",
+      "newToReplace": "New to replace"
     }
   }
 }

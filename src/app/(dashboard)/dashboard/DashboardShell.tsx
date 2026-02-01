@@ -10,6 +10,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import type { SessionUser } from "@/lib/auth";
 
 /** Nav item key for main nav (matches t.dashboard.nav) */
@@ -149,6 +150,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
               <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">{t.dashboard.title}</h1>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
+              <LanguageSwitcher variant="light" />
               <Link
                 href="/logout"
                 className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"

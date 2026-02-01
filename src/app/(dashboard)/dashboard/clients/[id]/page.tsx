@@ -130,8 +130,8 @@ export default async function ClientDetailPage({
           </div>
         </div>
 
-        {/* Contact Info - min-w-0 prevents grid overflow; truncate keeps email/phone in column */}
-        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Contact Info - mobile-first: 1 col → 2 → 4; min-w-0 + truncate prevent overflow */}
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div className="min-w-0">
             <p className="text-xs text-gray-500 uppercase">Email</p>
             <a
@@ -204,17 +204,17 @@ export default async function ClientDetailPage({
           </div>
         )}
 
-        {/* Quick Actions */}
-        <div className="mt-6 pt-6 border-t border-gray-100 flex gap-3">
+        {/* Quick Actions - stack on mobile, touch-friendly min height */}
+        <div className="mt-6 pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
           <Link
             href={`/dashboard/credentials?clientId=${client.id}`}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm"
+            className="min-h-[44px] flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm w-full sm:w-auto"
           >
             View Credentials ({client._count.supportCredentials})
           </Link>
           <Link
             href={`/dashboard/tickets?clientId=${client.id}`}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm"
+            className="min-h-[44px] flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm w-full sm:w-auto"
           >
             View All Tickets
           </Link>
@@ -241,7 +241,7 @@ export default async function ClientDetailPage({
       </div>
 
       {/* Admin credentials */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Admin credentials</h2>
         <p className="text-sm text-gray-500 mb-4">
           Store client admin panel / cPanel / FTP credentials. Values are encrypted. Decrypt from Support Credentials when needed.
@@ -256,9 +256,9 @@ export default async function ClientDetailPage({
         ) : (
           <p className="text-gray-500 text-sm mb-4">No credentials yet.</p>
         )}
-        <form action={createCredential} className="flex flex-wrap items-end gap-3 p-3 bg-gray-50 rounded-lg">
+        <form action={createCredential} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg">
           <input type="hidden" name="clientId" value={client.id} />
-          <div className="min-w-[140px]">
+          <div>
             <label className="block text-xs text-gray-500 uppercase mb-1">Label *</label>
             <input
               name="label"
@@ -267,7 +267,7 @@ export default async function ClientDetailPage({
               placeholder="e.g. Admin panel, cPanel"
             />
           </div>
-          <div className="min-w-[180px] flex-1">
+          <div>
             <label className="block text-xs text-gray-500 uppercase mb-1">Value (password / URL) *</label>
             <input
               type="password"
@@ -280,7 +280,7 @@ export default async function ClientDetailPage({
           </div>
           <button
             type="submit"
-            className="px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
+            className="min-h-[44px] sm:col-span-2 px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
           >
             Add credential
           </button>
@@ -288,7 +288,7 @@ export default async function ClientDetailPage({
       </div>
 
       {/* Contacts */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Contacts</h2>
         {client.contacts.length > 0 ? (
           <ClientContacts
@@ -301,11 +301,13 @@ export default async function ClientDetailPage({
           <p className="text-gray-500 text-sm mb-4">No additional contacts yet.</p>
         )}
         <form
-          action={createClientContact}
-          className="flex flex-wrap items-end gap-3 p-3 bg-gray-50 rounded-lg"
+          action={async (fd) => {
+            await createClientContact(fd);
+          }}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg"
         >
           <input type="hidden" name="clientId" value={client.id} />
-          <div className="flex-1 min-w-[140px]">
+          <div className="sm:col-span-2">
             <label className="block text-xs text-gray-500 uppercase mb-1">
               Name *
             </label>
@@ -316,7 +318,7 @@ export default async function ClientDetailPage({
               placeholder="Contact name"
             />
           </div>
-          <div className="w-28">
+          <div>
             <label className="block text-xs text-gray-500 uppercase mb-1">
               Title
             </label>
@@ -326,7 +328,7 @@ export default async function ClientDetailPage({
               placeholder="e.g. Admin"
             />
           </div>
-          <div className="flex-1 min-w-[160px]">
+          <div>
             <label className="block text-xs text-gray-500 uppercase mb-1">
               Email
             </label>
@@ -337,7 +339,7 @@ export default async function ClientDetailPage({
               placeholder="email@example.com"
             />
           </div>
-          <div className="min-w-[120px]">
+          <div className="sm:col-span-2">
             <label className="block text-xs text-gray-500 uppercase mb-1">
               Phone
             </label>
@@ -350,7 +352,7 @@ export default async function ClientDetailPage({
           </div>
           <button
             type="submit"
-            className="px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
+            className="min-h-[44px] sm:col-span-2 w-full sm:w-auto px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
           >
             Add Contact
           </button>
@@ -358,7 +360,7 @@ export default async function ClientDetailPage({
       </div>
 
       {/* Subscriptions */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Subscriptions</h2>
         </div>
@@ -441,7 +443,7 @@ export default async function ClientDetailPage({
               <div className="flex items-end">
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
+                  className="min-h-[44px] w-full sm:w-auto px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
                 >
                   Add subscription
                 </button>
@@ -476,7 +478,7 @@ export default async function ClientDetailPage({
       </div>
 
       {/* Recent Tickets */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Recent Tickets</h2>
           <Link
@@ -488,7 +490,7 @@ export default async function ClientDetailPage({
         </div>
 
         {/* Create ticket for this client */}
-        <form action={createTicket} className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+        <form action={createTicket} className="mb-6 p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-100">
           <p className="text-sm font-medium text-gray-700 mb-3">Create support ticket</p>
           <input type="hidden" name="clientId" value={client.id} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
@@ -505,7 +507,7 @@ export default async function ClientDetailPage({
               <label className="block text-xs text-gray-500 uppercase mb-1">Priority</label>
               <select
                 name="priority"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5] min-h-[44px]"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -525,7 +527,7 @@ export default async function ClientDetailPage({
           </div>
           <button
             type="submit"
-            className="px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
+            className="min-h-[44px] w-full sm:w-auto px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
           >
             Create ticket
           </button>
