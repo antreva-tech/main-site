@@ -1,6 +1,5 @@
 /**
- * Plan data structure based on Phase1.md
- * Restaurant plans for San Pedro de Macorís (SPM)
+ * Plan data structure: Start, Pro, Premium.
  */
 
 export interface PlanFeature {
@@ -20,17 +19,17 @@ export interface Plan {
 }
 
 /**
- * Restaurant plans derived from Phase1.md
+ * Plans: Start, Pro, Premium.
  */
-export const restaurantPlans: Plan[] = [
+export const plans: Plan[] = [
   {
     id: "start",
-    name: "Restaurant START",
+    name: "Start",
     tier: "START",
     price: "RD$4,500",
     priceNote: "per month",
     description:
-      "Perfect for restaurants starting their digital journey with essential tools.",
+      "Perfect for businesses starting their digital journey with essential tools.",
     features: [
       { text: "WhatsApp Business setup", included: true },
       { text: "Digital menu with QR code", included: true },
@@ -45,12 +44,12 @@ export const restaurantPlans: Plan[] = [
   },
   {
     id: "pro",
-    name: "Restaurant PRO",
+    name: "Pro",
     tier: "PRO",
     price: "RD$7,500",
     priceNote: "per month",
     description:
-      "For growing restaurants ready to automate and create engaging content.",
+      "For growing businesses ready to automate and create engaging content.",
     features: [
       { text: "Everything in START", included: true },
       { text: "Advanced WhatsApp automation", included: true },
@@ -64,7 +63,7 @@ export const restaurantPlans: Plan[] = [
   },
   {
     id: "premium",
-    name: "Restaurant PREMIUM",
+    name: "Premium",
     tier: "PREMIUM",
     price: "RD$12,000+",
     priceNote: "per month",

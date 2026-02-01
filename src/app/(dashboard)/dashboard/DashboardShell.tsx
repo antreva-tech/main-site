@@ -1,16 +1,15 @@
 "use client";
 
 /**
- * Dashboard shell: sidebar, top bar, and language switcher.
+ * Dashboard shell: sidebar and top bar.
  * Responsive: sidebar hidden on mobile with drawer overlay; main full width.
- * Uses LanguageContext for Spanish/English translations.
+ * Uses LanguageContext for Spanish/English translations (language set in Profile Settings).
  */
 
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import type { SessionUser } from "@/lib/auth";
 
 /** Nav item key for main nav (matches t.dashboard.nav) */
@@ -149,12 +148,11 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
               </button>
               <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">{t.dashboard.title}</h1>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-              <LanguageSwitcher variant="light" />
-              <span className="hidden sm:inline text-sm text-gray-600 truncate max-w-[120px] md:max-w-[180px]">
-                {user.email}
-              </span>
-              <Link href="/logout" className="text-sm text-[#1C6ED5] hover:underline py-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Link
+                href="/logout"
+                className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+              >
                 {t.dashboard.signOut}
               </Link>
             </div>

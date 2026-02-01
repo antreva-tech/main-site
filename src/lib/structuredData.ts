@@ -30,7 +30,7 @@ export function getLocalBusinessSchema() {
     name: SITE_NAME,
     url: SITE_URL,
     description:
-      "Technology company offering software development, AI solutions, cybersecurity, cloud solutions, and restaurant digital solutions in San Pedro de Macorís, Dominican Republic.",
+      "Technology company offering software development, AI solutions, cybersecurity, cloud solutions, and digital plans (Start, Pro, Premium) in San Pedro de Macorís, Dominican Republic.",
     address: {
       "@type": "PostalAddress",
       addressLocality: "San Pedro de Macorís",
@@ -64,7 +64,7 @@ export function getFAQSchema(locale: "es" | "en" = "es") {
           {
             question: "¿Qué servicios ofrece Antreva Tech?",
             answer:
-              "Antreva Tech ofrece desarrollo de software a medida, soluciones de IA, ciberseguridad, soluciones en la nube y planes digitales para restaurantes (menús digitales, WhatsApp Business, sitios web, contenido y campañas).",
+              "Antreva Tech ofrece desarrollo de software a medida, soluciones de IA, ciberseguridad, soluciones en la nube y planes digitales Start, Pro y Premium (menús digitales, WhatsApp Business, sitios web, contenido y campañas).",
           },
           {
             question: "¿Cómo contactar a Antreva Tech?",
@@ -86,7 +86,7 @@ export function getFAQSchema(locale: "es" | "en" = "es") {
           {
             question: "What services does Antreva Tech offer?",
             answer:
-              "Antreva Tech offers custom software development, AI solutions, cybersecurity, cloud solutions, and digital plans for restaurants (digital menus, WhatsApp Business, websites, content, and campaigns).",
+              "Antreva Tech offers custom software development, AI solutions, cybersecurity, cloud solutions, and digital plans Start, Pro and Premium (digital menus, WhatsApp Business, websites, content, and campaigns).",
           },
           {
             question: "How to contact Antreva Tech?",

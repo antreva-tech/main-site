@@ -47,7 +47,7 @@ const defaultKeywords = [
   "ciberseguridad",
   "soluciones en la nube",
   "plataformas digitales",
-  "tecnología para restaurantes",
+  "planes Start Pro Premium",
   "San Pedro de Macorís",
   "República Dominicana",
   "Antreva Tech",

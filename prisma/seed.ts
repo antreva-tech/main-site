@@ -32,8 +32,7 @@ const ALL_PERMISSIONS = [
 ];
 
 /**
- * Service catalog per dev-docs/Phase1.md — Restaurant Plans (SPM).
- * Target: Restaurants in San Pedro de Macorís. Pricing in RD$ (DOP).
+ * Service catalog: Start, Pro, Premium plans only.
  */
 const SERVICES: Array<{
   name: string;
@@ -43,75 +42,28 @@ const SERVICES: Array<{
   defaultAmount: number;
   currency: Currency;
 }> = [
-  // --- Phase1: Plan 1 — Restaurant START ---
   {
-    name: "Restaurant START",
-    slug: "restaurant-start",
-    description:
-      "WhatsApp Business setup, Digital menu, Basic website with WhatsApp button, Instagram optimization. Monthly support included. Deliverables: WhatsApp configured, Digital menu link + QR, 1-page website (mobile-first), Instagram profile optimized.",
+    name: "Start",
+    slug: "start",
+    description: "Entry plan: WhatsApp setup, digital menu, basic website, Instagram optimization.",
     billingType: BillingType.recurring,
     defaultAmount: 4500,
     currency: Currency.DOP,
   },
-  // --- Phase1: Plan 2 — Restaurant PRO ---
   {
-    name: "Restaurant PRO",
-    slug: "restaurant-pro",
-    description:
-      "Everything in START, plus: Advanced WhatsApp flows, Monthly Instagram content, Website with order form, Basic cybersecurity (if applicable). Deliverables: WhatsApp automation/flows, Content pack (posts/reels/stories), Order form + routing to WhatsApp/email, Basic security hardening checklist.",
+    name: "Pro",
+    slug: "pro",
+    description: "Growth plan: Everything in Start plus advanced WhatsApp flows, content pack, order form.",
     billingType: BillingType.recurring,
     defaultAmount: 7500,
     currency: Currency.DOP,
   },
-  // --- Phase1: Plan 3 — Restaurant PREMIUM ---
   {
-    name: "Restaurant PREMIUM",
-    slug: "restaurant-premium",
-    description:
-      "Everything in PRO, plus: Semi-automated WhatsApp, Digital campaigns, Advanced website, Reinforced cybersecurity. Deliverables: Advanced WhatsApp automation, Campaign setup & reporting, Multi-page website (menu, location, ordering), Security improvements & monitoring.",
+    name: "Premium",
+    slug: "premium",
+    description: "Full plan: Everything in Pro plus campaigns, multi-page website, reinforced security.",
     billingType: BillingType.recurring,
     defaultAmount: 12000,
-    currency: Currency.DOP,
-  },
-  // --- Phase1: Add-ons (optional; quote-based default 0) ---
-  {
-    name: "Professional photography",
-    slug: "addon-photography",
-    description: "Add-on: Professional photography for menu, venue, or content.",
-    billingType: BillingType.one_time,
-    defaultAmount: 0,
-    currency: Currency.DOP,
-  },
-  {
-    name: "Paid ads management",
-    slug: "addon-paid-ads",
-    description: "Add-on: Paid ads management (meta, Google, etc.).",
-    billingType: BillingType.recurring,
-    defaultAmount: 0,
-    currency: Currency.DOP,
-  },
-  {
-    name: "Extra content packs",
-    slug: "addon-content-packs",
-    description: "Add-on: Extra content packs (posts/reels/stories).",
-    billingType: BillingType.recurring,
-    defaultAmount: 0,
-    currency: Currency.DOP,
-  },
-  {
-    name: "Additional pages / e-commerce",
-    slug: "addon-pages-ecommerce",
-    description: "Add-on: Additional pages or e-commerce on website.",
-    billingType: BillingType.one_time,
-    defaultAmount: 0,
-    currency: Currency.DOP,
-  },
-  {
-    name: "Extended cybersecurity services",
-    slug: "addon-cybersecurity",
-    description: "Add-on: Extended cybersecurity services.",
-    billingType: BillingType.one_time,
-    defaultAmount: 0,
     currency: Currency.DOP,
   },
 ];
@@ -229,9 +181,9 @@ async function main() {
   }
   console.log(`  ⚠️  Temporary password: ${ctoTempPassword}\n`);
 
-  // 4. Create services (Phase1.md is the only catalog — Restaurant Plans SPM + add-ons)
-  const phase1Slugs = SERVICES.map((s) => s.slug);
-  console.log("Creating services (Phase1 only)...");
+  // 4. Create services (Start, Pro, Premium only)
+  const planSlugs = SERVICES.map((s) => s.slug);
+  console.log("Creating services (Start, Pro, Premium)...");
   for (const service of SERVICES) {
     const created = await prisma.service.upsert({
       where: { slug: service.slug },
@@ -240,39 +192,17 @@ async function main() {
     });
     console.log(`  ✓ ${created.name} (${created.slug})`);
   }
-  // Deactivate any service not in Phase1 so the catalog is Phase1-only
+  // Deactivate any service not in the plan catalog
   const deactivated = await prisma.service.updateMany({
-    where: { slug: { notIn: phase1Slugs } },
+    where: { slug: { notIn: planSlugs } },
     data: { isActive: false },
   });
   if (deactivated.count > 0) {
-    console.log(`  ⚠ Deactivated ${deactivated.count} service(s) not in Phase1 catalog`);
+    console.log(`  ⚠ Deactivated ${deactivated.count} service(s) not in catalog`);
   }
   console.log("");
 
-  // 5. Create sample bank account (Antreva's receiving account)
-  const bankAccountNumber = process.env.SEED_BANK_ACCOUNT || "1234567890";
-  const { encrypted, iv } = encryptValue(bankAccountNumber);
-  
-  console.log("Creating bank account...");
-  const bankAccount = await prisma.bankAccount.upsert({
-    where: { id: "default-bank-account" },
-    update: {},
-    create: {
-      id: "default-bank-account",
-      bankName: process.env.SEED_BANK_NAME || "Banreservas",
-      accountNumber: encrypted,
-      accountNumberIv: iv,
-      accountNumberLast4: bankAccountNumber.slice(-4),
-      accountType: "checking",
-      currency: "DOP",
-      accountHolder: "Antreva Tech SRL",
-      isActive: true,
-    },
-  });
-  console.log(`  ✓ Bank account: ${bankAccount.bankName} (****${bankAccount.accountNumberLast4})\n`);
-
-  // 6. Create additional roles for future use
+  // 5. Create additional roles for future use
   console.log("Creating additional roles...");
   
   const managerRole = await prisma.role.upsert({

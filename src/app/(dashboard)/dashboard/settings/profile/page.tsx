@@ -4,6 +4,7 @@
 
 import { getSession } from "@/lib/auth";
 import { EditNameForm } from "./EditNameForm";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 /**
  * Current user profile page.
@@ -15,6 +16,17 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-2xl">
       <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Profile Settings</h1>
+
+      {/* Language */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Language
+        </h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Choose your preferred language for the dashboard.
+        </p>
+        <LanguageSwitcher variant="light" />
+      </div>
 
       {/* Profile Info */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">

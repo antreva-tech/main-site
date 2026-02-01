@@ -5,6 +5,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { logCreate, logUpdate } from "@/lib/audit";
@@ -49,7 +50,8 @@ export async function createTicket(formData: FormData) {
   await logCreate(session.id, "ticket", ticket.id, { clientId, subject });
 
   revalidatePath("/dashboard/tickets");
-  return ticket;
+  revalidatePath(`/dashboard/clients/${clientId}`);
+  redirect(`/dashboard/tickets/${ticket.id}`);
 }
 
 /**

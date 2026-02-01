@@ -132,22 +132,24 @@ enum LeadStage {
 
 /// Converted from won Lead, or direct entry
 model Client {
-  id        String       @id @default(cuid())
-  leadId    String?      @unique
-  lead      Lead?        @relation("ConvertedLead")
-  name      String
-  email     String       @unique
-  company   String?
-  phone     String?
-  cedula    String?      @unique // Dominican national ID
-  rnc       String?      // Business tax ID (RNC)
-  notes     String?      @db.Text
-  status    ClientStatus @default(active)
-  startedAt DateTime     @default(now())
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id         String       @id @default(cuid())
+  leadId     String?      @unique
+  lead       Lead?        @relation("ConvertedLead")
+  name       String
+  email      String       @unique
+  company    String?
+  phone      String?
+  websiteUrl String?      // Client's website / admin panel URL
+  cedula     String?      @unique // Dominican national ID
+  rnc        String?      // Business tax ID (RNC)
+  notes      String?      @db.Text
+  status     ClientStatus @default(active)
+  startedAt  DateTime     @default(now())
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
 
   // Relations
+  contacts               ClientContact[]
   subscriptions         ClientSubscription[]
   supportCredentials    SupportCredential[]
   tickets               Ticket[]
@@ -155,6 +157,21 @@ model Client {
 
   @@index([status])
   @@index([startedAt(sort: Desc)])
+}
+
+/// Additional contacts for a client (e.g. admin, support, billing)
+model ClientContact {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name      String
+  title     String?  // e.g. CEO, Admin, Billing
+  email     String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
 }
 
 enum ClientStatus {
@@ -234,19 +251,20 @@ enum SubscriptionStatus {
 
 /// Antreva's receiving bank accounts
 model BankAccount {
-  id                String      @id @default(cuid())
-  bankName          String      // Banreservas, Banco Popular, BHD León, etc.
-  accountNumber     String      // Encrypted
-  accountNumberIv   String      // IV for encryption
+  id                 String      @id @default(cuid())
+  bankName           String      // Banreservas, Banco Popular, BHD León, etc.
+  routingNumber      String?     // Bank routing / ABA / branch identifier
+  accountNumber      String      // Encrypted
+  accountNumberIv    String      // IV for encryption
   accountNumberLast4 String     // Last 4 digits for display
-  accountType       AccountType @default(checking)
-  currency          Currency    @default(DOP)
-  accountHolder     String
-  isActive          Boolean     @default(true)
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  accountType        AccountType @default(checking)
+  currency           Currency    @default(DOP)
+  accountHolder      String
+  isActive           Boolean     @default(true)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 
-  receivedPayments  Payment[]
+  receivedPayments   Payment[]
 }
 
 enum AccountType {
@@ -437,6 +455,7 @@ enum AuditEntityType {
   user
   lead
   client
+  client_contact
   ticket
   payment
   subscription

@@ -17,7 +17,7 @@
   "services": {
     "tagline": "Más Allá de los Planes",
     "title": "Servicios Personalizados Bajo Pedido",
-    "description": "Más allá de nuestros planes para restaurantes, Antreva Tech ofrece una amplia gama de servicios tecnológicos. Ya sea que necesite desarrollo de software, integración de IA, soluciones en la nube o ciberseguridad mejorada, podemos construir una solución personalizada para su negocio.",
+    "description": "Más allá de nuestros planes, Antreva Tech ofrece una amplia gama de servicios tecnológicos. Ya sea que necesite desarrollo de software, integración de IA, soluciones en la nube o ciberseguridad mejorada, podemos construir una solución personalizada para su negocio.",
     "addOnsTitle": "Complementos Disponibles:",
     "discussProject": "Discutir tu proyecto",
     "softwareDev": "Desarrollo de Software",
@@ -31,8 +31,8 @@
   },
   "plans": {
     "tagline": "Nuestros Planes",
-    "title": "Soluciones para Restaurantes",
-    "description": "Soluciones digitales integrales diseñadas para restaurantes en San Pedro de Macorís. Elige el plan que se adapte a tus necesidades.",
+    "title": "Start, Pro y Premium",
+    "description": "Soluciones digitales integrales. Elige el plan que se adapte a tus necesidades.",
     "mostPopular": "Más Popular",
     "perMonth": "por mes",
     "allPlansInclude": "Todos los planes incluyen soporte de incorporación y mantenimiento mensual.",
@@ -40,15 +40,15 @@
     "contactUs": "Contáctanos",
     "forTailored": "para una solución a medida.",
     "start": {
-      "name": "Restaurante START",
-      "description": "Perfecto para restaurantes que inician su viaje digital con herramientas esenciales."
+      "name": "Start",
+      "description": "Perfecto para negocios que inician su viaje digital con herramientas esenciales."
     },
     "pro": {
-      "name": "Restaurante PRO",
-      "description": "Para restaurantes en crecimiento listos para automatizar y crear contenido atractivo."
+      "name": "Pro",
+      "description": "Para negocios en crecimiento listos para automatizar y crear contenido atractivo."
     },
     "premium": {
-      "name": "Restaurante PREMIUM",
+      "name": "Premium",
       "description": "Solución completa con automatización avanzada, campañas y seguridad."
     },
     "features": {

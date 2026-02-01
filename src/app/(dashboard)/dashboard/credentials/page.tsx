@@ -21,10 +21,11 @@ export default async function CredentialsPage({
   // Get clients with credentials
   const clients = await prisma.client.findMany({
     where: clientId ? { id: clientId } : undefined,
-    orderBy: { name: "asc" },
+    orderBy: [{ company: "asc" }, { name: "asc" }],
     select: {
       id: true,
       name: true,
+      company: true,
       supportCredentials: {
         orderBy: { label: "asc" },
         select: {
@@ -60,14 +61,19 @@ export default async function CredentialsPage({
               className="bg-white rounded-xl border border-gray-200 p-6"
             >
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  <Link
-                    href={`/dashboard/clients/${client.id}`}
-                    className="hover:text-[#1C6ED5]"
-                  >
-                    {client.name}
-                  </Link>
-                </h2>
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    <Link
+                      href={`/dashboard/clients/${client.id}`}
+                      className="hover:text-[#1C6ED5]"
+                    >
+                      {client.company || client.name}
+                    </Link>
+                  </h2>
+                  {client.company && (
+                    <p className="text-sm text-gray-500 mt-0.5">{client.name}</p>
+                  )}
+                </div>
                 <span className="text-sm text-gray-500">
                   {client.supportCredentials.length} credential(s)
                 </span>

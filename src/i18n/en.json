@@ -17,7 +17,7 @@
   "services": {
     "tagline": "Beyond the Plans",
     "title": "Custom Services On Request",
-    "description": "Beyond our restaurant plans, Antreva Tech offers a wide range of technology services. Whether you need software development, AI integration, cloud solutions, or enhanced cybersecurity, we can build a custom solution for your business.",
+    "description": "Beyond our plans, Antreva Tech offers a wide range of technology services. Whether you need software development, AI integration, cloud solutions, or enhanced cybersecurity, we can build a custom solution for your business.",
     "addOnsTitle": "Available Add-ons:",
     "discussProject": "Discuss your project",
     "softwareDev": "Software Development",
@@ -31,8 +31,8 @@
   },
   "plans": {
     "tagline": "Our Plans",
-    "title": "Restaurant Solutions",
-    "description": "Comprehensive digital solutions designed for restaurants in San Pedro de Macorís. Choose the plan that fits your needs.",
+    "title": "Start, Pro & Premium",
+    "description": "Comprehensive digital solutions. Choose the plan that fits your needs.",
     "mostPopular": "Most Popular",
     "perMonth": "per month",
     "allPlansInclude": "All plans include onboarding support and monthly maintenance.",
@@ -40,15 +40,15 @@
     "contactUs": "Contact us",
     "forTailored": "for a tailored solution.",
     "start": {
-      "name": "Restaurant START",
-      "description": "Perfect for restaurants starting their digital journey with essential tools."
+      "name": "Start",
+      "description": "Perfect for businesses starting their digital journey with essential tools."
     },
     "pro": {
-      "name": "Restaurant PRO",
-      "description": "For growing restaurants ready to automate and create engaging content."
+      "name": "Pro",
+      "description": "For growing businesses ready to automate and create engaging content."
     },
     "premium": {
-      "name": "Restaurant PREMIUM",
+      "name": "Premium",
       "description": "Full-service solution with advanced automation, campaigns, and security."
     },
     "features": {
