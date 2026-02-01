@@ -58,30 +58,33 @@ export async function updateUser(formData: FormData) {
   redirect("/dashboard/settings/users");
 }
 
+/** Return type for resetUserPassword when used with useActionState. */
+export type ResetPasswordState = { error?: string } | null;
+
 /**
  * Resets a user's password (admin-set new password). Expects formData: userId, newPassword, confirmPassword.
+ * Use with useActionState(resetUserPassword, null) to display validation errors in the form.
  * Requires users.manage.
  */
-export async function resetUserPassword(formData: FormData) {
+export async function resetUserPassword(
+  _prevState: ResetPasswordState,
+  formData: FormData
+): Promise<ResetPasswordState> {
   const session = await getSession();
   if (!session?.permissions.includes("users.manage")) {
-    throw new Error("Unauthorized");
+    return { error: "Unauthorized" };
   }
 
-  const userId = formData.get("userId") as string;
-  const newPassword = formData.get("newPassword") as string;
-  const confirmPassword = formData.get("confirmPassword") as string;
+  const userId = (formData.get("userId") as string)?.trim();
+  const newPassword = (formData.get("newPassword") as string)?.trim() ?? "";
+  const confirmPassword = (formData.get("confirmPassword") as string)?.trim() ?? "";
 
-  if (!userId) throw new Error("User ID required");
-  if (!newPassword || newPassword.length < 12) {
-    throw new Error("Password must be at least 12 characters");
-  }
-  if (newPassword !== confirmPassword) {
-    throw new Error("Passwords do not match");
-  }
+  if (!userId) return { error: "User ID required" };
+  if (newPassword.length < 12) return { error: "Password must be at least 12 characters" };
+  if (newPassword !== confirmPassword) return { error: "Passwords do not match" };
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user) throw new Error("User not found");
+  if (!user) return { error: "User not found" };
 
   const passwordHash = await hashPassword(newPassword);
   await prisma.user.update({

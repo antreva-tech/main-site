@@ -5,7 +5,7 @@
  * and inline password reset for users.manage (CEO/CTO).
  */
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { EditModal } from "../../components/EditModal";
 
 type UserRow = {
@@ -21,11 +21,13 @@ type UserRow = {
 
 type RoleOption = { id: string; name: string };
 
+type ResetPasswordAction = (prevState: { error?: string } | null, formData: FormData) => Promise<{ error?: string } | null>;
+
 type Props = {
   users: UserRow[];
   roles: RoleOption[];
   updateUser: (formData: FormData) => Promise<void>;
-  resetUserPassword: (formData: FormData) => Promise<void>;
+  resetUserPassword: ResetPasswordAction;
 };
 
 function StatusBadge({ status }: { status: string }) {
@@ -44,6 +46,7 @@ function StatusBadge({ status }: { status: string }) {
 export function UserManagementTable({ users, roles, updateUser, resetUserPassword }: Props) {
   const [editingUser, setEditingUser] = useState<UserRow | null>(null);
   const [showPasswordReset, setShowPasswordReset] = useState(false);
+  const [passwordState, passwordAction] = useActionState(resetUserPassword, null);
 
   const openEdit = (user: UserRow) => {
     setEditingUser(user);
@@ -242,8 +245,13 @@ export function UserManagementTable({ users, roles, updateUser, resetUserPasswor
                   Set new password for this user
                 </button>
               ) : (
-                <form action={resetUserPassword} className="grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0 text-sm">
+                <form action={passwordAction} className="grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0 text-sm">
                   <input type="hidden" name="userId" value={editingUser.id} />
+                  {passwordState?.error && (
+                    <p className="sm:col-span-2 text-sm text-red-600" role="alert">
+                      {passwordState.error}
+                    </p>
+                  )}
                   <div className="min-w-0">
                     <label className="block text-xs text-gray-500 uppercase mb-0.5">New password *</label>
                     <input
@@ -263,7 +271,7 @@ export function UserManagementTable({ users, roles, updateUser, resetUserPasswor
                       type="password"
                       required
                       minLength={12}
-                      autoComplete="new-password"
+                      autoComplete="off"
                       className="w-full min-w-0 px-2.5 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
                       placeholder="Same as above"
                     />
