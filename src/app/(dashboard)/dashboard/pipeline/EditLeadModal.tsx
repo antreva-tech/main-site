@@ -13,7 +13,7 @@ import { updateLead } from "./actions";
 import type { LeadRow } from "./PipelineBoard";
 import type { LeadStage, LeadSource } from "@prisma/client";
 
-const SOURCE_OPTIONS: Array<{ value: LeadStage; labelKey: string }> = [
+const SOURCE_OPTIONS: Array<{ value: LeadStage; labelKey: LeadStage }> = [
   { value: "new", labelKey: "new" },
   { value: "qualified", labelKey: "qualified" },
   { value: "proposal", labelKey: "proposal" },

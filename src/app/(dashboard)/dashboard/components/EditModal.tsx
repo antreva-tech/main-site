@@ -19,7 +19,7 @@ type Props = {
   /** Optional footer (e.g. Remove/Delete button). Rendered in a separate row with border. */
   footer?: React.ReactNode;
   /** Max width class. Default: max-w-2xl */
-  maxWidth?: "max-w-xl" | "max-w-2xl" | "max-w-3xl" | "max-w-4xl";
+  maxWidth?: "max-w-sm" | "max-w-xl" | "max-w-2xl" | "max-w-3xl" | "max-w-4xl";
   /** When false, content area grows with content (no internal scroll). Use for compact cards like lead view. */
   scrollContent?: boolean;
 };

@@ -17,6 +17,7 @@ import {
   useDraggable,
   useDroppable,
   type DragEndEvent,
+  type DragStartEvent,
 } from "@dnd-kit/core";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { LeadStage } from "@prisma/client";
@@ -153,8 +154,10 @@ export function PipelineBoard({ stages, leadsByStage }: Props) {
 
   const allLeads = stages.flatMap((s) => leadsByStage[s.key] ?? []);
 
-  const handleDragStart = (event: { active: { id: string } }) => {
-    const lead = allLeads.find((l) => l.id === event.active.id) ?? null;
+  const handleDragStart = (event: DragStartEvent) => {
+    const id = event.active.id;
+    const lead =
+      typeof id === "string" ? allLeads.find((l) => l.id === id) ?? null : null;
     setActiveLead(lead);
   };
 
