@@ -10,6 +10,16 @@ import { getSession } from "@/lib/auth";
 import { logCreate, logUpdate, logDelete } from "@/lib/audit";
 import type { LeadStage, LeadSource } from "@prisma/client";
 
+/** Valid lead stages for form/API. */
+const LEAD_STAGES: LeadStage[] = [
+  "new",
+  "qualified",
+  "proposal",
+  "negotiation",
+  "won",
+  "lost",
+];
+
 /**
  * Creates a new lead.
  */
@@ -22,6 +32,7 @@ export async function createLead(formData: FormData) {
   const company = formData.get("company") as string | null;
   const phone = formData.get("phone") as string | null;
   const source = (formData.get("source") as LeadSource) || "other";
+  const sourceOther = (formData.get("sourceOther") as string) || null;
   const notes = formData.get("notes") as string | null;
   const expectedValue = formData.get("expectedValue") as string | null;
 
@@ -34,6 +45,7 @@ export async function createLead(formData: FormData) {
       company: company || null,
       phone: phone || null,
       source,
+      sourceOther: source === "other" ? sourceOther : null,
       notes: notes || null,
       expectedValue: expectedValue ? parseFloat(expectedValue) : null,
       stage: "new",
@@ -75,7 +87,7 @@ export async function updateLeadStage(leadId: string, stage: LeadStage) {
 }
 
 /**
- * Updates a lead's details.
+ * Updates a lead's details (including stage when provided in formData).
  */
 export async function updateLead(leadId: string, formData: FormData) {
   const session = await getSession();
@@ -84,25 +96,36 @@ export async function updateLead(leadId: string, formData: FormData) {
   const lead = await prisma.lead.findUnique({ where: { id: leadId } });
   if (!lead) throw new Error("Lead not found");
 
-  const data = {
+  const stageRaw = formData.get("stage") as string | null;
+  const stage: LeadStage | undefined =
+    stageRaw && LEAD_STAGES.includes(stageRaw as LeadStage)
+      ? (stageRaw as LeadStage)
+      : undefined;
+
+  const source = (formData.get("source") as LeadSource) || lead.source;
+  const sourceOther = (formData.get("sourceOther") as string) || null;
+
+  const base = {
     name: formData.get("name") as string,
-    email: formData.get("email") as string | null,
-    company: formData.get("company") as string | null,
-    phone: formData.get("phone") as string | null,
-    source: formData.get("source") as LeadSource,
-    notes: formData.get("notes") as string | null,
+    email: (formData.get("email") as string) || null,
+    company: (formData.get("company") as string) || null,
+    phone: (formData.get("phone") as string) || null,
+    source,
+    sourceOther: source === "other" ? sourceOther : null,
+    notes: (formData.get("notes") as string) || null,
     expectedValue: formData.get("expectedValue")
       ? parseFloat(formData.get("expectedValue") as string)
       : null,
-    lostReason: formData.get("lostReason") as string | null,
+    lostReason: (formData.get("lostReason") as string) || null,
   };
+  const data = stage != null ? { ...base, stage } : base;
 
   const updated = await prisma.lead.update({
     where: { id: leadId },
     data,
   });
 
-  await logUpdate(session.id, "lead", leadId, { name: lead.name }, { name: data.name });
+  await logUpdate(session.id, "lead", leadId, { name: lead.name }, { name: base.name });
 
   revalidatePath("/dashboard/pipeline");
   revalidatePath(`/dashboard/pipeline/${leadId}`);

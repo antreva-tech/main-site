@@ -3,9 +3,11 @@
 /**
  * Shared modal shell for edit flows across the admin dashboard.
  * Use for any edit/delete-in-modal pattern (subscriptions, credentials, contacts, bank accounts, etc.).
+ * Renders via portal to document.body so it is viewport-centered above sidebar/layout.
  */
 
 import { useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 type Props = {
   open: boolean;
@@ -18,6 +20,8 @@ type Props = {
   footer?: React.ReactNode;
   /** Max width class. Default: max-w-2xl */
   maxWidth?: "max-w-xl" | "max-w-2xl" | "max-w-3xl" | "max-w-4xl";
+  /** When false, content area grows with content (no internal scroll). Use for compact cards like lead view. */
+  scrollContent?: boolean;
 };
 
 export function EditModal({
@@ -28,8 +32,10 @@ export function EditModal({
   children,
   footer,
   maxWidth = "max-w-2xl",
+  scrollContent = true,
 }: Props) {
   const overlayRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -46,22 +52,25 @@ export function EditModal({
   }, [open, onClose]);
 
   const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === overlayRef.current) onClose();
+    if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+      onClose();
+    }
   };
 
   if (!open) return null;
 
-  return (
+  const modalContent = (
     <div
       ref={overlayRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+      className="fixed inset-0 z-[100] overflow-hidden bg-black/50 flex items-center justify-center p-4"
       onClick={handleOverlayClick}
     >
       <div
-        className={`bg-white rounded-xl border border-gray-200 shadow-xl w-full max-w-[calc(100vw-2rem)] ${maxWidth} max-h-[90vh] flex flex-col min-w-0`}
+        ref={panelRef}
+        className={`bg-white rounded-xl border border-gray-200 shadow-xl w-full max-w-[calc(100vw-2rem)] ${maxWidth} flex flex-col min-w-0 max-h-[85vh] ${scrollContent ? "" : "overflow-hidden"}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
@@ -80,14 +89,23 @@ export function EditModal({
           </button>
         </div>
 
-        <div className="p-4 overflow-y-auto overflow-x-hidden flex-1 min-w-0">{children}</div>
+        <div
+          className={`min-w-0 ${scrollContent ? "p-4 overflow-y-auto overflow-x-hidden flex-1 min-h-0" : "p-3 flex-shrink-0 overflow-hidden"}`}
+        >
+          {children}
+        </div>
 
         {footer != null && (
-          <div className="p-4 border-t border-gray-200 bg-gray-50 rounded-b-xl flex justify-end">
+          <div className="p-4 border-t border-gray-200 bg-gray-50 rounded-b-xl flex justify-end flex-shrink-0">
             {footer}
           </div>
         )}
       </div>
     </div>
   );
+
+  if (typeof document !== "undefined") {
+    return createPortal(modalContent, document.body);
+  }
+  return modalContent;
 }

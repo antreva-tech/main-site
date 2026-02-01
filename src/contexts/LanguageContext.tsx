@@ -30,14 +30,22 @@ function setLocaleCookie(locale: Locale) {
   document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
 }
 
+/** Reads locale from document.cookie (client-only). Returns undefined if missing or invalid. */
+function getLocaleFromCookie(): Locale | undefined {
+  if (typeof document === "undefined") return undefined;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${LOCALE_COOKIE}=([^;]*)`));
+  const value = match?.[1]?.trim();
+  return value === "en" || value === "es" ? value : undefined;
+}
+
 /**
  * Language provider component.
- * Wraps the app and provides translation context. Defaults to Spanish (es).
+ * Wraps the app and provides translation context. Defaults to English (en).
  * Persists locale in a cookie when changed.
  */
 export function LanguageProvider({
   children,
-  defaultLocale = "es",
+  defaultLocale = "en",
 }: LanguageProviderProps) {
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
   const [t, setT] = useState<Translations>(() => getTranslations(defaultLocale));
@@ -56,6 +64,26 @@ export function LanguageProvider({
   useEffect(() => {
     setLocaleCookie(locale);
   }, [locale]);
+
+  /** On mount, sync state from cookie so client preference wins (fixes nav staying in wrong language). */
+  useEffect(() => {
+    const cookieLocale = getLocaleFromCookie();
+    if (cookieLocale && cookieLocale !== locale) {
+      setLocaleState(cookieLocale);
+      setT(getTranslations(cookieLocale));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount to read cookie
+  }, []);
+
+  /** Sync when server sends a different defaultLocale; skip if cookie already overrides. */
+  useEffect(() => {
+    const cookieLocale = getLocaleFromCookie();
+    if (cookieLocale && cookieLocale !== defaultLocale) return; // cookie wins
+    if (defaultLocale !== locale) {
+      setLocaleState(defaultLocale);
+      setT(getTranslations(defaultLocale));
+    }
+  }, [defaultLocale, locale]);
 
   return (
     <LanguageContext.Provider value={{ locale, t, setLocale, toggleLocale }}>

@@ -301,9 +301,7 @@ export default async function ClientDetailPage({
           <p className="text-gray-500 text-sm mb-4">No additional contacts yet.</p>
         )}
         <form
-          action={async (fd) => {
-            await createClientContact(fd);
-          }}
+          action={createClientContact}
           className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg"
         >
           <input type="hidden" name="clientId" value={client.id} />

@@ -84,7 +84,11 @@ export default async function LeadDetailPage({
           )}
           <div>
             <p className="text-xs text-gray-500 uppercase">Source</p>
-            <p className="capitalize">{lead.source.replace("_", " ")}</p>
+            <p className={lead.source === "other" && lead.sourceOther ? "" : "capitalize"}>
+              {lead.source === "other" && lead.sourceOther
+                ? lead.sourceOther
+                : lead.source.replace(/_/g, " ")}
+            </p>
           </div>
           {expectedValue && (
             <div>

@@ -163,6 +163,7 @@
       "editCredential": "Edit credential",
       "editSubscription": "Edit subscription",
       "editBankAccount": "Edit bank account",
+      "editLead": "Edit lead",
       "removeContact": "Remove this contact?",
       "removeSubscription": "Remove this subscription? Schedules and payment records for it will be deleted.",
       "removeBankAccount": "Remove bank account",
@@ -194,7 +195,12 @@
       "phone": "Phone",
       "source": "Source",
       "estimatedValue": "Expected Value (RD$)",
-      "notes": "Additional notes..."
+      "notes": "Additional notes...",
+      "stage": "Stage",
+      "lostReason": "Lost reason",
+      "sourceOtherPlaceholder": "Specify other source",
+      "call": "Call",
+      "whatsappFollowUp": "WhatsApp follow-up"
     },
     "clients": {
       "clients": "Clients",

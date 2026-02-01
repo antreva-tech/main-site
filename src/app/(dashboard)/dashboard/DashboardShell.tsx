@@ -10,7 +10,6 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import type { SessionUser } from "@/lib/auth";
 
 /** Nav item key for main nav (matches t.dashboard.nav) */
@@ -24,11 +23,11 @@ const NAV_KEYS = [
   { key: "whatsapp", href: "/dashboard/whatsapp", icon: "💬", permission: undefined },
 ] as const;
 
-/** Settings nav keys (matches t.dashboard.settingsNav) */
+/** Settings nav keys (matches t.dashboard.settingsNav). Audit log is CTO-only (by title). */
 const SETTINGS_KEYS = [
-  { key: "users", href: "/dashboard/settings/users", icon: "👤", permission: "users.manage" },
-  { key: "bankAccounts", href: "/dashboard/settings/bank-accounts", icon: "🏦", permission: "users.manage" },
-  { key: "auditLog", href: "/dashboard/settings/audit", icon: "📋", permission: "audit.read" },
+  { key: "users", href: "/dashboard/settings/users", icon: "👤", permission: "users.manage" as const },
+  { key: "bankAccounts", href: "/dashboard/settings/bank-accounts", icon: "🏦", permission: "users.manage" as const },
+  { key: "auditLog", href: "/dashboard/settings/audit", icon: "📋", ctoOnly: true as const },
   { key: "profile", href: "/dashboard/settings/profile", icon: "⚙️", permission: undefined as string | undefined },
 ] as const;
 
@@ -102,9 +101,12 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
               {t.dashboard.settings}
             </h3>
             <ul className="space-y-1">
-              {SETTINGS_KEYS.filter(
-                (item) => !item.permission || user.permissions.includes(item.permission)
-              ).map((item) => (
+              {SETTINGS_KEYS.filter((item) => {
+                if ("ctoOnly" in item && item.ctoOnly) {
+                  return user.title === "CTO";
+                }
+                return !item.permission || user.permissions.includes(item.permission);
+              }).map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
@@ -150,7 +152,6 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
               <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">{t.dashboard.title}</h1>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
-              <LanguageSwitcher variant="light" />
               <Link
                 href="/logout"
                 className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
@@ -160,7 +161,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
             </div>
           </div>
         </header>
-        <div className="flex-1 min-w-0 p-4 sm:p-6">{children}</div>
+        <div className="flex-1 min-w-0 min-h-0 flex flex-col p-4 sm:p-6">{children}</div>
       </main>
     </div>
   );

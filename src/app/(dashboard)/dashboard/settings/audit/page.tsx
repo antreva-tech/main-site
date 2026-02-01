@@ -1,5 +1,5 @@
 /**
- * Audit Log Viewer (Admin/Readonly)
+ * Audit Log Viewer (CTO only)
  */
 
 import { redirect } from "next/navigation";
@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 
 /**
- * Audit log viewer page.
+ * Audit log viewer page. Access restricted to users with CTO title.
  */
 export default async function AuditLogPage({
   searchParams,
@@ -15,7 +15,7 @@ export default async function AuditLogPage({
   searchParams: Promise<{ entityType?: string; action?: string }>;
 }) {
   const session = await getSession();
-  if (!session?.permissions.includes("audit.read")) {
+  if (!session || session.title !== "CTO") {
     redirect("/dashboard");
   }
 

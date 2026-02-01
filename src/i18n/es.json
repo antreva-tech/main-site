@@ -163,6 +163,7 @@
       "editCredential": "Editar credencial",
       "editSubscription": "Editar suscripción",
       "editBankAccount": "Editar cuenta bancaria",
+      "editLead": "Editar lead",
       "removeContact": "¿Eliminar este contacto?",
       "removeSubscription": "¿Eliminar esta suscripción? Los programas y registros de pago asociados se eliminarán.",
       "removeBankAccount": "Eliminar cuenta bancaria",
@@ -194,7 +195,12 @@
       "phone": "Teléfono",
       "source": "Origen",
       "estimatedValue": "Valor estimado (RD$)",
-      "notes": "Notas adicionales..."
+      "notes": "Notas adicionales...",
+      "stage": "Etapa",
+      "lostReason": "Motivo de pérdida",
+      "sourceOtherPlaceholder": "Especificar otro origen",
+      "call": "Llamar",
+      "whatsappFollowUp": "Seguimiento por WhatsApp"
     },
     "clients": {
       "clients": "Clientes",

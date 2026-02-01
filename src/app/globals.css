@@ -1,11 +1,10 @@
 @import "tailwindcss";
 
 /**
- * Antreva Tech Brand Colors
- * - Midnight Navy: #0B132B (primary dark)
- * - Tech Blue: #1C6ED5 (accent)
- * - Slate Gray: #8A8F98 (secondary text)
- * - White: #FFFFFF (background/text)
+ * Antreva Tech — Tailwind-first CSS
+ * Use Tailwind utilities for layout, spacing, typography, and colors.
+ * Custom CSS only where Tailwind doesn’t cover (scrollbars, keyframes, design tokens).
+ * Brand colors are in @theme for utilities: bg-tech-blue, text-midnight-navy, etc.
  */
 :root {
   /* Brand Colors */
@@ -120,4 +119,46 @@ html {
 
 .animation-delay-4000 {
   animation-delay: 4s;
+}
+
+/* Pipeline scrollbars: thin, branded (Tailwind has no scrollbar utilities) */
+@layer utilities {
+  .pipeline-kanban-scroll {
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-slate-gray) transparent;
+  }
+  .pipeline-kanban-scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+  .pipeline-kanban-scroll::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+  }
+  .pipeline-kanban-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-slate-gray);
+    border-radius: 3px;
+  }
+  .pipeline-kanban-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--color-tech-blue);
+  }
+
+  .pipeline-column-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-slate-gray) transparent;
+  }
+  .pipeline-column-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .pipeline-column-scroll::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+  }
+  .pipeline-column-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-slate-gray);
+    border-radius: 3px;
+  }
+  .pipeline-column-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--color-tech-blue);
+  }
 }

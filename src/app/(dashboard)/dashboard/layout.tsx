@@ -30,7 +30,7 @@ export default async function DashboardLayout({
 
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get(LOCALE_COOKIE)?.value;
-  const defaultLocale = localeCookie === "en" || localeCookie === "es" ? localeCookie : "es";
+  const defaultLocale = localeCookie === "en" || localeCookie === "es" ? localeCookie : "en";
 
   return (
     <AuthProvider user={session}>

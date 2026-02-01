@@ -7,6 +7,7 @@
 import { useState, useTransition } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { createLead } from "./actions";
+import type { LeadSource } from "@prisma/client";
 
 /**
  * Button that opens new lead modal.
@@ -15,6 +16,7 @@ export function NewLeadButton() {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [source, setSource] = useState<LeadSource>("other");
 
   const handleSubmit = async (formData: FormData) => {
     startTransition(async () => {
@@ -95,6 +97,8 @@ export function NewLeadButton() {
                   </label>
                   <select
                     name="source"
+                    value={source}
+                    onChange={(e) => setSource(e.target.value as LeadSource)}
                     className="w-full min-h-[44px] px-3 py-2.5 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
                   >
                     <option value="website">Website</option>
@@ -104,6 +108,19 @@ export function NewLeadButton() {
                     <option value="other">Other</option>
                   </select>
                 </div>
+
+                {source === "other" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {t.dashboard.pipeline.sourceOtherPlaceholder}
+                    </label>
+                    <input
+                      name="sourceOther"
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
+                      placeholder={t.dashboard.pipeline.sourceOtherPlaceholder}
+                    />
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">

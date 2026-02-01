@@ -91,6 +91,7 @@ model Lead {
   company           String?
   phone             String?
   source            LeadSource  @default(other)
+  sourceOther       String?     /// Custom value when source is "other"
   notes             String?     @db.Text
   stage             LeadStage   @default(new)
   lostReason        String?
