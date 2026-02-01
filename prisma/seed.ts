@@ -9,7 +9,7 @@
  * - SEED_CTO_EMAIL, SEED_CTO_NAME
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, BillingType, Currency } from "@prisma/client";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 
@@ -35,16 +35,23 @@ const ALL_PERMISSIONS = [
  * Service catalog per dev-docs/Phase1.md — Restaurant Plans (SPM).
  * Target: Restaurants in San Pedro de Macorís. Pricing in RD$ (DOP).
  */
-const SERVICES = [
+const SERVICES: Array<{
+  name: string;
+  slug: string;
+  description: string;
+  billingType: BillingType;
+  defaultAmount: number;
+  currency: Currency;
+}> = [
   // --- Phase1: Plan 1 — Restaurant START ---
   {
     name: "Restaurant START",
     slug: "restaurant-start",
     description:
       "WhatsApp Business setup, Digital menu, Basic website with WhatsApp button, Instagram optimization. Monthly support included. Deliverables: WhatsApp configured, Digital menu link + QR, 1-page website (mobile-first), Instagram profile optimized.",
-    billingType: "recurring",
+    billingType: BillingType.recurring,
     defaultAmount: 4500,
-    currency: "DOP",
+    currency: Currency.DOP,
   },
   // --- Phase1: Plan 2 — Restaurant PRO ---
   {
@@ -52,9 +59,9 @@ const SERVICES = [
     slug: "restaurant-pro",
     description:
       "Everything in START, plus: Advanced WhatsApp flows, Monthly Instagram content, Website with order form, Basic cybersecurity (if applicable). Deliverables: WhatsApp automation/flows, Content pack (posts/reels/stories), Order form + routing to WhatsApp/email, Basic security hardening checklist.",
-    billingType: "recurring",
+    billingType: BillingType.recurring,
     defaultAmount: 7500,
-    currency: "DOP",
+    currency: Currency.DOP,
   },
   // --- Phase1: Plan 3 — Restaurant PREMIUM ---
   {
@@ -62,50 +69,50 @@ const SERVICES = [
     slug: "restaurant-premium",
     description:
       "Everything in PRO, plus: Semi-automated WhatsApp, Digital campaigns, Advanced website, Reinforced cybersecurity. Deliverables: Advanced WhatsApp automation, Campaign setup & reporting, Multi-page website (menu, location, ordering), Security improvements & monitoring.",
-    billingType: "recurring",
+    billingType: BillingType.recurring,
     defaultAmount: 12000,
-    currency: "DOP",
+    currency: Currency.DOP,
   },
   // --- Phase1: Add-ons (optional; quote-based default 0) ---
   {
     name: "Professional photography",
     slug: "addon-photography",
     description: "Add-on: Professional photography for menu, venue, or content.",
-    billingType: "one_time",
+    billingType: BillingType.one_time,
     defaultAmount: 0,
-    currency: "DOP",
+    currency: Currency.DOP,
   },
   {
     name: "Paid ads management",
     slug: "addon-paid-ads",
     description: "Add-on: Paid ads management (meta, Google, etc.).",
-    billingType: "recurring",
+    billingType: BillingType.recurring,
     defaultAmount: 0,
-    currency: "DOP",
+    currency: Currency.DOP,
   },
   {
     name: "Extra content packs",
     slug: "addon-content-packs",
     description: "Add-on: Extra content packs (posts/reels/stories).",
-    billingType: "recurring",
+    billingType: BillingType.recurring,
     defaultAmount: 0,
-    currency: "DOP",
+    currency: Currency.DOP,
   },
   {
     name: "Additional pages / e-commerce",
     slug: "addon-pages-ecommerce",
     description: "Add-on: Additional pages or e-commerce on website.",
-    billingType: "one_time",
+    billingType: BillingType.one_time,
     defaultAmount: 0,
-    currency: "DOP",
+    currency: Currency.DOP,
   },
   {
     name: "Extended cybersecurity services",
     slug: "addon-cybersecurity",
     description: "Add-on: Extended cybersecurity services.",
-    billingType: "one_time",
+    billingType: BillingType.one_time,
     defaultAmount: 0,
-    currency: "DOP",
+    currency: Currency.DOP,
   },
 ];
 
