@@ -105,6 +105,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
                 if ("ctoOnly" in item && item.ctoOnly) {
                   return user.title === "CTO";
                 }
+                if (!("permission" in item)) return false;
                 return !item.permission || user.permissions.includes(item.permission);
               }).map((item) => (
                 <li key={item.href}>
