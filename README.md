@@ -2,7 +2,7 @@
 
 **Engineering Digital Intelligence**
 
-Corporate landing site for Antreva Tech: software development, AI, cybersecurity, cloud solutions, and digital platforms.
+Corporate landing site and CRM dashboard for Antreva Tech: software development, AI, cybersecurity, cloud solutions, and digital platforms.
 
 ## Tech Stack
 
@@ -10,36 +10,71 @@ Corporate landing site for Antreva Tech: software development, AI, cybersecurity
 - **Runtime:** React 19
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS 4
+- **Database:** Neon Postgres with Prisma (driver adapter)
+- **Auth:** Session-based login, RBAC, optional MFA (TOTP)
 - **i18n:** English / Spanish (context-based)
 
 ## Getting Started
 
+1. Copy `.env.example` to `.env.local` and set:
+   - `DATABASE_URL` — Neon Postgres connection string ([Neon Console](https://console.neon.tech))
+   - `ENCRYPTION_KEY` — 64-char hex (e.g. `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`)
+   - `SESSION_SECRET` — 64-char hex for cookie signing
+   - Optional: `WHATSAPP_*` for WhatsApp Business Cloud API; `SEED_*` for seed data
+2. Run:
+
 ```bash
 npm install
+npm run db:migrate
+npm run db:seed
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Use seeded credentials to log in at `/login`.
 
 ## Scripts
 
-| Command   | Description        |
-| --------- | ------------------ |
-| `npm run dev`   | Start dev server   |
-| `npm run build` | Production build   |
-| `npm run start` | Run production app |
-| `npm run lint`  | Run ESLint         |
+| Command            | Description           |
+| ------------------ | --------------------- |
+| `npm run dev`      | Start dev server       |
+| `npm run build`    | Prisma generate + build |
+| `npm run start`    | Run production app    |
+| `npm run lint`     | Run ESLint            |
+| `npm run typecheck`| TypeScript check      |
+| `npm run db:migrate` | Run Prisma migrations |
+| `npm run db:seed`  | Seed database         |
+| `npm run db:studio`| Open Prisma Studio    |
 
 ## Project Structure
 
 ```
 src/
-├── app/           # Next.js App Router (layout, page, globals)
-├── components/    # Header, Hero, CustomServices, Plans, Footer
-├── contexts/     # LanguageContext (en/es)
-├── data/         # Plans and static content
-└── i18n/         # en.json, es.json
+├── app/
+│   ├── (auth)/         # login, logout
+│   ├── (dashboard)/    # dashboard/* (overview, pipeline, clients, etc.)
+│   ├── api/webhooks/   # WhatsApp webhook
+│   ├── layout.tsx, page.tsx, globals.css, robots.ts, sitemap.ts
+├── components/         # Header, Hero, CustomServices, Plans, Footer
+├── contexts/           # AuthContext, LanguageContext
+├── data/               # Plans and static content
+├── i18n/               # en.json, es.json
+└── lib/                # auth, prisma, encryption, audit, whatsapp, seo, etc.
+prisma/
+├── schema.prisma       # CRM schema (Users, Roles, Leads, Clients, Tickets, etc.)
+└── seed.ts
 ```
+
+## Dashboard (CRM)
+
+- **Overview** — Recent leads and key metrics
+- **Pipeline** — Lead stages, convert to client
+- **Clients** — Contacts, credentials, subscriptions, single charges, tickets, development projects
+- **Credentials** — Stored credentials list
+- **Development** — Project board and logs
+- **Payments** — Payment list and actions
+- **Tickets** — Support tickets and comments
+- **WhatsApp** — Inbox and conversations (Cloud API)
+- **Settings** — Audit log, bank accounts, profile, roles, users
 
 ## Brand
 
