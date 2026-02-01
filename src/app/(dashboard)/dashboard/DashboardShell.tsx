@@ -24,9 +24,10 @@ const NAV_KEYS = [
   { key: "whatsapp", href: "/dashboard/whatsapp", icon: "💬", permission: undefined },
 ] as const;
 
-/** Settings nav keys (matches t.dashboard.settingsNav). Audit log is CTO-only (by title). */
+/** Settings nav keys (matches t.dashboard.settingsNav). Roles and audit are CTO/CEO-only (roles.manage / CTO title). */
 const SETTINGS_KEYS = [
   { key: "users", href: "/dashboard/settings/users", icon: "👤", permission: "users.manage" as const },
+  { key: "roles", href: "/dashboard/settings/roles", icon: "🔑", permission: "roles.manage" as const },
   { key: "bankAccounts", href: "/dashboard/settings/bank-accounts", icon: "🏦", permission: "users.manage" as const },
   { key: "auditLog", href: "/dashboard/settings/audit", icon: "📋", ctoOnly: true as const },
   { key: "profile", href: "/dashboard/settings/profile", icon: "⚙️", permission: undefined as string | undefined },
@@ -53,7 +54,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
   const settingsNav = t.dashboard.settingsNav;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 bg-grid-pattern flex">
       {/* Mobile backdrop: close drawer on tap */}
       {sidebarOpen && (
         <div
@@ -68,7 +69,11 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
         className={`fixed left-0 top-0 h-full w-64 bg-[#0B132B] text-white flex flex-col z-50 transition-transform duration-200 ease-out ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
         <div className="p-4 border-b border-gray-700 flex-shrink-0">
-          <Link href="/dashboard" onClick={() => closeDrawer(setSidebarOpen)}>
+          <Link
+            href="/dashboard"
+            onClick={() => closeDrawer(setSidebarOpen)}
+            className="flex items-center justify-center bg-white rounded-lg p-3 block"
+          >
             <Image
               src="/Antreva Tech Transparente.png"
               alt="Antreva Tech"
@@ -79,7 +84,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
           </Link>
         </div>
 
-        <nav className="flex-1 p-4 overflow-y-auto min-h-0">
+        <nav className="flex-1 p-4 overflow-y-auto min-h-0 scrollbar-hide">
           <ul className="space-y-1">
             {NAV_KEYS.filter((item) => {
               if ("ctoOnly" in item && item.ctoOnly) return user.title === "CTO";
@@ -165,7 +170,9 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
             </div>
           </div>
         </header>
-        <div className="flex-1 min-w-0 min-h-0 flex flex-col p-4 sm:p-6">{children}</div>
+        <div className="flex-1 min-w-0 min-h-0 flex flex-col p-4 sm:p-6 bg-gray-50 bg-grid-pattern">
+          {children}
+        </div>
       </main>
     </div>
   );

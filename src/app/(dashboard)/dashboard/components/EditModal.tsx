@@ -22,6 +22,8 @@ type Props = {
   maxWidth?: "max-w-sm" | "max-w-xl" | "max-w-2xl" | "max-w-3xl" | "max-w-4xl";
   /** When false, content area grows with content (no internal scroll). Use for compact cards like lead view. */
   scrollContent?: boolean;
+  /** When true, content and panel allow overflow so dropdowns can extend outside the box (no scroll, no clip). */
+  allowContentOverflow?: boolean;
 };
 
 export function EditModal({
@@ -33,6 +35,7 @@ export function EditModal({
   footer,
   maxWidth = "max-w-2xl",
   scrollContent = true,
+  allowContentOverflow = false,
 }: Props) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -65,12 +68,12 @@ export function EditModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
-      className="fixed inset-0 z-[100] overflow-hidden bg-black/50 flex items-center justify-center p-4"
+      className={`fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4 ${allowContentOverflow ? "overflow-visible" : "overflow-hidden"}`}
       onClick={handleOverlayClick}
     >
       <div
         ref={panelRef}
-        className={`bg-white rounded-xl border border-gray-200 shadow-xl w-full max-w-[calc(100vw-2rem)] ${maxWidth} flex flex-col min-w-0 max-h-[85vh] ${scrollContent ? "" : "overflow-hidden"}`}
+        className={`bg-white rounded-xl border border-gray-200 shadow-xl w-full max-w-[calc(100vw-2rem)] ${maxWidth} flex flex-col min-w-0 max-h-[85vh] ${allowContentOverflow ? "overflow-visible" : scrollContent ? "" : "overflow-hidden"}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
@@ -90,7 +93,7 @@ export function EditModal({
         </div>
 
         <div
-          className={`min-w-0 ${scrollContent ? "p-4 overflow-y-auto overflow-x-hidden flex-1 min-h-0" : "p-3 flex-shrink-0 overflow-hidden"}`}
+          className={`min-w-0 ${allowContentOverflow ? "p-3 flex-shrink-0 overflow-visible" : scrollContent ? "p-4 overflow-y-auto overflow-x-hidden flex-1 min-h-0" : "p-3 flex-shrink-0 overflow-hidden"}`}
         >
           {children}
         </div>

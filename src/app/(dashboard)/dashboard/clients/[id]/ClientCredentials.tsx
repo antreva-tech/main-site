@@ -27,22 +27,25 @@ export function ClientCredentials({
 
   return (
     <>
-      <ul className="space-y-2 mb-4">
+      <ul className="space-y-3 mb-5">
         {credentials.map((cred) => (
-          <li key={cred.id} className="p-3 bg-gray-50 rounded-lg space-y-2">
+          <li
+            key={cred.id}
+            className="p-4 rounded-xl border border-[#0B132B]/[0.08] bg-white/80 hover:bg-white hover:border-[#1C6ED5]/20 transition-all duration-200"
+          >
             <div className="flex items-center justify-between gap-2 flex-wrap">
-              <span className="font-medium text-gray-900">{cred.label}</span>
+              <span className="font-semibold text-[#0B132B]">{cred.label}</span>
               <div className="flex items-center gap-2">
                 <Link
                   href={`/dashboard/credentials?clientId=${clientId}`}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-[#0B132B]/[0.12] bg-white text-[#0B132B] hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 transition-all"
                 >
                   View / Decrypt
                 </Link>
                 <button
                   type="button"
                   onClick={() => setEditingCred(cred)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-[#0B132B]/[0.12] bg-white text-[#0B132B] hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 transition-all"
                 >
                   Edit
                 </button>

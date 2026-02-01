@@ -132,15 +132,14 @@ export default async function LeadDetailPage({
         )}
       </div>
 
-      {/* Convert Action */}
-      {lead.stage === "won" && !lead.convertedClient && (
+      {/* Convert Action: show when not yet converted and not lost. Converting moves lead to Won and creates client. */}
+      {!lead.convertedClient && lead.stage !== "lost" && (
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Convert to Client
           </h2>
           <p className="text-gray-600 mb-4">
-            This lead has been won. Convert them to a client to start tracking
-            subscriptions and payments.
+            Convert this lead to a client to finalize the win. This will create the client, move the lead to Won, and add them to the clients list. Once won, the lead cannot be moved back to any other stage.
           </p>
           <ConvertToClientButton
             leadId={lead.id}

@@ -116,6 +116,7 @@
     "settings": "Configuración",
     "settingsNav": {
       "users": "Usuarios",
+      "roles": "Roles",
       "bankAccounts": "Cuentas bancarias",
       "auditLog": "Registro de auditoría",
       "profile": "Perfil"
@@ -139,7 +140,10 @@
       "recentLeads": "Leads recientes",
       "noLeadsYet": "Sin leads aún",
       "pendingPayments": "Pagos pendientes de confirmar",
-      "noPendingConfirmations": "Sin confirmaciones pendientes"
+      "noPendingConfirmations": "Sin confirmaciones pendientes",
+      "openTickets": "Tickets abiertos",
+      "noOpenTickets": "Sin tickets abiertos",
+      "noModulesForRole": "No hay módulos disponibles para tu rol."
     },
     "common": {
       "back": "Volver",
@@ -269,6 +273,18 @@
     },
     "credentials": {
       "addCredentialsFromClient": "Añade credenciales desde la ficha del cliente."
+    },
+    "whatsapp": {
+      "title": "Bandeja de WhatsApp",
+      "emptyHeadline": "Aún no hay conversaciones",
+      "emptyDescription": "Cuando los clientes te escriban por WhatsApp, las conversaciones aparecerán aquí. Podrás responder, vincular contactos con leads o clientes y gestionarlo todo en un solo lugar.",
+      "emptyCta": "Cómo conectar WhatsApp",
+      "youPrefix": "Tú: ",
+      "noMessages": "Sin mensajes",
+      "unknown": "Desconocido",
+      "client": "Cliente",
+      "lead": "Lead",
+      "yesterday": "Ayer"
     },
     "profile": {
       "profileSettings": "Configuración del perfil",

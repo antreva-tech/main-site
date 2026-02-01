@@ -6,6 +6,7 @@
  */
 
 import { useTransition, useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { EditModal } from "../components/EditModal";
@@ -57,12 +58,14 @@ type Props = {
   onEdit: () => void;
   /** Called after stage is updated so parent can sync lead state (e.g. update modal lead.stage). */
   onStageChange?: (newStage: LeadStage) => void;
+  /** When user selects Won, open convert modal instead of updating stage. Parent opens ConvertToClientModal. */
+  onRequestConvert?: (lead: LeadRow) => void;
 };
 
 /**
  * Renders a compact read-only lead summary with Call, WhatsApp, and Edit actions.
  */
-export function LeadViewModal({ lead, open, onClose, onEdit, onStageChange }: Props) {
+export function LeadViewModal({ lead, open, onClose, onEdit, onStageChange, onRequestConvert }: Props) {
   const { t } = useLanguage();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -91,10 +94,20 @@ export function LeadViewModal({ lead, open, onClose, onEdit, onStageChange }: Pr
   const handleStageSelect = (newStage: LeadStage) => {
     if (!STAGE_KEYS.includes(newStage) || newStage === lead.stage) return;
     setDropdownOpen(false);
+    if (newStage === "won") {
+      onRequestConvert?.(lead);
+      onClose();
+      return;
+    }
     startTransition(async () => {
-      await updateLeadStage(lead.id, newStage);
-      onStageChange?.(newStage);
-      router.refresh();
+      try {
+        await updateLeadStage(lead.id, newStage);
+        onStageChange?.(newStage);
+        router.refresh();
+      } catch (err) {
+        console.error(err);
+        alert(err instanceof Error ? err.message : "Failed to update stage");
+      }
     });
   };
 
@@ -135,6 +148,7 @@ export function LeadViewModal({ lead, open, onClose, onEdit, onStageChange }: Pr
       titleId="lead-view-modal-title"
       maxWidth="max-w-sm"
       scrollContent={false}
+      allowContentOverflow={true}
     >
       <div className="space-y-4">
         {/* Card summary */}
@@ -170,62 +184,77 @@ export function LeadViewModal({ lead, open, onClose, onEdit, onStageChange }: Pr
           </span>
           <span className="text-gray-500">{t.dashboard.pipeline.stage}</span>
           <span className="sm:col-span-1" ref={dropdownRef}>
-            <div className="relative mt-0.5">
-              <button
-                type="button"
-                onClick={() => {
-                  if (isPending) return;
-                  setDropdownOpen((o) => {
-                    if (!o) setHighlightedIndex(STAGE_KEYS.indexOf(lead.stage));
-                    return !o;
-                  });
-                }}
-                onKeyDown={handleKeyDown}
-                disabled={isPending}
-                aria-haspopup="listbox"
-                aria-expanded={dropdownOpen}
-                aria-label={t.dashboard.pipeline.stage}
-                className="w-full min-w-0 flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-left text-sm text-gray-900 shadow-sm transition hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-tech-blue focus:ring-offset-0 disabled:opacity-50"
-              >
-                <span className={`h-2 w-2 flex-shrink-0 rounded-full ${STAGE_COLORS[lead.stage]}`} />
-                <span className="flex-1 truncate">{t.dashboard.pipeline.stages[lead.stage]}</span>
-                <svg
-                  className={`h-4 w-4 flex-shrink-0 text-gray-500 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {dropdownOpen && (
-                <ul
-                  role="listbox"
-                  className="absolute left-0 right-0 top-full z-10 mt-1 max-h-56 overflow-auto rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
+            {lead.stage === "won" ? (
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className={`h-2 w-2 flex-shrink-0 rounded-full ${STAGE_COLORS.won}`} />
+                <span className="text-sm font-medium text-gray-900">{t.dashboard.pipeline.stages.won}</span>
+                {lead.convertedClientId && (
+                  <Link
+                    href={`/dashboard/clients/${lead.convertedClientId}`}
+                    className="text-sm text-[#1C6ED5] hover:underline ml-1"
+                  >
+                    View client →
+                  </Link>
+                )}
+              </div>
+            ) : (
+              <div className="relative mt-0.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isPending) return;
+                    setDropdownOpen((o) => {
+                      if (!o) setHighlightedIndex(STAGE_KEYS.indexOf(lead.stage));
+                      return !o;
+                    });
+                  }}
+                  onKeyDown={handleKeyDown}
+                  disabled={isPending}
+                  aria-haspopup="listbox"
+                  aria-expanded={dropdownOpen}
                   aria-label={t.dashboard.pipeline.stage}
+                  className="w-full min-w-0 flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-left text-sm text-gray-900 shadow-sm transition hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-tech-blue focus:ring-offset-0 disabled:opacity-50"
                 >
-                  {STAGE_KEYS.map((key, i) => (
-                    <li
-                      key={key}
-                      role="option"
-                      aria-selected={lead.stage === key}
-                      onMouseEnter={() => setHighlightedIndex(i)}
-                      onClick={() => handleStageSelect(key)}
-                      className={`flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition ${
-                        lead.stage === key
-                          ? "bg-tech-blue/10 text-midnight-navy font-medium"
-                          : highlightedIndex === i
-                            ? "bg-gray-100 text-gray-900"
-                            : "text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      <span className={`h-2 w-2 flex-shrink-0 rounded-full ${STAGE_COLORS[key]}`} />
-                      {t.dashboard.pipeline.stages[key]}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+                  <span className={`h-2 w-2 flex-shrink-0 rounded-full ${STAGE_COLORS[lead.stage]}`} />
+                  <span className="flex-1 truncate">{t.dashboard.pipeline.stages[lead.stage]}</span>
+                  <svg
+                    className={`h-4 w-4 flex-shrink-0 text-gray-500 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {dropdownOpen && (
+                  <ul
+                    role="listbox"
+                    className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-auto rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
+                    aria-label={t.dashboard.pipeline.stage}
+                  >
+                    {STAGE_KEYS.map((key, i) => (
+                      <li
+                        key={key}
+                        role="option"
+                        aria-selected={lead.stage === key}
+                        onMouseEnter={() => setHighlightedIndex(i)}
+                        onClick={() => handleStageSelect(key)}
+                        className={`flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition ${
+                          lead.stage === key
+                            ? "bg-tech-blue/10 text-midnight-navy font-medium"
+                            : highlightedIndex === i
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        <span className={`h-2 w-2 flex-shrink-0 rounded-full ${STAGE_COLORS[key]}`} />
+                        {t.dashboard.pipeline.stages[key]}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
           </span>
           {lead.expectedValue != null && lead.expectedValue > 0 && (
             <>

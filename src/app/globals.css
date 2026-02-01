@@ -44,6 +44,17 @@ body {
   font-family: var(--font-sans);
 }
 
+/* Consistent pointer cursor for all interactive elements (buttons, links, clickable rows) */
+button:not(:disabled),
+[type="button"]:not(:disabled),
+[type="submit"]:not(:disabled),
+[type="reset"]:not(:disabled),
+[role="button"],
+a[href],
+summary {
+  cursor: pointer;
+}
+
 /* Heading styles using Sora */
 h1,
 h2,
@@ -160,5 +171,44 @@ html {
   }
   .pipeline-column-scroll::-webkit-scrollbar-thumb:hover {
     background: var(--color-tech-blue);
+  }
+
+  /* Premium dashboard cards: elevated, soft shadow, brand-aligned */
+  .dashboard-card {
+    background: var(--color-white);
+    border-radius: 1rem;
+    border: 1px solid rgba(11, 19, 43, 0.08);
+    box-shadow: 0 1px 3px rgba(11, 19, 43, 0.06);
+  }
+  .dashboard-card-accent {
+    border-left: 3px solid var(--color-tech-blue);
+  }
+  .dashboard-section-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-midnight-navy);
+    letter-spacing: -0.01em;
+  }
+
+  /** Page title: list and detail pages. Use on <h1> for consistent hierarchy and brand. */
+  .page-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-midnight-navy);
+    letter-spacing: -0.025em;
+  }
+  @media (min-width: 640px) {
+    .page-title {
+      font-size: 1.875rem;
+    }
+  }
+
+  /* Hide scrollbar when content fits (sidebar nav); overflow still works when needed */
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }

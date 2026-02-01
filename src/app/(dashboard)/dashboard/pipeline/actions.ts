@@ -7,6 +7,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { normalizePhoneForStorage } from "@/lib/phone";
 import { logCreate, logUpdate, logDelete } from "@/lib/audit";
 import type { LeadStage, LeadSource } from "@prisma/client";
 
@@ -43,7 +44,7 @@ export async function createLead(formData: FormData) {
       name,
       email: email || null,
       company: company || null,
-      phone: phone || null,
+      phone: normalizePhoneForStorage(phone),
       source,
       sourceOther: source === "other" ? sourceOther : null,
       notes: notes || null,
@@ -65,6 +66,8 @@ export async function createLead(formData: FormData) {
 
 /**
  * Updates a lead's stage.
+ * Won is final: once a lead is won, stage cannot be changed.
+ * Moving to won is only allowed via convertLeadToClient (convert workflow).
  */
 export async function updateLeadStage(leadId: string, stage: LeadStage) {
   const session = await getSession();
@@ -72,6 +75,13 @@ export async function updateLeadStage(leadId: string, stage: LeadStage) {
 
   const lead = await prisma.lead.findUnique({ where: { id: leadId } });
   if (!lead) throw new Error("Lead not found");
+
+  if (lead.stage === "won") {
+    throw new Error("Once won, lead stage cannot be changed.");
+  }
+  if (stage === "won") {
+    throw new Error("To win this lead, use Convert to Client from the card or pipeline.");
+  }
 
   const oldStage = lead.stage;
 
@@ -109,7 +119,7 @@ export async function updateLead(leadId: string, formData: FormData) {
     name: formData.get("name") as string,
     email: (formData.get("email") as string) || null,
     company: (formData.get("company") as string) || null,
-    phone: (formData.get("phone") as string) || null,
+    phone: normalizePhoneForStorage(formData.get("phone") as string),
     source,
     sourceOther: source === "other" ? sourceOther : null,
     notes: (formData.get("notes") as string) || null,
@@ -118,7 +128,10 @@ export async function updateLead(leadId: string, formData: FormData) {
       : null,
     lostReason: (formData.get("lostReason") as string) || null,
   };
-  const data = stage != null ? { ...base, stage } : base;
+  // Once won, do not allow changing stage via edit form.
+  const stageToApply =
+    lead.stage === "won" ? undefined : stage != null ? stage : undefined;
+  const data = stageToApply != null ? { ...base, stage: stageToApply } : base;
 
   const updated = await prisma.lead.update({
     where: { id: leadId },
@@ -146,14 +159,14 @@ export async function convertLeadToClient(leadId: string, formData: FormData) {
   const cedula = formData.get("cedula") as string | null;
   const rnc = formData.get("rnc") as string | null;
 
-  // Create client from lead data
+  // Create client from lead data (lead.phone already normalized when lead was created/updated)
   const client = await prisma.client.create({
     data: {
       leadId: lead.id,
       name: lead.name,
       email: lead.email || `${lead.id}@placeholder.local`, // Email required
       company: lead.company,
-      phone: lead.phone,
+      phone: normalizePhoneForStorage(lead.phone),
       cedula: cedula || null,
       rnc: rnc || null,
       notes: lead.notes,

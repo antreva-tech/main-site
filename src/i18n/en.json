@@ -116,6 +116,7 @@
     "settings": "Settings",
     "settingsNav": {
       "users": "Users",
+      "roles": "Roles",
       "bankAccounts": "Bank Accounts",
       "auditLog": "Audit Log",
       "profile": "Profile"
@@ -139,7 +140,10 @@
       "recentLeads": "Recent Leads",
       "noLeadsYet": "No leads yet",
       "pendingPayments": "Pending Payment Confirmations",
-      "noPendingConfirmations": "No pending confirmations"
+      "noPendingConfirmations": "No pending confirmations",
+      "openTickets": "Open Tickets",
+      "noOpenTickets": "No open tickets",
+      "noModulesForRole": "No modules available for your role."
     },
     "common": {
       "back": "Back",
@@ -269,6 +273,18 @@
     },
     "credentials": {
       "addCredentialsFromClient": "Add credentials from a client's detail page."
+    },
+    "whatsapp": {
+      "title": "WhatsApp Inbox",
+      "emptyHeadline": "No conversations yet",
+      "emptyDescription": "When customers message you on WhatsApp, conversations will appear here. You can reply, link contacts to leads or clients, and manage everything in one place.",
+      "emptyCta": "How to connect WhatsApp",
+      "youPrefix": "You: ",
+      "noMessages": "No messages",
+      "unknown": "Unknown",
+      "client": "Client",
+      "lead": "Lead",
+      "yesterday": "Yesterday"
     },
     "profile": {
       "profileSettings": "Profile Settings",

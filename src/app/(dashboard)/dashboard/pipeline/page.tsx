@@ -37,6 +37,7 @@ export default async function PipelinePage() {
       lostReason: true,
       expectedValue: true,
       createdAt: true,
+      convertedClientId: true,
     },
   });
 
@@ -53,6 +54,7 @@ export default async function PipelinePage() {
     lostReason: l.lostReason,
     expectedValue: l.expectedValue != null ? Number(l.expectedValue) : null,
     createdAt: l.createdAt.toISOString(),
+    convertedClientId: l.convertedClientId,
   }));
 
   const leadsByStage = STAGES.reduce(

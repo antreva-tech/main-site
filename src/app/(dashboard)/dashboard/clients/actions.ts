@@ -8,8 +8,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { normalizePhoneForStorage } from "@/lib/phone";
 import { logCreate, logUpdate, logDelete } from "@/lib/audit";
-import type { ClientStatus, SubscriptionStatus } from "@prisma/client";
+import type { ClientStatus, SubscriptionStatus, SingleChargeStatus } from "@prisma/client";
 
 /**
  * Creates a new client (direct entry, not from lead).
@@ -34,7 +35,7 @@ export async function createClient(formData: FormData) {
       name,
       email,
       company: company || null,
-      phone: phone || null,
+      phone: normalizePhoneForStorage(phone),
       websiteUrl: websiteUrl || null,
       cedula: cedula || null,
       rnc: rnc || null,
@@ -73,7 +74,7 @@ export async function updateClient(formData: FormData) {
     name: formData.get("name") as string,
     email: formData.get("email") as string,
     company: (formData.get("company") as string)?.trim() || null,
-    phone: (formData.get("phone") as string)?.trim() || null,
+    phone: normalizePhoneForStorage((formData.get("phone") as string)?.trim()),
     websiteUrl: (formData.get("websiteUrl") as string)?.trim() || null,
     cedula: (formData.get("cedula") as string)?.trim() || null,
     rnc: (formData.get("rnc") as string)?.trim() || null,
@@ -266,6 +267,137 @@ export async function deleteSubscription(formData: FormData) {
 }
 
 /**
+ * Creates a single (one-time) charge for a client.
+ * Expects formData: clientId, description, amount, currency, chargedAt (optional), status (optional), notes (optional).
+ */
+export async function createSingleCharge(formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const clientId = formData.get("clientId") as string;
+  if (!clientId) throw new Error("Client ID required");
+
+  const description = (formData.get("description") as string)?.trim();
+  if (!description) throw new Error("Description is required");
+
+  const amountRaw = formData.get("amount") as string;
+  const amount = parseFloat(amountRaw);
+  if (Number.isNaN(amount) || amount < 0) throw new Error("Valid amount is required");
+
+  const currency = formData.get("currency") as "DOP" | "USD";
+  const validCurrencies = ["DOP", "USD"] as const;
+  if (!validCurrencies.includes(currency)) throw new Error("Currency must be DOP or USD");
+
+  const chargedAtRaw = (formData.get("chargedAt") as string)?.trim() || null;
+  const chargedAt = chargedAtRaw ? new Date(chargedAtRaw) : new Date();
+  if (Number.isNaN(chargedAt.getTime())) throw new Error("Invalid charge date");
+
+  const statusRaw = (formData.get("status") as string)?.trim() || "pending";
+  const validStatuses: SingleChargeStatus[] = ["pending", "paid", "cancelled"];
+  const status = validStatuses.includes(statusRaw as SingleChargeStatus)
+    ? (statusRaw as SingleChargeStatus)
+    : "pending";
+
+  const notes = (formData.get("notes") as string)?.trim() || null;
+
+  const client = await prisma.client.findUnique({ where: { id: clientId } });
+  if (!client) throw new Error("Client not found");
+
+  const singleCharge = await prisma.singleCharge.create({
+    data: {
+      clientId,
+      description,
+      amount,
+      currency,
+      chargedAt,
+      status,
+      notes,
+    },
+  });
+
+  await logCreate(session.id, "single_charge", singleCharge.id, { description, amount, clientId });
+
+  revalidatePath(`/dashboard/clients/${clientId}`);
+  redirect(`/dashboard/clients/${clientId}`);
+}
+
+/**
+ * Updates a single charge. Expects formData: singleChargeId, clientId, description, amount, currency, chargedAt, status, notes (optional).
+ */
+export async function updateSingleCharge(formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const singleChargeId = formData.get("singleChargeId") as string;
+  const clientId = formData.get("clientId") as string;
+  if (!singleChargeId || !clientId) throw new Error("Single charge ID and client ID required");
+
+  const charge = await prisma.singleCharge.findUnique({
+    where: { id: singleChargeId },
+  });
+  if (!charge || charge.clientId !== clientId) throw new Error("Single charge not found");
+
+  const description = (formData.get("description") as string)?.trim();
+  if (!description) throw new Error("Description is required");
+
+  const amountRaw = formData.get("amount") as string;
+  const amount = parseFloat(amountRaw);
+  if (Number.isNaN(amount) || amount < 0) throw new Error("Valid amount is required");
+
+  const currency = formData.get("currency") as "DOP" | "USD";
+  const validCurrencies = ["DOP", "USD"] as const;
+  if (!validCurrencies.includes(currency)) throw new Error("Currency must be DOP or USD");
+
+  const chargedAtRaw = formData.get("chargedAt") as string;
+  const chargedAt = new Date(chargedAtRaw);
+  if (Number.isNaN(chargedAt.getTime())) throw new Error("Valid charge date is required");
+
+  const statusRaw = formData.get("status") as string;
+  const validStatuses: SingleChargeStatus[] = ["pending", "paid", "cancelled"];
+  const status = validStatuses.includes(statusRaw as SingleChargeStatus)
+    ? (statusRaw as SingleChargeStatus)
+    : charge.status;
+
+  const notes = (formData.get("notes") as string)?.trim() || null;
+
+  await prisma.singleCharge.update({
+    where: { id: singleChargeId },
+    data: { description, amount, currency, chargedAt, status, notes },
+  });
+
+  await logUpdate(session.id, "single_charge", singleChargeId,
+    { description: charge.description, amount: Number(charge.amount), status: charge.status },
+    { description, amount, status }
+  );
+
+  revalidatePath(`/dashboard/clients/${clientId}`);
+  redirect(`/dashboard/clients/${clientId}`);
+}
+
+/**
+ * Deletes a single charge. Expects formData: singleChargeId, clientId.
+ */
+export async function deleteSingleCharge(formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const singleChargeId = formData.get("singleChargeId") as string;
+  const clientId = formData.get("clientId") as string;
+  if (!singleChargeId || !clientId) throw new Error("Single charge ID and client ID required");
+
+  const charge = await prisma.singleCharge.findUnique({
+    where: { id: singleChargeId },
+  });
+  if (!charge || charge.clientId !== clientId) throw new Error("Single charge not found");
+
+  await prisma.singleCharge.delete({ where: { id: singleChargeId } });
+  await logDelete(session.id, "single_charge", singleChargeId);
+
+  revalidatePath(`/dashboard/clients/${clientId}`);
+  redirect(`/dashboard/clients/${clientId}`);
+}
+
+/**
  * Creates an additional contact for a client. Form must include clientId (hidden).
  */
 export async function createClientContact(formData: FormData) {
@@ -287,7 +419,7 @@ export async function createClientContact(formData: FormData) {
       name,
       title: (formData.get("title") as string) || null,
       email: (formData.get("email") as string) || null,
-      phone: (formData.get("phone") as string) || null,
+      phone: normalizePhoneForStorage(formData.get("phone") as string),
     },
   });
 
@@ -321,7 +453,7 @@ export async function updateClientContact(formData: FormData) {
       name,
       title: (formData.get("title") as string)?.trim() || null,
       email: (formData.get("email") as string)?.trim() || null,
-      phone: (formData.get("phone") as string)?.trim() || null,
+      phone: normalizePhoneForStorage((formData.get("phone") as string)?.trim()),
     },
   });
 

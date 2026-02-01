@@ -6,12 +6,17 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { createClientContact, deleteClientContact, updateClientContact, updateClient, createSubscription, updateSubscription, deleteSubscription } from "../actions";
+import { createClientContact, deleteClientContact, updateClientContact, updateClient, createSubscription, updateSubscription, deleteSubscription, createSingleCharge, updateSingleCharge, deleteSingleCharge } from "../actions";
 import { createCredential, updateCredential, deleteCredential } from "@/app/(dashboard)/dashboard/credentials/actions";
 import { createTicket } from "@/app/(dashboard)/dashboard/tickets/actions";
 import { ClientSubscriptions } from "./ClientSubscriptions";
+import { ClientSingleCharges } from "./ClientSingleCharges";
+import { AddSingleChargeForm } from "./AddSingleChargeForm";
 import { ClientCredentials } from "./ClientCredentials";
 import { ClientContacts } from "./ClientContacts";
+import { AddCredentialForm } from "./AddCredentialForm";
+import { AddContactForm } from "./AddContactForm";
+import { AddTicketForm } from "./AddTicketForm";
 import { EditClientDetailsModal } from "./EditClientDetailsModal";
 import { StartDevelopmentProjectButton } from "./StartDevelopmentProjectButton";
 
@@ -43,11 +48,20 @@ interface ClientWithRelations {
     endDate: Date | null;
     status: string;
   }>;
+  singleCharges: Array<{
+    id: string;
+    description: string;
+    amount: unknown;
+    currency: string;
+    chargedAt: Date;
+    status: string;
+    notes: string | null;
+  }>;
   tickets: Array<{ id: string; subject: string; status: string; priority: string; createdAt: Date }>;
   lead: { id: string; source: string } | null;
   supportCredentials: Array<{ id: string; label: string }>;
   developmentProject: { id: string; stage: string } | null;
-  _count: { supportCredentials: number };
+  _count: { supportCredentials: number; subscriptions: number; singleCharges: number; tickets: number };
 }
 
 /**
@@ -69,6 +83,18 @@ export default async function ClientDetailPage({
         subscriptions: {
           include: { service: true },
           orderBy: { startDate: "desc" },
+        },
+        singleCharges: {
+          orderBy: { chargedAt: "desc" },
+          select: {
+            id: true,
+            description: true,
+            amount: true,
+            currency: true,
+            chargedAt: true,
+            status: true,
+            notes: true,
+          },
         },
         tickets: {
           take: 5,
@@ -92,7 +118,7 @@ export default async function ClientDetailPage({
           select: { id: true, stage: true },
         },
         _count: {
-          select: { supportCredentials: true },
+          select: { supportCredentials: true, subscriptions: true, singleCharges: true, tickets: true },
         },
       },
     } as { where: { id: string }; include: Record<string, unknown> }),
@@ -110,220 +136,249 @@ export default async function ClientDetailPage({
   }
 
   return (
-    <div className="max-w-4xl">
-      {/* Breadcrumb */}
-      <div className="mb-4">
+    <div className="w-full">
+      {/* Breadcrumb: minimal, brand link — touch-friendly on mobile */}
+      <div className="mb-4 sm:mb-6">
         <Link
           href="/dashboard/clients"
-          className="text-[#1C6ED5] hover:underline text-sm"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[#1C6ED5] hover:text-[#1559B3] transition-colors min-h-[44px] py-2 -my-2 touch-manipulation"
         >
-          ← Back to Clients
+          <span aria-hidden>←</span> Back to Clients
         </Link>
       </div>
 
-      {/* Header: business name large, CEO name small */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-              {client.company || client.name}
-            </h1>
-            {client.company && (
-              <p className="text-gray-600 text-sm mt-1">{client.name}</p>
+      {/* Hero: mobile-first — single column; lg: 2 cols with At a glance right panel */}
+      <div className="dashboard-card overflow-hidden mb-6">
+        <div className="bg-gradient-to-br from-[#0B132B]/[0.03] via-transparent to-[#1C6ED5]/[0.04] p-4 sm:p-6 lg:p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+            {/* Left: main client info — full width on mobile */}
+            <div className="min-w-0">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#0B132B] tracking-tight truncate">
+                    {client.company || client.name}
+                  </h1>
+                  {client.company && (
+                    <p className="text-[#8A8F98] text-sm mt-1.5 font-medium truncate">
+                      {client.name}
+                    </p>
+                  )}
+                </div>
+                <StatusBadge status={client.status} />
+              </div>
+
+              {/* Project status — card-style UI; pipeline link only for CTO and Developer */}
+              {(() => {
+                const canViewPipeline =
+                  session?.title === "CTO" ||
+                  session?.title === "Developer" ||
+                  session?.roleName?.toLowerCase() === "developer";
+                return (
+                  <div className="mt-4 sm:mt-5 pt-4 sm:pt-5 border-t border-[#0B132B]/[0.08]">
+                    <div className="rounded-xl border border-[#0B132B]/[0.08] bg-white/60 p-4">
+                      <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-3">
+                        Project status
+                      </p>
+                      {client.developmentProject ? (
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span
+                            className={`inline-flex items-center px-3 py-1.5 rounded-lg font-semibold text-sm ${getProjectStageStyles(client.developmentProject.stage)}`}
+                          >
+                            {formatDevStage(client.developmentProject.stage)}
+                          </span>
+                          {canViewPipeline && (
+                            <Link
+                              href={`/dashboard/development/${client.developmentProject.id}`}
+                              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1C6ED5] hover:text-[#1559B3] rounded-lg hover:bg-[#1C6ED5]/[0.06] transition-colors"
+                            >
+                              View in Development Pipeline
+                              <span aria-hidden>→</span>
+                            </Link>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span className="text-sm text-[#8A8F98]">No active project</span>
+                          {canViewPipeline && (
+                            <StartDevelopmentProjectButton clientId={client.id} />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Contact grid: 1 col mobile → 2 → 4 on larger */}
+              <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
+              <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Email</p>
+              <a
+                href={`mailto:${client.email}`}
+                title={client.email}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 bg-[#1C6ED5]/[0.08] text-[#1C6ED5] hover:bg-[#1C6ED5]/15 hover:border-[#1C6ED5]/50 transition-all"
+              >
+                <span aria-hidden>✉️</span> Email
+              </a>
+            </div>
+            {client.phone && (
+              <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
+                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Phone</p>
+                <div className="flex flex-wrap gap-1.5">
+                  <a
+                    href={`tel:${client.phone}`}
+                    title={client.phone}
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-violet-500/30 bg-violet-500/[0.08] text-violet-700 hover:bg-violet-500/15 hover:border-violet-500/50 transition-all"
+                  >
+                    <span aria-hidden>📞</span> Call
+                  </a>
+                  <a
+                    href={`https://wa.me/${client.phone.replace(/\D/g, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={`WhatsApp ${client.phone}`}
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#25D366]/40 bg-[#25D366]/[0.12] text-[#128C7E] hover:bg-[#25D366]/20 hover:border-[#25D366]/60 transition-all"
+                  >
+                    <span aria-hidden>💬</span> WhatsApp
+                  </a>
+                </div>
+              </div>
             )}
-          </div>
-          <div className="flex items-center gap-2">
-            <StatusBadge status={client.status} />
-          </div>
-        </div>
-
-        {/* Project status: sales sees stage; CTO can start or open pipeline */}
-        <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center gap-2">
-          <span className="text-xs text-gray-500 uppercase">Project status</span>
-          {client.developmentProject ? (
-            <>
-              <span className="text-sm text-gray-700">
-                Stage: <strong>{formatDevStage(client.developmentProject.stage)}</strong>
-              </span>
-              {session?.title === "CTO" && (
-                <Link
-                  href={`/dashboard/development/${client.developmentProject.id}`}
-                  className="text-sm text-[#1C6ED5] hover:underline"
+            {client.websiteUrl && (
+              <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
+                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Website</p>
+                <a
+                  href={client.websiteUrl.startsWith("http") ? client.websiteUrl : `https://${client.websiteUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={client.websiteUrl}
+                  className="text-[#1C6ED5] hover:text-[#1559B3] text-sm font-medium block truncate transition-colors"
                 >
-                  View in Development Pipeline →
+                  {client.websiteUrl.replace(/^https?:\/\//i, "")}
+                </a>
+              </div>
+            )}
+            {client.cedula && (
+              <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
+                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Cedula</p>
+                <p className="text-sm text-[#0B132B]/90 truncate font-mono" title="Full number hidden for privacy">
+                  {maskCedula(client.cedula)}
+                </p>
+              </div>
+            )}
+            {client.rnc && (
+              <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
+                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">RNC</p>
+                <p className="text-sm text-[#0B132B]/90 truncate font-mono" title={client.rnc}>{client.rnc}</p>
+              </div>
+            )}
+            <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
+              <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Started</p>
+              <p className="text-sm text-[#0B132B]/90">{client.startedAt.toLocaleDateString()}</p>
+            </div>
+            {client.lead && (
+              <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
+                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Source</p>
+                <p className="text-sm text-[#0B132B]/90 capitalize">{client.lead.source.replace("_", " ")}</p>
+              </div>
+            )}
+              </div>
+
+              {/* Notes */}
+              {client.notes && (
+                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-[#0B132B]/[0.08]">
+                  <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-2">Notes</p>
+                  <p className="text-[#0B132B]/85 text-sm whitespace-pre-wrap leading-relaxed">
+                    {client.notes}
+                  </p>
+                </div>
+              )}
+
+              {/* Quick Actions — mobile / single column only; on lg shown in right panel */}
+              <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-[#0B132B]/[0.08] flex flex-col sm:flex-row gap-3 lg:hidden">
+                <Link
+                  href={`/dashboard/credentials?clientId=${client.id}`}
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 border border-[#0B132B]/[0.12] rounded-xl hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 text-sm font-medium text-[#0B132B] transition-all w-full sm:w-auto touch-manipulation"
+                >
+                  View Credentials ({client._count.supportCredentials})
                 </Link>
-              )}
-            </>
-          ) : (
-            <>
-              <span className="text-sm text-gray-500">No active project</span>
-              {session?.title === "CTO" && (
-                <StartDevelopmentProjectButton clientId={client.id} />
-              )}
-            </>
-          )}
-        </div>
+                <Link
+                  href={`/dashboard/tickets?clientId=${client.id}`}
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 border border-[#0B132B]/[0.12] rounded-xl hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 text-sm font-medium text-[#0B132B] transition-all w-full sm:w-auto touch-manipulation"
+                >
+                  View All Tickets
+                </Link>
+              </div>
 
-        {/* Contact Info - mobile-first: 1 col → 2 → 4; min-w-0 + truncate prevent overflow */}
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="min-w-0">
-            <p className="text-xs text-gray-500 uppercase">Email</p>
-            <a
-              href={`mailto:${client.email}`}
-              title={client.email}
-              className="text-[#1C6ED5] hover:underline text-sm block truncate"
-            >
-              {client.email}
-            </a>
+              {/* Edit client details */}
+              <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-[#0B132B]/[0.08]">
+                <EditClientDetailsModal
+                  client={{
+                    id: client.id,
+                    name: client.name,
+                    email: client.email,
+                    company: client.company,
+                    phone: client.phone,
+                    websiteUrl: client.websiteUrl,
+                    cedula: client.cedula,
+                    rnc: client.rnc,
+                    notes: client.notes,
+                    status: client.status,
+                  }}
+                  updateClient={updateClient}
+                />
+              </div>
+            </div>
+
+            {/* Right: At a glance — visible on lg+ only; fills empty space dynamically */}
+            <aside className="hidden lg:flex flex-col gap-4 min-w-0">
+              <div className="rounded-xl border border-[#0B132B]/[0.08] bg-white/50 p-5 flex-shrink-0">
+                <h2 className="text-sm font-semibold text-[#8A8F98] uppercase tracking-wider mb-4">
+                  At a glance
+                </h2>
+                <dl className="space-y-3">
+                  <div className="flex justify-between items-center gap-2">
+                    <dt className="text-sm text-[#0B132B]/80">Subscriptions</dt>
+                    <dd className="text-sm font-semibold text-[#0B132B]">{client._count.subscriptions}</dd>
+                  </div>
+                  <div className="flex justify-between items-center gap-2">
+                    <dt className="text-sm text-[#0B132B]/80">Single charges</dt>
+                    <dd className="text-sm font-semibold text-[#0B132B]">{client._count.singleCharges}</dd>
+                  </div>
+                  <div className="flex justify-between items-center gap-2">
+                    <dt className="text-sm text-[#0B132B]/80">Tickets</dt>
+                    <dd className="text-sm font-semibold text-[#0B132B]">{client._count.tickets}</dd>
+                  </div>
+                  <div className="flex justify-between items-center gap-2">
+                    <dt className="text-sm text-[#0B132B]/80">Credentials</dt>
+                    <dd className="text-sm font-semibold text-[#0B132B]">{client._count.supportCredentials}</dd>
+                  </div>
+                </dl>
+              </div>
+              <div className="flex flex-col gap-3 flex-1 min-h-0">
+                <Link
+                  href={`/dashboard/credentials?clientId=${client.id}`}
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 bg-[#1C6ED5] text-white rounded-xl font-medium text-sm hover:bg-[#1559B3] transition-colors shadow-sm touch-manipulation"
+                >
+                  View Credentials ({client._count.supportCredentials})
+                </Link>
+                <Link
+                  href={`/dashboard/tickets?clientId=${client.id}`}
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 border border-[#0B132B]/[0.12] rounded-xl font-medium text-sm text-[#0B132B] hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 transition-colors touch-manipulation"
+                >
+                  View All Tickets
+                </Link>
+              </div>
+            </aside>
           </div>
-          {client.phone && (
-            <div className="min-w-0">
-              <p className="text-xs text-gray-500 uppercase">Phone</p>
-              <a
-                href={`tel:${client.phone}`}
-                title={client.phone}
-                className="text-[#1C6ED5] hover:underline text-sm block truncate"
-              >
-                {client.phone}
-              </a>
-            </div>
-          )}
-          {client.websiteUrl && (
-            <div className="min-w-0">
-              <p className="text-xs text-gray-500 uppercase">Website</p>
-              <a
-                href={client.websiteUrl.startsWith("http") ? client.websiteUrl : `https://${client.websiteUrl}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={client.websiteUrl}
-                className="text-[#1C6ED5] hover:underline text-sm block truncate"
-              >
-                {client.websiteUrl.replace(/^https?:\/\//i, "")}
-              </a>
-            </div>
-          )}
-          {client.cedula && (
-            <div className="min-w-0">
-              <p className="text-xs text-gray-500 uppercase">Cedula</p>
-              <p className="text-sm truncate" title="Full number hidden for privacy">
-                {maskCedula(client.cedula)}
-              </p>
-            </div>
-          )}
-          {client.rnc && (
-            <div className="min-w-0">
-              <p className="text-xs text-gray-500 uppercase">RNC</p>
-              <p className="text-sm truncate" title={client.rnc}>{client.rnc}</p>
-            </div>
-          )}
-          <div className="min-w-0">
-            <p className="text-xs text-gray-500 uppercase">Started</p>
-            <p className="text-sm">{client.startedAt.toLocaleDateString()}</p>
-          </div>
-          {client.lead && (
-            <div className="min-w-0">
-              <p className="text-xs text-gray-500 uppercase">Source</p>
-              <p className="text-sm capitalize">{client.lead.source.replace("_", " ")}</p>
-            </div>
-          )}
-        </div>
-
-        {/* Notes */}
-        {client.notes && (
-          <div className="mt-6 pt-6 border-t border-gray-100">
-            <p className="text-xs text-gray-500 uppercase mb-2">Notes</p>
-            <p className="text-gray-700 text-sm whitespace-pre-wrap">
-              {client.notes}
-            </p>
-          </div>
-        )}
-
-        {/* Quick Actions - stack on mobile, touch-friendly min height */}
-        <div className="mt-6 pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
-          <Link
-            href={`/dashboard/credentials?clientId=${client.id}`}
-            className="min-h-[44px] flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm w-full sm:w-auto"
-          >
-            View Credentials ({client._count.supportCredentials})
-          </Link>
-          <Link
-            href={`/dashboard/tickets?clientId=${client.id}`}
-            className="min-h-[44px] flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm w-full sm:w-auto"
-          >
-            View All Tickets
-          </Link>
-        </div>
-
-        {/* Edit client details (opens modal) */}
-        <div className="mt-6 pt-6 border-t border-gray-100">
-          <EditClientDetailsModal
-            client={{
-              id: client.id,
-              name: client.name,
-              email: client.email,
-              company: client.company,
-              phone: client.phone,
-              websiteUrl: client.websiteUrl,
-              cedula: client.cedula,
-              rnc: client.rnc,
-              notes: client.notes,
-              status: client.status,
-            }}
-            updateClient={updateClient}
-          />
         </div>
       </div>
 
-      {/* Admin credentials */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Admin credentials</h2>
-        <p className="text-sm text-gray-500 mb-4">
-          Store client admin panel / cPanel / FTP credentials. Values are encrypted. Decrypt from Support Credentials when needed.
-        </p>
-        {client.supportCredentials.length > 0 ? (
-          <ClientCredentials
-            credentials={client.supportCredentials.map((c) => ({ id: c.id, label: c.label }))}
-            clientId={client.id}
-            updateCredential={updateCredential}
-            deleteCredential={deleteCredential}
-          />
-        ) : (
-          <p className="text-gray-500 text-sm mb-4">No credentials yet.</p>
-        )}
-        <form action={createCredential} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg">
-          <input type="hidden" name="clientId" value={client.id} />
-          <div>
-            <label className="block text-xs text-gray-500 uppercase mb-1">Label *</label>
-            <input
-              name="label"
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="e.g. Admin panel, cPanel"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-500 uppercase mb-1">Value (password / URL) *</label>
-            <input
-              type="password"
-              name="value"
-              required
-              autoComplete="new-password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="Encrypted at rest"
-            />
-          </div>
-          <button
-            type="submit"
-            className="min-h-[44px] sm:col-span-2 px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
-          >
-            Add credential
-          </button>
-        </form>
-      </div>
-
+      {/* 1 col mobile → 2 col md → 3 col xl; hero stays full width above */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
       {/* Contacts */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Contacts</h2>
+      <div className="dashboard-card p-5 sm:p-6">
+        <h2 className="dashboard-section-title text-lg mb-1">Contacts</h2>
         {client.contacts.length > 0 ? (
           <ClientContacts
             contacts={client.contacts}
@@ -332,90 +387,36 @@ export default async function ClientDetailPage({
             deleteClientContact={deleteClientContact}
           />
         ) : (
-          <p className="text-gray-500 text-sm mb-4">No additional contacts yet.</p>
+          <p className="text-[#8A8F98] text-sm mb-5">No additional contacts yet.</p>
         )}
-        <form
-          action={createClientContact}
-          className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg"
-        >
-          <input type="hidden" name="clientId" value={client.id} />
-          <div className="sm:col-span-2">
-            <label className="block text-xs text-gray-500 uppercase mb-1">
-              Name *
-            </label>
-            <input
-              name="name"
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="Contact name"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-500 uppercase mb-1">
-              Title
-            </label>
-            <input
-              name="title"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="e.g. Admin"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-500 uppercase mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="email@example.com"
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="block text-xs text-gray-500 uppercase mb-1">
-              Phone
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="+1 809..."
-            />
-          </div>
-          <button
-            type="submit"
-            className="min-h-[44px] sm:col-span-2 w-full sm:w-auto px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
-          >
-            Add Contact
-          </button>
-        </form>
+        <AddContactForm clientId={client.id} createClientContact={createClientContact} />
       </div>
 
       {/* Subscriptions */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Subscriptions</h2>
+      <div className="dashboard-card p-5 sm:p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="dashboard-section-title text-lg">Subscriptions</h2>
         </div>
 
         {/* Add subscription form */}
         {services.length === 0 && (
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-[#8A8F98] mb-5">
             No active services in the catalog. Add services in Settings to offer subscriptions.
           </p>
         )}
         {services.length > 0 && (
-          <details className="mb-6">
-            <summary className="cursor-pointer text-sm font-medium text-[#1C6ED5] hover:underline list-none">
+          <details className="mb-6 group">
+            <summary className="cursor-pointer text-sm font-semibold text-[#1C6ED5] hover:text-[#1559B3] list-none py-1 transition-colors">
               + Add Subscription
             </summary>
-            <form action={createSubscription} className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <form action={createSubscription} className="mt-4 p-4 sm:p-5 rounded-xl bg-[#0B132B]/[0.03] border border-[#0B132B]/[0.06] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <input type="hidden" name="clientId" value={client.id} />
               <div>
-                <label className="block text-xs text-gray-500 uppercase mb-1">Service *</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">Service *</label>
                 <select
                   name="serviceId"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 >
                   <option value="">Select service</option>
                   {services.map((svc) => (
@@ -429,7 +430,7 @@ export default async function ClientDetailPage({
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-gray-500 uppercase mb-1">Amount *</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">Amount *</label>
                 <input
                   type="number"
                   name="amount"
@@ -437,24 +438,24 @@ export default async function ClientDetailPage({
                   min="0"
                   step="0.01"
                   placeholder="0.00"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 uppercase mb-1">Currency</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">Currency</label>
                 <select
                   name="currency"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 >
                   <option value="DOP">DOP (RD$)</option>
                   <option value="USD">USD ($)</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-gray-500 uppercase mb-1">Billing cycle</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">Billing cycle</label>
                 <select
                   name="billingCycle"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 >
                   <option value="monthly">Monthly</option>
                   <option value="quarterly">Quarterly</option>
@@ -463,19 +464,19 @@ export default async function ClientDetailPage({
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-gray-500 uppercase mb-1">Start date *</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">Start date *</label>
                 <input
                   type="date"
                   name="startDate"
                   required
                   defaultValue={new Date().toISOString().slice(0, 10)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 />
               </div>
               <div className="flex items-end">
                 <button
                   type="submit"
-                  className="min-h-[44px] w-full sm:w-auto px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
+                  className="min-h-[44px] w-full sm:w-auto px-4 py-2.5 bg-[#1C6ED5] text-white text-sm rounded-xl font-medium shadow-sm hover:bg-[#1559B3] hover:shadow transition-all"
                 >
                   Add subscription
                 </button>
@@ -503,67 +504,77 @@ export default async function ClientDetailPage({
             deleteSubscription={deleteSubscription}
           />
         ) : (
-          <p className="text-gray-500 text-sm py-4 text-center">
+          <p className="text-[#8A8F98] text-sm py-6 text-center">
             No subscriptions yet
           </p>
         )}
       </div>
 
+      {/* Single charges */}
+      <div className="dashboard-card p-5 sm:p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="dashboard-section-title text-lg">Single charges</h2>
+        </div>
+        <p className="text-sm text-[#8A8F98] mb-5">
+          One-time charges (setup fees, migrations, one-off projects).
+        </p>
+        <div className="mb-5">
+          <AddSingleChargeForm clientId={client.id} createSingleCharge={createSingleCharge} />
+        </div>
+        {client.singleCharges.length > 0 ? (
+          <ClientSingleCharges
+            charges={client.singleCharges.map((c) => ({
+              id: c.id,
+              description: c.description,
+              amount: c.amount,
+              currency: c.currency,
+              chargedAt: c.chargedAt,
+              status: c.status,
+              notes: c.notes,
+            }))}
+            clientId={client.id}
+            updateSingleCharge={updateSingleCharge}
+            deleteSingleCharge={deleteSingleCharge}
+          />
+        ) : (
+          <p className="text-[#8A8F98] text-sm py-6 text-center">
+            No single charges yet
+          </p>
+        )}
+      </div>
+
+      {/* Admin credentials */}
+      <div className="dashboard-card p-5 sm:p-6">
+        <h2 className="dashboard-section-title text-lg mb-1">Admin credentials</h2>
+        <p className="text-sm text-[#8A8F98] mb-5">
+          Store client admin panel / cPanel / FTP credentials. Values are encrypted. Decrypt from Support Credentials when needed.
+        </p>
+        {client.supportCredentials.length > 0 ? (
+          <ClientCredentials
+            credentials={client.supportCredentials.map((c) => ({ id: c.id, label: c.label }))}
+            clientId={client.id}
+            updateCredential={updateCredential}
+            deleteCredential={deleteCredential}
+          />
+        ) : (
+          <p className="text-[#8A8F98] text-sm mb-4">No credentials yet.</p>
+        )}
+        <AddCredentialForm clientId={client.id} createCredential={createCredential} />
+      </div>
+
       {/* Recent Tickets */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Tickets</h2>
+      <div className="dashboard-card p-5 sm:p-6 lg:min-h-0">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="dashboard-section-title text-lg">Recent Tickets</h2>
           <Link
             href={`/dashboard/tickets?clientId=${client.id}`}
-            className="text-sm text-[#1C6ED5] hover:underline"
+            className="text-sm font-semibold text-[#1C6ED5] hover:text-[#1559B3] transition-colors"
           >
             View All
           </Link>
         </div>
 
-        {/* Create ticket for this client */}
-        <form action={createTicket} className="mb-6 p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-100">
-          <p className="text-sm font-medium text-gray-700 mb-3">Create support ticket</p>
-          <input type="hidden" name="clientId" value={client.id} />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-            <div className="sm:col-span-2">
-              <label className="block text-xs text-gray-500 uppercase mb-1">Subject *</label>
-              <input
-                name="subject"
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-                placeholder="Brief description of the issue"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-500 uppercase mb-1">Priority</label>
-              <select
-                name="priority"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5] min-h-[44px]"
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="urgent">Urgent</option>
-              </select>
-            </div>
-          </div>
-          <div className="mb-3">
-            <label className="block text-xs text-gray-500 uppercase mb-1">Initial message (optional)</label>
-            <textarea
-              name="content"
-              rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="Add details..."
-            />
-          </div>
-          <button
-            type="submit"
-            className="min-h-[44px] w-full sm:w-auto px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
-          >
-            Create ticket
-          </button>
-        </form>
+        <AddTicketForm clientId={client.id} createTicket={createTicket} />
 
         {client.tickets.length > 0 ? (
           <div className="space-y-2">
@@ -571,11 +582,11 @@ export default async function ClientDetailPage({
               <Link
                 key={ticket.id}
                 href={`/dashboard/tickets/${ticket.id}`}
-                className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition"
+                className="flex items-center justify-between p-3.5 rounded-xl border border-[#0B132B]/[0.06] hover:bg-[#1C6ED5]/[0.05] hover:border-[#1C6ED5]/20 transition-all"
               >
                 <div>
-                  <p className="font-medium text-gray-900">{ticket.subject}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="font-semibold text-[#0B132B]">{ticket.subject}</p>
+                  <p className="text-xs text-[#8A8F98] mt-0.5">
                     {ticket.createdAt.toLocaleDateString()}
                   </p>
                 </div>
@@ -584,14 +595,15 @@ export default async function ClientDetailPage({
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 text-sm py-4 text-center">
+          <p className="text-[#8A8F98] text-sm py-6 text-center">
             No tickets yet
           </p>
         )}
       </div>
+      </div>
 
       {/* Metadata */}
-      <div className="mt-6 text-xs text-gray-400">
+      <div className="mt-6 text-xs text-[#8A8F98]/80">
         <p>Created: {client.createdAt.toLocaleString()}</p>
         <p>Updated: {client.updatedAt.toLocaleString()}</p>
         <p>ID: {client.id}</p>
@@ -617,6 +629,22 @@ function formatDevStage(stage: string): string {
 }
 
 /**
+ * Tailwind classes for project stage pill (bg + text) for color-coding.
+ */
+function getProjectStageStyles(stage: string): string {
+  const styles: Record<string, string> = {
+    discovery: "bg-blue-500/12 text-blue-700",
+    design: "bg-violet-500/12 text-violet-700",
+    development: "bg-[#1C6ED5]/12 text-[#1C6ED5]",
+    qa: "bg-amber-500/12 text-amber-700",
+    deployment: "bg-teal-500/12 text-teal-700",
+    completed: "bg-emerald-500/12 text-emerald-700",
+    on_hold: "bg-[#8A8F98]/20 text-[#8A8F98]",
+  };
+  return styles[stage] ?? "bg-[#0B132B]/10 text-[#0B132B]/80";
+}
+
+/**
  * Masks Cedula for display: only last 4 characters visible (e.g. ••••••••••••8901).
  */
 function maskCedula(cedula: string): string {
@@ -630,14 +658,14 @@ function maskCedula(cedula: string): string {
  */
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    active: "bg-green-100 text-green-700",
-    inactive: "bg-yellow-100 text-yellow-700",
-    churned: "bg-red-100 text-red-700",
+    active: "bg-emerald-500/12 text-emerald-700",
+    inactive: "bg-amber-500/12 text-amber-700",
+    churned: "bg-red-500/12 text-red-700",
   };
 
   return (
     <span
-      className={`px-3 py-1 rounded-full text-sm font-medium ${styles[status] || styles.active}`}
+      className={`inline-flex px-3 py-1.5 rounded-full text-sm font-semibold ${styles[status] || styles.active}`}
     >
       {status}
     </span>
@@ -649,16 +677,16 @@ function StatusBadge({ status }: { status: string }) {
  */
 function TicketStatus({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    open: "bg-blue-100 text-blue-700",
-    in_progress: "bg-purple-100 text-purple-700",
-    waiting: "bg-yellow-100 text-yellow-700",
-    resolved: "bg-green-100 text-green-700",
-    closed: "bg-gray-100 text-gray-500",
+    open: "bg-[#1C6ED5]/12 text-[#1C6ED5]",
+    in_progress: "bg-purple-500/12 text-purple-700",
+    waiting: "bg-amber-500/12 text-amber-700",
+    resolved: "bg-emerald-500/12 text-emerald-700",
+    closed: "bg-[#8A8F98]/20 text-[#8A8F98]",
   };
 
   return (
     <span
-      className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || styles.open}`}
+      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${styles[status] || styles.open}`}
     >
       {status.replace("_", " ")}
     </span>

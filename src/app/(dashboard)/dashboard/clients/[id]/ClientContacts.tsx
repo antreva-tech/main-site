@@ -32,36 +32,49 @@ export function ClientContacts({
 
   return (
     <>
-      <ul className="space-y-3 mb-4">
+      <ul className="space-y-3 mb-5">
         {contacts.map((c) => (
           <li
             key={c.id}
-            className="flex items-center justify-between gap-4 p-3 bg-gray-50 rounded-lg"
+            className="flex items-center justify-between gap-4 p-4 rounded-xl border border-[#0B132B]/[0.08] bg-white/80 hover:bg-white hover:border-[#1C6ED5]/20 transition-all duration-200"
           >
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-gray-900">{c.name}</p>
-              {c.title && <p className="text-xs text-gray-500">{c.title}</p>}
-              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm">
+              <p className="font-semibold text-[#0B132B]">{c.name}</p>
+              {c.title && <p className="text-xs text-[#8A8F98] mt-0.5">{c.title}</p>}
+              <div className="flex flex-wrap gap-2 mt-2">
                 {c.email && (
                   <a
                     href={`mailto:${c.email}`}
-                    className="text-[#1C6ED5] hover:underline truncate max-w-[200px] inline-block"
                     title={c.email}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 bg-[#1C6ED5]/[0.08] text-[#1C6ED5] hover:bg-[#1C6ED5]/15 hover:border-[#1C6ED5]/50 transition-all"
                   >
-                    {c.email}
+                    <span aria-hidden>✉️</span> Email
                   </a>
                 )}
                 {c.phone && (
-                  <a href={`tel:${c.phone}`} className="text-[#1C6ED5] hover:underline">
-                    {c.phone}
-                  </a>
+                  <>
+                    <a
+                      href={`tel:${c.phone}`}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-violet-500/30 bg-violet-500/[0.08] text-violet-700 hover:bg-violet-500/15 hover:border-violet-500/50 transition-all"
+                    >
+                      <span aria-hidden>📞</span> Call
+                    </a>
+                    <a
+                      href={`https://wa.me/${c.phone.replace(/\D/g, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-[#25D366]/40 bg-[#25D366]/[0.12] text-[#128C7E] hover:bg-[#25D366]/20 hover:border-[#25D366]/60 transition-all"
+                    >
+                      <span aria-hidden>💬</span> WhatsApp
+                    </a>
+                  </>
                 )}
               </div>
             </div>
             <button
               type="button"
               onClick={() => setEditingContact(c)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-[#0B132B]/[0.12] bg-white text-[#0B132B] hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 transition-all"
             >
               Edit
             </button>

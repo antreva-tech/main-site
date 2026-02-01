@@ -6,6 +6,7 @@
  */
 
 import { useActionState, useState } from "react";
+import { PASSWORD_REQUIREMENTS } from "@/lib/passwordPolicy";
 import { EditModal } from "../../components/EditModal";
 
 type UserRow = {
@@ -58,19 +59,19 @@ export function UserManagementTable({ users, roles, updateUser, resetUserPasswor
       {/* Desktop: table */}
       <div className="hidden md:block bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Login</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">MFA</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+          <thead>
+            <tr className="bg-[#0B132B]">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">User</th>
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">Role</th>
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">Last Login</th>
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">MFA</th>
+              <th className="px-6 py-3.5 text-right text-xs font-semibold text-white/90 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100/80">
             {users.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
+              <tr key={user.id} className="hover:bg-[#1C6ED5]/[0.06] transition-colors duration-150">
                 <td className="px-6 py-4">
                   <p className="font-medium text-gray-900">{user.name}</p>
                   <p className="text-sm text-gray-500">{user.email}</p>
@@ -83,7 +84,7 @@ export function UserManagementTable({ users, roles, updateUser, resetUserPasswor
                   <StatusBadge status={user.status} />
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-600">
-                  {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : "Never"}
+                  {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString("en-US") : "Never"}
                 </td>
                 <td className="px-6 py-4">
                   {user.mfaSecret ? (
@@ -127,7 +128,7 @@ export function UserManagementTable({ users, roles, updateUser, resetUserPasswor
               <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center gap-3 text-sm">
                 <span className="px-2 py-1 bg-gray-100 rounded capitalize">{user.role.name}</span>
                 <span className="text-gray-500">
-                  {user.lastLoginAt ? `Last: ${new Date(user.lastLoginAt).toLocaleDateString()}` : "Never logged in"}
+                  {user.lastLoginAt ? `Last: ${new Date(user.lastLoginAt).toLocaleDateString("en-US")}` : "Never logged in"}
                 </span>
                 {user.mfaSecret ? (
                   <span className="text-green-600">MFA On</span>
@@ -262,6 +263,7 @@ export function UserManagementTable({ users, roles, updateUser, resetUserPasswor
                       autoComplete="new-password"
                       className="w-full min-w-0 px-2.5 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
                       placeholder="Min 12 characters"
+                      title={PASSWORD_REQUIREMENTS}
                     />
                   </div>
                   <div className="min-w-0">

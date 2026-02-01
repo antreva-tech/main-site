@@ -1,25 +1,50 @@
 /**
  * Dashboard Overview Page for Antreva CRM
- * Displays key metrics and recent activity. Uses locale cookie for translations.
+ * Role-aware: shows only KPIs and list widgets the user has permission to see.
+ * Uses locale cookie for translations; quick actions (e.g. Create Lead) when write permission exists.
  */
 
-import React, { Suspense, Children } from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/auth";
 import { getTranslations } from "@/i18n";
 import type { Translations } from "@/i18n";
+import {
+  allowedKpis,
+  allowedLists,
+  canShowListAction,
+} from "./overview/overviewConfig";
+import {
+  StatCard,
+  StatCardSkeleton,
+  ListCard,
+  ListSkeleton,
+  PriorityBadge,
+  formatCurrency,
+  formatDate,
+} from "./overview/OverviewComponents";
+import { RecentLeadsWithModal } from "./overview/RecentLeadsWithModal";
+import type { LeadRow } from "./pipeline/PipelineBoard";
 
 const LOCALE_COOKIE = "locale";
 
 /**
- * Dashboard overview page with parallel-loaded widgets.
+ * Dashboard overview: session-driven widget visibility (RBAC) and optional quick actions.
  */
 export default async function DashboardPage() {
+  const session = await getSession();
+  const permissions = session?.permissions ?? [];
+
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get(LOCALE_COOKIE)?.value;
   const locale = localeCookie === "en" || localeCookie === "es" ? localeCookie : "es";
   const t = getTranslations(locale);
+
+  const kpiKeys = allowedKpis(permissions);
+  const listKeys = allowedLists(permissions);
+  const listCols = Math.min(listKeys.length, 3) || 1;
 
   return (
     <div>
@@ -27,44 +52,83 @@ export default async function DashboardPage() {
         {t.dashboard.overview.title}
       </h1>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Suspense fallback={<StatCardSkeleton />}>
-          <PipelineStats t={t} />
-        </Suspense>
-        <Suspense fallback={<StatCardSkeleton />}>
-          <ClientStats t={t} />
-        </Suspense>
-        <Suspense fallback={<StatCardSkeleton />}>
-          <PaymentStats t={t} />
-        </Suspense>
-        <Suspense fallback={<StatCardSkeleton />}>
-          <TicketStats t={t} />
-        </Suspense>
-      </div>
+      {/* KPI cards: only those the user can read */}
+      {kpiKeys.length > 0 && (
+        <div
+          className={`grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 ${kpiKeys.length === 2 ? "lg:grid-cols-2" : ""} ${kpiKeys.length === 3 ? "lg:grid-cols-3" : ""} ${kpiKeys.length === 4 ? "lg:grid-cols-4" : ""}`}
+        >
+          {kpiKeys.includes("pipeline") && (
+            <Suspense fallback={<StatCardSkeleton />}>
+              <PipelineStats t={t} />
+            </Suspense>
+          )}
+          {kpiKeys.includes("clients") && (
+            <Suspense fallback={<StatCardSkeleton />}>
+              <ClientStats t={t} />
+            </Suspense>
+          )}
+          {kpiKeys.includes("payments") && (
+            <Suspense fallback={<StatCardSkeleton />}>
+              <PaymentStats t={t} />
+            </Suspense>
+          )}
+          {kpiKeys.includes("tickets") && (
+            <Suspense fallback={<StatCardSkeleton />}>
+              <TicketStats t={t} />
+            </Suspense>
+          )}
+        </div>
+      )}
 
-      {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Suspense fallback={<ListSkeleton title={t.dashboard.overview.recentLeads} />}>
-          <RecentLeads t={t} />
-        </Suspense>
-        <Suspense fallback={<ListSkeleton title={t.dashboard.overview.pendingPayments} />}>
-          <PendingPayments t={t} />
-        </Suspense>
-      </div>
+      {/* List widgets: only those the user can read; optional primary action (e.g. Create Lead) */}
+      {listKeys.length > 0 && (
+        <div
+          className={`grid grid-cols-1 gap-6 ${listCols === 2 ? "lg:grid-cols-2" : ""} ${listCols === 3 ? "lg:grid-cols-3" : ""}`}
+        >
+          {listKeys.includes("recentLeads") && (
+            <Suspense fallback={<ListSkeleton title={t.dashboard.overview.recentLeads} />}>
+              <RecentLeads
+                t={t}
+                primaryAction={
+                  canShowListAction("recentLeads", permissions)
+                    ? { label: `+ ${t.dashboard.common.createLead}`, href: "/dashboard/pipeline" }
+                    : undefined
+                }
+              />
+            </Suspense>
+          )}
+          {listKeys.includes("pendingPayments") && (
+            <Suspense fallback={<ListSkeleton title={t.dashboard.overview.pendingPayments} />}>
+              <PendingPayments t={t} />
+            </Suspense>
+          )}
+          {listKeys.includes("openTickets") && (
+            <Suspense fallback={<ListSkeleton title={t.dashboard.overview.openTickets} />}>
+              <OpenTickets t={t} />
+            </Suspense>
+          )}
+        </div>
+      )}
+
+      {/* No widgets: minimal state (e.g. role with no read permissions) */}
+      {kpiKeys.length === 0 && listKeys.length === 0 && (
+        <p className="text-gray-500 text-sm py-8">
+          {t.dashboard.overview.noModulesForRole}
+        </p>
+      )}
     </div>
   );
 }
 
-/**
- * Pipeline statistics widget.
- */
+// =============================================================================
+// KPI WIDGETS (async, permission-filtered by parent)
+// =============================================================================
+
 async function PipelineStats({ t }: { t: Translations }) {
   const counts = await prisma.lead.groupBy({
     by: ["stage"],
     _count: { id: true },
   });
-
   const total = counts.reduce((sum, c) => sum + c._count.id, 0);
   const active = counts
     .filter((c) => !["won", "lost"].includes(c.stage))
@@ -82,9 +146,6 @@ async function PipelineStats({ t }: { t: Translations }) {
   );
 }
 
-/**
- * Client statistics widget.
- */
 async function ClientStats({ t }: { t: Translations }) {
   const [active, thisMonth] = await Promise.all([
     prisma.client.count({ where: { status: "active" } }),
@@ -109,26 +170,19 @@ async function ClientStats({ t }: { t: Translations }) {
   );
 }
 
-/**
- * Payment statistics widget.
- */
 async function PaymentStats({ t }: { t: Translations }) {
   const now = new Date();
   const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
   const [overdue, dueThisWeek, pendingConfirmation] = await Promise.all([
-    prisma.paymentSchedule.count({
-      where: { status: "overdue" },
-    }),
+    prisma.paymentSchedule.count({ where: { status: "overdue" } }),
     prisma.paymentSchedule.count({
       where: {
         status: "pending",
         dueDate: { gte: now, lte: weekFromNow },
       },
     }),
-    prisma.payment.count({
-      where: { status: "pending_confirmation" },
-    }),
+    prisma.payment.count({ where: { status: "pending_confirmation" } }),
   ]);
 
   return (
@@ -144,19 +198,14 @@ async function PaymentStats({ t }: { t: Translations }) {
   );
 }
 
-/**
- * Ticket statistics widget.
- */
 async function TicketStats({ t }: { t: Translations }) {
   const counts = await prisma.ticket.groupBy({
     by: ["status"],
     _count: { id: true },
   });
-
   const open = counts
     .filter((c) => ["open", "in_progress", "waiting"].includes(c.status))
     .reduce((sum, c) => sum + c._count.id, 0);
-  
   const urgent = await prisma.ticket.count({
     where: { priority: "urgent", status: { in: ["open", "in_progress"] } },
   });
@@ -166,7 +215,11 @@ async function TicketStats({ t }: { t: Translations }) {
       title={t.dashboard.overview.tickets}
       value={open}
       label={t.dashboard.overview.open}
-      detail={urgent > 0 ? `${urgent} ${t.dashboard.overview.urgent}` : t.dashboard.overview.allUnderControl}
+      detail={
+        urgent > 0
+          ? `${urgent} ${t.dashboard.overview.urgent}`
+          : t.dashboard.overview.allUnderControl
+      }
       href="/dashboard/tickets"
       color="purple"
       alert={urgent > 0}
@@ -174,10 +227,54 @@ async function TicketStats({ t }: { t: Translations }) {
   );
 }
 
+// =============================================================================
+// LIST WIDGETS (async, permission-filtered by parent)
+// =============================================================================
+
 /**
- * Recent leads list widget.
+ * Maps DB lead to LeadRow (serialized for client; same shape as pipeline).
  */
-async function RecentLeads({ t }: { t: Translations }) {
+function toLeadRow(
+  l: {
+    id: string;
+    name: string;
+    company: string | null;
+    email: string | null;
+    phone: string | null;
+    stage: string;
+    source: string;
+    sourceOther: string | null;
+    notes: string | null;
+    lostReason: string | null;
+    expectedValue: unknown;
+    createdAt: Date;
+    convertedClientId: string | null;
+  }
+): LeadRow {
+  return {
+    id: l.id,
+    name: l.name,
+    company: l.company,
+    email: l.email,
+    phone: l.phone,
+    stage: l.stage as LeadRow["stage"],
+    source: l.source,
+    sourceOther: l.sourceOther,
+    notes: l.notes,
+    lostReason: l.lostReason,
+    expectedValue: l.expectedValue != null ? Number(l.expectedValue) : null,
+    createdAt: l.createdAt.toISOString(),
+    convertedClientId: l.convertedClientId,
+  };
+}
+
+async function RecentLeads({
+  t,
+  primaryAction,
+}: {
+  t: Translations;
+  primaryAction?: { label: string; href: string };
+}) {
   const leads = await prisma.lead.findMany({
     take: 5,
     orderBy: { createdAt: "desc" },
@@ -185,38 +282,35 @@ async function RecentLeads({ t }: { t: Translations }) {
       id: true,
       name: true,
       company: true,
+      email: true,
+      phone: true,
       stage: true,
+      source: true,
+      sourceOther: true,
+      notes: true,
+      lostReason: true,
+      expectedValue: true,
       createdAt: true,
+      convertedClientId: true,
     },
   });
 
+  const rows: LeadRow[] = leads.map(toLeadRow);
+  const stageLabels = t.dashboard.pipeline.stages as Record<string, string>;
+
   return (
-    <ListCard
+    <RecentLeadsWithModal
+      leads={rows}
       title={t.dashboard.overview.recentLeads}
       href="/dashboard/pipeline"
       emptyMessage={t.dashboard.overview.noLeadsYet}
       viewAllLabel={t.dashboard.common.viewAll}
-    >
-      {leads.map((lead) => (
-        <Link
-          key={lead.id}
-          href={`/dashboard/pipeline/${lead.id}`}
-          className="flex items-center justify-between py-3 hover:bg-gray-50 -mx-4 px-4 transition"
-        >
-          <div>
-            <p className="font-medium text-gray-900">{lead.name}</p>
-            <p className="text-sm text-gray-500">{lead.company || "—"}</p>
-          </div>
-          <StageBadge stage={lead.stage} label={t.dashboard.pipeline.stages[lead.stage as keyof typeof t.dashboard.pipeline.stages]} />
-        </Link>
-      ))}
-    </ListCard>
+      primaryAction={primaryAction}
+      stageLabels={stageLabels}
+    />
   );
 }
 
-/**
- * Pending payments list widget.
- */
 async function PendingPayments({ t }: { t: Translations }) {
   const payments = await prisma.payment.findMany({
     where: { status: "pending_confirmation" },
@@ -258,9 +352,7 @@ async function PendingPayments({ t }: { t: Translations }) {
             <p className="font-medium text-gray-900">
               {formatCurrency(Number(payment.amount), payment.currency)}
             </p>
-            <p className="text-xs text-gray-500">
-              {formatDate(payment.paidAt)}
-            </p>
+            <p className="text-xs text-gray-500">{formatDate(payment.paidAt)}</p>
           </div>
         </Link>
       ))}
@@ -268,169 +360,39 @@ async function PendingPayments({ t }: { t: Translations }) {
   );
 }
 
-// =============================================================================
-// UI COMPONENTS
-// =============================================================================
-
-/**
- * Stat card component.
- */
-function StatCard({
-  title,
-  value,
-  label,
-  detail,
-  href,
-  color,
-  alert,
-}: {
-  title: string;
-  value: number;
-  label: string;
-  detail: string;
-  href: string;
-  color: "blue" | "green" | "yellow" | "purple";
-  alert?: boolean;
-}) {
-  const colors = {
-    blue: "bg-blue-50 text-blue-700 border-blue-200",
-    green: "bg-green-50 text-green-700 border-green-200",
-    yellow: "bg-yellow-50 text-yellow-700 border-yellow-200",
-    purple: "bg-purple-50 text-purple-700 border-purple-200",
-  };
+async function OpenTickets({ t }: { t: Translations }) {
+  const tickets = await prisma.ticket.findMany({
+    where: { status: { in: ["open", "in_progress", "waiting"] } },
+    take: 5,
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      subject: true,
+      priority: true,
+      client: { select: { name: true } },
+    },
+  });
 
   return (
-    <Link
-      href={href}
-      className={`block p-6 rounded-xl border-2 ${colors[color]} hover:shadow-md transition`}
+    <ListCard
+      title={t.dashboard.overview.openTickets}
+      href="/dashboard/tickets"
+      emptyMessage={t.dashboard.overview.noOpenTickets}
+      viewAllLabel={t.dashboard.common.viewAll}
     >
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-medium opacity-80">{title}</h3>
-        {alert && (
-          <span className="inline-flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-        )}
-      </div>
-      <p className="text-3xl font-bold">{value}</p>
-      <p className="text-sm font-medium mt-1">{label}</p>
-      <p className="text-xs opacity-70 mt-1">{detail}</p>
-    </Link>
-  );
-}
-
-/**
- * Stat card skeleton for loading state.
- */
-function StatCardSkeleton() {
-  return (
-    <div className="p-6 rounded-xl border-2 border-gray-200 animate-pulse">
-      <div className="h-4 w-20 bg-gray-200 rounded mb-4" />
-      <div className="h-8 w-16 bg-gray-200 rounded mb-2" />
-      <div className="h-4 w-24 bg-gray-200 rounded mb-1" />
-      <div className="h-3 w-32 bg-gray-200 rounded" />
-    </div>
-  );
-}
-
-/**
- * List card component.
- */
-function ListCard({
-  title,
-  href,
-  emptyMessage,
-  viewAllLabel = "View all",
-  children,
-}: {
-  title: string;
-  href: string;
-  emptyMessage: string;
-  viewAllLabel?: string;
-  children: React.ReactNode;
-}) {
-  const hasItems = Children.count(children) > 0;
-
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+      {tickets.map((ticket) => (
         <Link
-          href={href}
-          className="text-sm text-[#1C6ED5] hover:underline"
+          key={ticket.id}
+          href={`/dashboard/tickets/${ticket.id}`}
+          className="flex items-center justify-between py-3 hover:bg-gray-50 -mx-4 px-4 transition"
         >
-          {viewAllLabel}
-        </Link>
-      </div>
-      {hasItems ? (
-        <div className="divide-y divide-gray-100">{children}</div>
-      ) : (
-        <p className="text-gray-500 text-sm py-4 text-center">{emptyMessage}</p>
-      )}
-    </div>
-  );
-}
-
-/**
- * List skeleton for loading state.
- */
-function ListSkeleton({ title }: { title: string }) {
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 animate-pulse">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-      </div>
-      <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="flex items-center justify-between py-2">
-            <div>
-              <div className="h-4 w-32 bg-gray-200 rounded mb-1" />
-              <div className="h-3 w-24 bg-gray-200 rounded" />
-            </div>
-            <div className="h-6 w-16 bg-gray-200 rounded" />
+          <div>
+            <p className="font-medium text-gray-900">{ticket.subject}</p>
+            <p className="text-sm text-gray-500">{ticket.client.name}</p>
           </div>
-        ))}
-      </div>
-    </div>
+          <PriorityBadge priority={ticket.priority} />
+        </Link>
+      ))}
+    </ListCard>
   );
-}
-
-/**
- * Stage badge component.
- */
-function StageBadge({ stage, label }: { stage: string; label?: string }) {
-  const styles: Record<string, string> = {
-    new: "bg-blue-100 text-blue-700",
-    qualified: "bg-cyan-100 text-cyan-700",
-    proposal: "bg-purple-100 text-purple-700",
-    negotiation: "bg-yellow-100 text-yellow-700",
-    won: "bg-green-100 text-green-700",
-    lost: "bg-gray-100 text-gray-500",
-  };
-
-  return (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[stage] || styles.new}`}>
-      {label ?? stage}
-    </span>
-  );
-}
-
-// =============================================================================
-// HELPERS
-// =============================================================================
-
-/**
- * Formats a number as currency.
- */
-function formatCurrency(amount: number, currency: string): string {
-  const symbol = currency === "DOP" ? "RD$" : "$";
-  return `${symbol}${amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
-}
-
-/**
- * Formats a date for display.
- */
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-  }).format(date);
 }

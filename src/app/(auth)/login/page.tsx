@@ -41,9 +41,9 @@ function LoginForm() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#0B132B] px-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
+    <main className="min-h-screen flex items-center justify-center bg-[#0B132B] bg-grid-pattern px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 sm:p-10">
+        {/* Logo — on white for best contrast with brand asset */}
         <div className="text-center mb-8">
           <Image
             src="/Antreva Tech Transparente.png"
@@ -53,7 +53,7 @@ function LoginForm() {
             className="mx-auto"
             priority
           />
-          <h1 className="mt-4 text-2xl font-semibold text-white">
+          <h1 className="mt-4 text-2xl font-semibold text-[#0B132B]">
             CRM Login
           </h1>
           <p className="mt-2 text-[#8A8F98]">
@@ -62,18 +62,18 @@ function LoginForm() {
         </div>
 
         {/* Login Form */}
-        <form action={formAction} className="bg-white rounded-lg p-8 shadow-xl">
+        <form action={formAction} className="space-y-4">
           <input type="hidden" name="returnUrl" value={returnUrl} />
 
           {/* Error Message */}
           {state.error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
               {state.error}
             </div>
           )}
 
           {/* Email */}
-          <div className="mb-4">
+          <div>
             <label
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 mb-1"
@@ -92,7 +92,7 @@ function LoginForm() {
           </div>
 
           {/* Password */}
-          <div className="mb-6">
+          <div>
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-700 mb-1"
@@ -145,14 +145,14 @@ export default function LoginPage() {
  */
 function LoginPageSkeleton() {
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#0B132B] px-4">
-      <div className="w-full max-w-md animate-pulse">
-        <div className="h-12 bg-gray-700 rounded mb-8" />
-        <div className="bg-white rounded-lg p-8 shadow-xl space-y-4">
-          <div className="h-10 bg-gray-200 rounded" />
-          <div className="h-10 bg-gray-200 rounded" />
-          <div className="h-12 bg-gray-200 rounded" />
-        </div>
+    <main className="min-h-screen flex items-center justify-center bg-[#0B132B] bg-grid-pattern px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 sm:p-10 animate-pulse">
+        <div className="h-12 bg-gray-200 rounded mx-auto max-w-[200px] mb-8" />
+        <div className="h-6 bg-gray-200 rounded w-32 mx-auto mb-2" />
+        <div className="h-4 bg-gray-100 rounded w-48 mx-auto mb-8" />
+        <div className="h-10 bg-gray-200 rounded mb-4" />
+        <div className="h-10 bg-gray-200 rounded mb-6" />
+        <div className="h-12 bg-gray-200 rounded" />
       </div>
     </main>
   );
@@ -175,9 +175,9 @@ function MfaForm({
   isPending: boolean;
 }) {
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#0B132B] px-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
+    <main className="min-h-screen flex items-center justify-center bg-[#0B132B] bg-grid-pattern px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 sm:p-10">
+        {/* Logo — on white for best contrast with brand asset */}
         <div className="text-center mb-8">
           <Image
             src="/Antreva Tech Transparente.png"
@@ -187,7 +187,7 @@ function MfaForm({
             className="mx-auto"
             priority
           />
-          <h1 className="mt-4 text-2xl font-semibold text-white">
+          <h1 className="mt-4 text-2xl font-semibold text-[#0B132B]">
             Two-Factor Authentication
           </h1>
           <p className="mt-2 text-[#8A8F98]">
@@ -196,19 +196,19 @@ function MfaForm({
         </div>
 
         {/* MFA Form */}
-        <form action={formAction} className="bg-white rounded-lg p-8 shadow-xl">
+        <form action={formAction} className="space-y-4">
           <input type="hidden" name="userId" value={userId || ""} />
           <input type="hidden" name="returnUrl" value={returnUrl} />
 
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
               {error}
             </div>
           )}
 
           {/* Code Input */}
-          <div className="mb-6">
+          <div>
             <label
               htmlFor="code"
               className="block text-sm font-medium text-gray-700 mb-1"

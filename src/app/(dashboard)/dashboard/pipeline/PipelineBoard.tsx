@@ -23,6 +23,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { LeadStage } from "@prisma/client";
 import { EditLeadModal } from "./EditLeadModal";
 import { LeadViewModal } from "./LeadViewModal";
+import { ConvertToClientModal } from "./ConvertToClientModal";
 import { updateLeadStage } from "./actions";
 
 /** Stage config (label + accent color). */
@@ -42,6 +43,8 @@ export type LeadRow = {
   lostReason: string | null;
   expectedValue: number | null;
   createdAt: string;
+  /** Set when lead is won and converted to client; used to lock stage and show View client. */
+  convertedClientId: string | null;
 };
 
 type Props = {
@@ -75,7 +78,7 @@ function DroppableColumn({
   );
 }
 
-/** Draggable lead card with handle; click (non-handle) opens view modal. */
+/** Draggable lead card with handle; click (non-handle) opens view modal. Won leads are not draggable. */
 function DraggableLeadCard({
   lead,
   onView,
@@ -83,9 +86,11 @@ function DraggableLeadCard({
   lead: LeadRow;
   onView: () => void;
 }) {
+  const isWon = lead.stage === "won";
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: lead.id,
     data: { leadId: lead.id, currentStage: lead.stage },
+    disabled: isWon,
   });
   return (
     <div
@@ -93,21 +98,23 @@ function DraggableLeadCard({
       className={`bg-white rounded-xl border border-gray-200 overflow-hidden ${isDragging ? "opacity-50 shadow-lg" : "hover:shadow-md hover:border-gray-300"} transition`}
     >
       <div className="flex">
-        <button
-          type="button"
-          aria-label="Drag to move"
-          className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 cursor-grab active:cursor-grabbing touch-none"
-          {...listeners}
-          {...attributes}
-        >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm6-12a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        </button>
+        {!isWon && (
+          <button
+            type="button"
+            aria-label="Drag to move"
+            className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 cursor-grab active:cursor-grabbing touch-none"
+            {...listeners}
+            {...attributes}
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm6-12a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </button>
+        )}
         <button
           type="button"
           onClick={onView}
-          className="flex-1 min-w-0 text-left p-3 pr-2 focus:outline-none focus:ring-2 focus:ring-[#1C6ED5] focus:ring-inset rounded-r-xl"
+          className={`flex-1 min-w-0 text-left p-3 pr-2 focus:outline-none focus:ring-2 focus:ring-[#1C6ED5] focus:ring-inset rounded-r-xl ${isWon ? "rounded-l-xl" : ""}`}
         >
           <h4 className="font-medium text-gray-900 truncate">{lead.name}</h4>
           {lead.company && (
@@ -142,6 +149,7 @@ export function PipelineBoard({ stages, leadsByStage }: Props) {
   const [selectedStage, setSelectedStage] = useState<LeadStage>("new");
   const [leadToView, setLeadToView] = useState<LeadRow | null>(null);
   const [leadToEdit, setLeadToEdit] = useState<LeadRow | null>(null);
+  const [leadToConvert, setLeadToConvert] = useState<LeadRow | null>(null);
   const [activeLead, setActiveLead] = useState<LeadRow | null>(null);
   const leads = leadsByStage[selectedStage] ?? [];
   const stageLabel = stages.find((s) => s.key === selectedStage)?.label ?? selectedStage;
@@ -170,6 +178,14 @@ export function PipelineBoard({ stages, leadsByStage }: Props) {
     const newStage = over.id as LeadStage;
     const isValidStage = stages.some((s) => s.key === newStage);
     if (!leadId || !currentStage || !isValidStage || newStage === currentStage) return;
+    // Won is final: cannot move a won lead.
+    if (currentStage === "won") return;
+    // Moving to Won: open convert modal instead of updating stage.
+    if (newStage === "won") {
+      const lead = allLeads.find((l) => l.id === leadId) ?? null;
+      if (lead) setLeadToConvert(lead);
+      return;
+    }
     await updateLeadStage(leadId, newStage);
     router.refresh();
   };
@@ -303,6 +319,10 @@ export function PipelineBoard({ stages, leadsByStage }: Props) {
               prev ? { ...prev, stage: newStage } : null
             );
           }}
+          onRequestConvert={(lead) => {
+            setLeadToView(null);
+            setLeadToConvert(lead);
+          }}
         />
       )}
       {leadToEdit && (
@@ -310,6 +330,16 @@ export function PipelineBoard({ stages, leadsByStage }: Props) {
           lead={leadToEdit}
           open={true}
           onClose={() => setLeadToEdit(null)}
+        />
+      )}
+      {leadToConvert && (
+        <ConvertToClientModal
+          open={true}
+          onClose={() => setLeadToConvert(null)}
+          leadId={leadToConvert.id}
+          leadName={leadToConvert.name}
+          leadEmail={leadToConvert.email}
+          onSuccess={() => setLeadToConvert(null)}
         />
       )}
     </div>

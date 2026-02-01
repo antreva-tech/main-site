@@ -33,6 +33,14 @@ const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
 /** Cookie name for session token */
 const SESSION_COOKIE = "antreva_session";
 
+// Re-export password policy (client-safe) so server code can import from auth
+export {
+  validatePasswordComplexity,
+  PASSWORD_REQUIREMENTS,
+  PASSWORD_MIN_LENGTH,
+  type PasswordValidationResult,
+} from "./passwordPolicy";
+
 // =============================================================================
 // PASSWORD HASHING
 // =============================================================================

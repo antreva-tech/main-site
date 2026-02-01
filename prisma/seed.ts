@@ -15,7 +15,7 @@ import crypto from "crypto";
 
 const prisma = new PrismaClient();
 
-/** All permissions available in the system */
+/** All permissions available in the system (admin = CEO/CTO only) */
 const ALL_PERMISSIONS = [
   "leads.read",
   "leads.write",
@@ -28,6 +28,7 @@ const ALL_PERMISSIONS = [
   "payments.read",
   "payments.write",
   "users.manage",
+  "roles.manage",
   "audit.read",
 ];
 
@@ -113,8 +114,8 @@ async function main() {
   });
   console.log(`  ✓ Admin role created/updated: ${adminRole.id}\n`);
 
-  // 2. Create CEO user
-  const ceoEmail = process.env.SEED_CEO_EMAIL || "ceo@antreva.com";
+  // 2. Create or update single CEO user (default email: ingramonechavarria@gmail.com)
+  const ceoEmail = process.env.SEED_CEO_EMAIL || "ingramonechavarria@gmail.com";
   const ceoName = process.env.SEED_CEO_NAME || "CEO";
   const ceoTempPassword = generateTempPassword();
   const ceoPasswordHash = await bcrypt.hash(ceoTempPassword, 12);
@@ -136,6 +137,23 @@ async function main() {
       status: "active",
     },
   });
+  // Remove CEO title from any other users (avoid duplicates)
+  const otherCeos = await prisma.user.updateMany({
+    where: { title: "CEO", id: { not: ceoUser.id } },
+    data: { title: null },
+  });
+  if (otherCeos.count > 0) {
+    console.log(`  ✓ Removed CEO title from ${otherCeos.count} duplicate user(s)`);
+  }
+  // Delete legacy CEO account (ceo@antreva.com) so only ingramonechavarria@gmail.com remains
+  if (ceoUser.email !== "ceo@antreva.com") {
+    const deleted = await prisma.user.deleteMany({
+      where: { email: "ceo@antreva.com" },
+    });
+    if (deleted.count > 0) {
+      console.log(`  ✓ Deleted legacy CEO account (ceo@antreva.com)`);
+    }
+  }
   console.log(`  ✓ CEO user: ${ceoUser.email}`);
   console.log(`  ⚠️  Temporary password: ${ceoTempPassword}\n`);
 
@@ -234,21 +252,39 @@ async function main() {
   });
   console.log(`  ✓ Support role: ${supportRole.id}`);
 
-  const readonlyRole = await prisma.role.upsert({
-    where: { name: "readonly" },
+  const developerRole = await prisma.role.upsert({
+    where: { name: "developer" },
     update: {},
     create: {
-      name: "readonly",
+      name: "developer",
       permissions: [
         "leads.read",
         "clients.read",
+        "clients.write",
         "tickets.read",
-        "payments.read",
-        "audit.read",
+        "tickets.write",
+        "credentials.read",
       ],
     },
   });
-  console.log(`  ✓ Readonly role: ${readonlyRole.id}\n`);
+  console.log(`  ✓ Developer role: ${developerRole.id}`);
+
+  const salesRole = await prisma.role.upsert({
+    where: { name: "sales" },
+    update: {},
+    create: {
+      name: "sales",
+      permissions: [
+        "leads.read",
+        "leads.write",
+        "clients.read",
+        "clients.write",
+        "payments.read",
+        "tickets.read",
+      ],
+    },
+  });
+  console.log(`  ✓ Sales role: ${salesRole.id}\n`);
 
   console.log("✅ Seed completed successfully!\n");
   console.log("⚠️  IMPORTANT: Save the temporary passwords above and change them on first login!");

@@ -4,6 +4,7 @@
 
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { FilterLink } from "../components/FilterLink";
 
 /**
  * Clients list page with filters.
@@ -37,18 +38,20 @@ export default async function ClientsPage({
 
   return (
     <div>
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Clients</h1>
+      {/* Header: brand typography, refined CTA */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-[#0B132B] tracking-tight">
+          Clients
+        </h1>
         <Link
           href="/dashboard/clients/new"
-          className="w-full sm:w-auto px-4 py-2.5 bg-[#1C6ED5] text-white rounded-lg hover:bg-[#1559B3] transition text-center"
+          className="w-full sm:w-auto px-5 py-2.5 bg-[#1C6ED5] text-white rounded-xl font-medium shadow-sm hover:bg-[#1559B3] hover:shadow transition-all duration-200 text-center"
         >
           + New Client
         </Link>
       </div>
 
-      {/* Filters */}
+      {/* Filters: pill style, brand active state */}
       <div className="flex flex-wrap gap-2 mb-6">
         <FilterLink href="/dashboard/clients" active={!statusFilter}>
           All
@@ -73,41 +76,46 @@ export default async function ClientsPage({
         </FilterLink>
       </div>
 
-      {/* Desktop: table */}
-      <div className="hidden md:block bg-white rounded-xl border border-gray-200 overflow-hidden">
+      {/* Desktop: premium table — navy header, subtle row hover */}
+      <div className="hidden md:block dashboard-card overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+          <thead>
+            <tr className="bg-[#0B132B]">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
                 Client
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
                 Started
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
                 Subscriptions
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
                 Tickets
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
                 Project
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100/80">
             {clients.map((client) => (
-              <tr key={client.id} className="hover:bg-gray-50">
+              <tr
+                key={client.id}
+                className="hover:bg-[#1C6ED5]/[0.06] transition-colors duration-150"
+              >
                 <td className="px-6 py-4">
                   <Link
                     href={`/dashboard/clients/${client.id}`}
-                    className="hover:text-[#1C6ED5]"
+                    className="group block"
                   >
-                    <p className="font-medium text-gray-900">{client.name}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-semibold text-[#0B132B] group-hover:text-[#1C6ED5] transition-colors">
+                      {client.name}
+                    </p>
+                    <p className="text-sm text-[#8A8F98] mt-0.5">
                       {client.company || client.email}
                     </p>
                   </Link>
@@ -115,29 +123,31 @@ export default async function ClientsPage({
                 <td className="px-6 py-4">
                   <StatusBadge status={client.status} />
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
+                <td className="px-6 py-4 text-sm text-[#0B132B]/80">
                   {client.startedAt.toLocaleDateString()}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
+                <td className="px-6 py-4 text-sm text-[#0B132B]/80">
                   {client._count.subscriptions}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
+                <td className="px-6 py-4 text-sm text-[#0B132B]/80">
                   {client._count.tickets}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
+                <td className="px-6 py-4 text-sm">
                   {client.developmentProject ? (
-                    <span className="capitalize">
-                      {client.developmentProject.stage.replace("_", " ")}
+                    <span
+                      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getProjectStageStyles(client.developmentProject.stage)}`}
+                    >
+                      {formatDevStage(client.developmentProject.stage)}
                     </span>
                   ) : (
-                    <span className="text-gray-400">—</span>
+                    <span className="text-[#8A8F98]">—</span>
                   )}
                 </td>
               </tr>
             ))}
             {clients.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                <td colSpan={6} className="px-6 py-16 text-center text-[#8A8F98]">
                   No clients found
                 </td>
               </tr>
@@ -146,10 +156,10 @@ export default async function ClientsPage({
         </table>
       </div>
 
-      {/* Mobile: card list */}
-      <div className="md:hidden space-y-3">
+      {/* Mobile: premium cards with left accent */}
+      <div className="md:hidden space-y-4">
         {clients.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 px-4 py-12 text-center text-gray-500">
+          <div className="dashboard-card px-6 py-14 text-center text-[#8A8F98]">
             No clients found
           </div>
         ) : (
@@ -157,23 +167,29 @@ export default async function ClientsPage({
             <Link
               key={client.id}
               href={`/dashboard/clients/${client.id}`}
-              className="block bg-white rounded-xl border border-gray-200 p-4 hover:bg-gray-50 transition"
+              className="block dashboard-card dashboard-card-accent p-5 active:scale-[0.99] transition-all duration-150"
             >
-              <div className="flex items-start justify-between gap-2">
+              <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium text-gray-900 truncate">{client.name}</p>
-                  <p className="text-sm text-gray-500 truncate">
+                  <p className="font-semibold text-[#0B132B] truncate">
+                    {client.name}
+                  </p>
+                  <p className="text-sm text-[#8A8F98] truncate mt-0.5">
                     {client.company || client.email}
                   </p>
                 </div>
                 <StatusBadge status={client.status} />
               </div>
-              <div className="mt-2 flex items-center gap-3 text-sm text-gray-600">
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-[#0B132B]/70">
                 <span>Started {client.startedAt.toLocaleDateString()}</span>
                 <span>{client._count.subscriptions} subs</span>
                 <span>{client._count.tickets} tickets</span>
                 {client.developmentProject ? (
-                  <span>Project: {client.developmentProject.stage.replace("_", " ")}</span>
+                  <span
+                    className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getProjectStageStyles(client.developmentProject.stage)}`}
+                  >
+                    {formatDevStage(client.developmentProject.stage)}
+                  </span>
                 ) : null}
               </div>
             </Link>
@@ -185,44 +201,50 @@ export default async function ClientsPage({
 }
 
 /**
- * Filter link component.
+ * Human-readable development stage label.
  */
-function FilterLink({
-  href,
-  active,
-  children,
-}: {
-  href: string;
-  active: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className={`px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm rounded-lg font-medium transition ${
-        active
-          ? "bg-[#1C6ED5] text-white"
-          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-      }`}
-    >
-      {children}
-    </Link>
-  );
+function formatDevStage(stage: string): string {
+  const labels: Record<string, string> = {
+    discovery: "Discovery",
+    design: "Design",
+    development: "Development",
+    qa: "QA",
+    deployment: "Deployment",
+    completed: "Completed",
+    on_hold: "On Hold",
+  };
+  return labels[stage] ?? stage;
 }
 
 /**
- * Status badge component.
+ * Tailwind classes for project stage pill (color-coded).
+ */
+function getProjectStageStyles(stage: string): string {
+  const styles: Record<string, string> = {
+    discovery: "bg-blue-500/12 text-blue-700",
+    design: "bg-violet-500/12 text-violet-700",
+    development: "bg-[#1C6ED5]/12 text-[#1C6ED5]",
+    qa: "bg-amber-500/12 text-amber-700",
+    deployment: "bg-teal-500/12 text-teal-700",
+    completed: "bg-emerald-500/12 text-emerald-700",
+    on_hold: "bg-[#8A8F98]/20 text-[#8A8F98]",
+  };
+  return styles[stage] ?? "bg-[#0B132B]/10 text-[#0B132B]/80";
+}
+
+/**
+ * Status badge component (client status: active, inactive, churned).
  */
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    active: "bg-green-100 text-green-700",
-    inactive: "bg-yellow-100 text-yellow-700",
-    churned: "bg-red-100 text-red-700",
+    active: "bg-emerald-500/12 text-emerald-700",
+    inactive: "bg-amber-500/12 text-amber-700",
+    churned: "bg-red-500/12 text-red-700",
   };
 
   return (
     <span
-      className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || styles.active}`}
+      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${styles[status] || styles.active}`}
     >
       {status}
     </span>

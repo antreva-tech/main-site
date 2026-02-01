@@ -153,6 +153,7 @@ model Client {
   // Relations
   contacts               ClientContact[]
   subscriptions         ClientSubscription[]
+  singleCharges         SingleCharge[]
   supportCredentials    SupportCredential[]
   tickets               Ticket[]
   whatsAppConversations WhatsAppConversation[]
@@ -246,6 +247,30 @@ enum SubscriptionStatus {
   paused
   cancelled
   expired
+}
+
+/// One-time charge per client (e.g. setup fee, migration, one-off project).
+model SingleCharge {
+  id          String             @id @default(cuid())
+  clientId    String
+  client      Client             @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  description String             // e.g. "Setup fee", "Website migration"
+  amount      Decimal            @db.Decimal(12, 2)
+  currency    Currency           @default(DOP)
+  chargedAt   DateTime          @default(now())
+  status      SingleChargeStatus @default(pending)
+  notes       String?            @db.Text
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([clientId])
+  @@index([chargedAt(sort: Desc)])
+}
+
+enum SingleChargeStatus {
+  pending
+  paid
+  cancelled
 }
 
 // =============================================================================
@@ -506,6 +531,7 @@ enum AuditEntityType {
   ticket
   payment
   subscription
+  single_charge
   credential
   whatsapp
   session

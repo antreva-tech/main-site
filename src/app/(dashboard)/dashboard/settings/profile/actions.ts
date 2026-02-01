@@ -6,8 +6,57 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { getSession, hashPassword, verifyPassword, validatePasswordComplexity } from "@/lib/auth";
 import { logAction } from "@/lib/audit";
+
+/** Return type for changePassword when used with useActionState. */
+export type ChangePasswordState = { error?: string } | null;
+
+/**
+ * Changes the current user's password. Expects formData: currentPassword, newPassword, confirmPassword.
+ * Enforces password complexity (min length, upper, lower, number, special char).
+ */
+export async function changePassword(
+  _prevState: ChangePasswordState,
+  formData: FormData
+): Promise<ChangePasswordState> {
+  const session = await getSession();
+  if (!session) return { error: "Not authenticated" };
+
+  const currentPassword = (formData.get("currentPassword") as string)?.trim() ?? "";
+  const newPassword = (formData.get("newPassword") as string)?.trim() ?? "";
+  const confirmPassword = (formData.get("confirmPassword") as string)?.trim() ?? "";
+
+  if (!currentPassword) return { error: "Current password is required" };
+  if (!newPassword) return { error: "New password is required" };
+
+  const complexity = validatePasswordComplexity(newPassword);
+  if (!complexity.valid) return { error: complexity.error };
+  if (newPassword !== confirmPassword) return { error: "Passwords do not match" };
+
+  const user = await prisma.user.findUnique({ where: { id: session.id }, select: { passwordHash: true } });
+  if (!user) return { error: "User not found" };
+
+  const valid = await verifyPassword(currentPassword, user.passwordHash);
+  if (!valid) return { error: "Current password is incorrect" };
+
+  const passwordHash = await hashPassword(newPassword);
+  await prisma.user.update({
+    where: { id: session.id },
+    data: { passwordHash, failedLoginAttempts: 0, lockedUntil: null },
+  });
+
+  await logAction({
+    userId: session.id,
+    action: "update",
+    entityType: "user",
+    entityId: session.id,
+    metadata: { context: { message: "Password changed" } },
+  });
+
+  revalidatePath("/dashboard/settings/profile");
+  return null;
+}
 
 /**
  * Updates the current user's display name.
