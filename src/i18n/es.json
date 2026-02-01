@@ -106,6 +106,7 @@
     "nav": {
       "overview": "Resumen",
       "pipeline": "Pipeline",
+      "development": "Desarrollo",
       "clients": "Clientes",
       "payments": "Pagos",
       "tickets": "Tickets",

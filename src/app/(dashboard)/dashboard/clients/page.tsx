@@ -26,6 +26,9 @@ export default async function ClientsPage({
       email: true,
       status: true,
       startedAt: true,
+      developmentProject: {
+        select: { stage: true },
+      },
       _count: {
         select: { subscriptions: true, tickets: true },
       },
@@ -90,6 +93,9 @@ export default async function ClientsPage({
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Tickets
               </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Project
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -118,11 +124,20 @@ export default async function ClientsPage({
                 <td className="px-6 py-4 text-sm text-gray-600">
                   {client._count.tickets}
                 </td>
+                <td className="px-6 py-4 text-sm text-gray-600">
+                  {client.developmentProject ? (
+                    <span className="capitalize">
+                      {client.developmentProject.stage.replace("_", " ")}
+                    </span>
+                  ) : (
+                    <span className="text-gray-400">—</span>
+                  )}
+                </td>
               </tr>
             ))}
             {clients.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                   No clients found
                 </td>
               </tr>
@@ -157,6 +172,9 @@ export default async function ClientsPage({
                 <span>Started {client.startedAt.toLocaleDateString()}</span>
                 <span>{client._count.subscriptions} subs</span>
                 <span>{client._count.tickets} tickets</span>
+                {client.developmentProject ? (
+                  <span>Project: {client.developmentProject.stage.replace("_", " ")}</span>
+                ) : null}
               </div>
             </Link>
           ))

@@ -5,6 +5,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/auth";
 import { createClientContact, deleteClientContact, updateClientContact, updateClient, createSubscription, updateSubscription, deleteSubscription } from "../actions";
 import { createCredential, updateCredential, deleteCredential } from "@/app/(dashboard)/dashboard/credentials/actions";
 import { createTicket } from "@/app/(dashboard)/dashboard/tickets/actions";
@@ -12,6 +13,7 @@ import { ClientSubscriptions } from "./ClientSubscriptions";
 import { ClientCredentials } from "./ClientCredentials";
 import { ClientContacts } from "./ClientContacts";
 import { EditClientDetailsModal } from "./EditClientDetailsModal";
+import { StartDevelopmentProjectButton } from "./StartDevelopmentProjectButton";
 
 /** Shape of client query result for this page (avoids stale Prisma client types). */
 interface ClientWithRelations {
@@ -44,6 +46,7 @@ interface ClientWithRelations {
   tickets: Array<{ id: string; subject: string; status: string; priority: string; createdAt: Date }>;
   lead: { id: string; source: string } | null;
   supportCredentials: Array<{ id: string; label: string }>;
+  developmentProject: { id: string; stage: string } | null;
   _count: { supportCredentials: number };
 }
 
@@ -57,7 +60,8 @@ export default async function ClientDetailPage({
 }) {
   const { id } = await params;
 
-  const [clientRaw, services] = await Promise.all([
+  const [session, clientRaw, services] = await Promise.all([
+    getSession(),
     prisma.client.findUnique({
       where: { id },
       include: {
@@ -83,6 +87,9 @@ export default async function ClientDetailPage({
         supportCredentials: {
           orderBy: { label: "asc" },
           select: { id: true, label: true },
+        },
+        developmentProject: {
+          select: { id: true, stage: true },
         },
         _count: {
           select: { supportCredentials: true },
@@ -128,6 +135,33 @@ export default async function ClientDetailPage({
           <div className="flex items-center gap-2">
             <StatusBadge status={client.status} />
           </div>
+        </div>
+
+        {/* Project status: sales sees stage; CTO can start or open pipeline */}
+        <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center gap-2">
+          <span className="text-xs text-gray-500 uppercase">Project status</span>
+          {client.developmentProject ? (
+            <>
+              <span className="text-sm text-gray-700">
+                Stage: <strong>{formatDevStage(client.developmentProject.stage)}</strong>
+              </span>
+              {session?.title === "CTO" && (
+                <Link
+                  href={`/dashboard/development/${client.developmentProject.id}`}
+                  className="text-sm text-[#1C6ED5] hover:underline"
+                >
+                  View in Development Pipeline →
+                </Link>
+              )}
+            </>
+          ) : (
+            <>
+              <span className="text-sm text-gray-500">No active project</span>
+              {session?.title === "CTO" && (
+                <StartDevelopmentProjectButton clientId={client.id} />
+              )}
+            </>
+          )}
         </div>
 
         {/* Contact Info - mobile-first: 1 col → 2 → 4; min-w-0 + truncate prevent overflow */}
@@ -564,6 +598,22 @@ export default async function ClientDetailPage({
       </div>
     </div>
   );
+}
+
+/**
+ * Human-readable development stage label for sales team.
+ */
+function formatDevStage(stage: string): string {
+  const labels: Record<string, string> = {
+    discovery: "Discovery",
+    design: "Design",
+    development: "Development",
+    qa: "QA",
+    deployment: "Deployment",
+    completed: "Completed",
+    on_hold: "On Hold",
+  };
+  return labels[stage] ?? stage;
 }
 
 /**

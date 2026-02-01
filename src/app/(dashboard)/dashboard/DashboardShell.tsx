@@ -12,10 +12,11 @@ import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { SessionUser } from "@/lib/auth";
 
-/** Nav item key for main nav (matches t.dashboard.nav) */
+/** Nav item key for main nav (matches t.dashboard.nav). development is CTO-only. */
 const NAV_KEYS = [
   { key: "overview", href: "/dashboard", icon: "📊", permission: undefined as string | undefined },
   { key: "pipeline", href: "/dashboard/pipeline", icon: "🎯", permission: "leads.read" },
+  { key: "development", href: "/dashboard/development", icon: "🛠️", ctoOnly: true as const },
   { key: "clients", href: "/dashboard/clients", icon: "👥", permission: "clients.read" },
   { key: "payments", href: "/dashboard/payments", icon: "💰", permission: "payments.read" },
   { key: "tickets", href: "/dashboard/tickets", icon: "🎫", permission: "tickets.read" },
@@ -80,9 +81,11 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
 
         <nav className="flex-1 p-4 overflow-y-auto min-h-0">
           <ul className="space-y-1">
-            {NAV_KEYS.filter(
-              (item) => !item.permission || user.permissions.includes(item.permission)
-            ).map((item) => (
+            {NAV_KEYS.filter((item) => {
+              if ("ctoOnly" in item && item.ctoOnly) return user.title === "CTO";
+              const perm = "permission" in item ? item.permission : undefined;
+              return !perm || user.permissions.includes(perm);
+            }).map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}

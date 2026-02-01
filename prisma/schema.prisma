@@ -40,6 +40,7 @@ model User {
   createdTickets      Ticket[]  @relation("CreatedTickets")
   ticketComments      TicketComment[]
   confirmedPayments   Payment[] @relation("ConfirmedPayments")
+  developmentProjectLogs DevelopmentProjectLog[]
 
   @@index([email])
   @@index([roleId])
@@ -155,6 +156,7 @@ model Client {
   supportCredentials    SupportCredential[]
   tickets               Ticket[]
   whatsAppConversations WhatsAppConversation[]
+  developmentProject    DevelopmentProject?
 
   @@index([status])
   @@index([startedAt(sort: Desc)])
@@ -431,6 +433,50 @@ enum TicketAuthorType {
 }
 
 // =============================================================================
+// DEVELOPMENT PIPELINE (CTO-only full view; sales sees stage on client page)
+// =============================================================================
+
+/// One active development project per client; stage visible to sales on client page.
+model DevelopmentProject {
+  id        String           @id @default(cuid())
+  clientId  String           @unique
+  client    Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  stage     DevelopmentStage @default(discovery)
+  notes     String?          @db.Text
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  logs DevelopmentProjectLog[]
+
+  @@index([stage])
+  @@index([clientId])
+}
+
+enum DevelopmentStage {
+  discovery
+  design
+  development
+  qa
+  deployment
+  completed
+  on_hold
+}
+
+/// CTO-only activity log for a development project.
+model DevelopmentProjectLog {
+  id         String           @id @default(cuid())
+  projectId  String
+  project    DevelopmentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  content    String           @db.Text
+  createdById String
+  createdBy  User             @relation(fields: [createdById], references: [id])
+  createdAt  DateTime         @default(now())
+
+  @@index([projectId])
+  @@index([createdAt(sort: Desc)])
+}
+
+// =============================================================================
 // AUDIT AND COMPLIANCE (SOC 2)
 // =============================================================================
 
@@ -464,6 +510,8 @@ enum AuditEntityType {
   whatsapp
   session
   role
+  development_project
+  development_project_log
 }
 
 enum AuditAction {
