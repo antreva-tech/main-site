@@ -294,7 +294,6 @@ export async function createClientContact(formData: FormData) {
   await logCreate(session.id, "client_contact", contact.id, { name, clientId });
 
   revalidatePath(`/dashboard/clients/${clientId}`);
-  return contact;
 }
 
 /**
