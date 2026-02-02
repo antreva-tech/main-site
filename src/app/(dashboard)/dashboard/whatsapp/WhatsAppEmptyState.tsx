@@ -12,6 +12,8 @@ export interface WhatsAppEmptyStateProps {
   description: string;
   ctaLabel: string;
   ctaHref?: string;
+  /** If true, open CTA link in a new tab with safe attributes. */
+  ctaExternal?: boolean;
 }
 
 /**
@@ -23,6 +25,7 @@ export function WhatsAppEmptyState({
   description,
   ctaLabel,
   ctaHref = "#",
+  ctaExternal = false,
 }: WhatsAppEmptyStateProps) {
   return (
     <div
@@ -57,6 +60,10 @@ export function WhatsAppEmptyState({
           <Link
             href={ctaHref}
             className="inline-flex items-center gap-2 rounded-xl bg-[#1C6ED5] px-5 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-[#1559B3] focus:outline-none focus:ring-2 focus:ring-[#1C6ED5] focus:ring-offset-2"
+            {...(ctaExternal && {
+              target: "_blank",
+              rel: "noopener noreferrer",
+            })}
           >
             {ctaLabel}
             <span aria-hidden>→</span>

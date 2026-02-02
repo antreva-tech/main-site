@@ -37,7 +37,8 @@ export function WhatsAppInboxView({ conversations }: WhatsAppInboxViewProps) {
           headline={whatsapp.emptyHeadline}
           description={whatsapp.emptyDescription}
           ctaLabel={whatsapp.emptyCta}
-          ctaHref="#"
+          ctaHref="https://developers.facebook.com/docs/whatsapp/cloud-api/get-started"
+          ctaExternal
         />
       ) : (
         <WhatsAppConversationList
