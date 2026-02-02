@@ -115,6 +115,9 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
+    <head>
+    <meta name="apple-mobile-web-app-title" content="Antreva" />
+    </head>
       <body
         className={`${inter.variable} ${sora.variable} ${roboto.variable} antialiased`}
       >
