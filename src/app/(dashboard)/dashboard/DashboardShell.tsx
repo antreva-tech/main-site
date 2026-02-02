@@ -71,6 +71,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
         <div className="p-4 border-b border-gray-700 flex-shrink-0">
           <Link
             href="/dashboard"
+            prefetch={false}
             onClick={() => closeDrawer(setSidebarOpen)}
             className="flex items-center justify-center bg-white rounded-lg p-3 block"
           >
@@ -94,6 +95,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  prefetch={false}
                   onClick={() => closeDrawer(setSidebarOpen)}
                   className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-[#1C6ED5]/20 transition-colors"
                 >
@@ -119,6 +121,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    prefetch={false}
                     onClick={() => closeDrawer(setSidebarOpen)}
                     className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-[#1C6ED5]/20 transition-colors"
                   >
@@ -163,6 +166,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
             <div className="flex items-center gap-2 flex-shrink-0">
               <Link
                 href="/logout"
+                prefetch={false}
                 className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
               >
                 {t.dashboard.signOut}

@@ -1,9 +1,13 @@
 /**
  * Dashboard Layout for Antreva CRM
  * Protected layout with navigation, user context, and i18n (Spanish/English).
+ * force-dynamic ensures session is read from current request on every nav (avoids Router Cache serving stale "no session").
  */
 
 import { redirect } from "next/navigation";
+
+/** Prevent layout from being cached so getSession() always runs with current request cookies. */
+export const dynamic = "force-dynamic";
 import { cookies } from "next/headers";
 import { getSession } from "@/lib/auth";
 import { AuthProvider } from "@/contexts/AuthContext";
