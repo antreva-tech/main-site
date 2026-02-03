@@ -107,7 +107,7 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get(LOCALE_COOKIE)?.value;
-  const locale = localeCookie === "en" || localeCookie === "es" ? localeCookie : "en";
+  const locale = localeCookie === "en" || localeCookie === "es" ? localeCookie : "es";
 
   const orgSchema = getOrganizationSchema();
   const localSchema = getLocalBusinessSchema();

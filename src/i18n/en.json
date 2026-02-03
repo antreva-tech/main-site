@@ -6,11 +6,10 @@
     "getStarted": "Get Started"
   },
   "hero": {
-    "tagline": "Engineering Digital Intelligence",
-    "title": "Transform Your Business with",
-    "titleHighlight": "Technology",
-    "description": "We help businesses grow through software development, digital platforms, AI solutions, and cybersecurity.",
-    "about": "Antreva Tech is a technology company focused on software development, artificial intelligence, cybersecurity, cloud solutions, and digital platforms—based in San Pedro de Macorís, Dominican Republic.",
+    "brand": "Antreva Tech",
+    "headline1": "We don't make your business adapt to the system.",
+    "headline2": "We make the system adapt to your business.",
+    "tagline": "Technology that simplifies, not complicates.",
     "viewPlans": "View Plans",
     "contactUs": "Contact Us"
   },

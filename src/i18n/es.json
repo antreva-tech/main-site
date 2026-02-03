@@ -6,11 +6,10 @@
     "getStarted": "Comenzar"
   },
   "hero": {
-    "tagline": "Ingeniería de Inteligencia Digital",
-    "title": "Transforma Tu Negocio con",
-    "titleHighlight": "Tecnología",
-    "description": "Ayudamos a las empresas a crecer a través del desarrollo de software, plataformas digitales, soluciones de IA y ciberseguridad.",
-    "about": "Antreva Tech es una empresa de tecnología enfocada en desarrollo de software, inteligencia artificial, ciberseguridad, soluciones en la nube y plataformas digitales, con sede en San Pedro de Macorís, República Dominicana.",
+    "brand": "Antreva Tech",
+    "headline1": "No hacemos que tu negocio se adapte al sistema.",
+    "headline2": "Hacemos que el sistema se adapte a tu negocio.",
+    "tagline": "Tecnología que simplifica, no que complica.",
     "viewPlans": "Ver Planes",
     "contactUs": "Contáctanos"
   },

@@ -45,17 +45,14 @@ export function Hero() {
           {/* Content - Second on mobile, first on desktop */}
           <div className="space-y-4 sm:space-y-5 text-center md:text-left md:order-1">
             <span className="inline-block text-tech-blue font-medium text-xs sm:text-sm tracking-wider uppercase bg-tech-blue/10 px-3 py-1 rounded-full">
-              {t.hero.tagline}
+              {t.hero.brand}
             </span>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-midnight-navy leading-tight">
-              {t.hero.title}{" "}
-              <span className="text-tech-blue">{t.hero.titleHighlight}</span>
+              <span className="block">{t.hero.headline1}</span>
+              <span className="block text-tech-blue">{t.hero.headline2}</span>
             </h1>
-            <p className="text-base sm:text-lg text-slate-gray max-w-lg mx-auto md:mx-0">
-              {t.hero.description}
-            </p>
-            <p className="text-sm text-slate-gray/90 max-w-lg mx-auto md:mx-0" aria-label="About Antreva Tech">
-              {t.hero.about}
+            <p className="text-base sm:text-lg text-slate-gray max-w-lg mx-auto md:mx-0" aria-label={t.hero.tagline}>
+              {t.hero.tagline}
             </p>
             {/* CTA Buttons */}
             <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:gap-4 sm:justify-center md:justify-start">

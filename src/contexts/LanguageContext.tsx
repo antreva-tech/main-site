@@ -40,12 +40,12 @@ function getLocaleFromCookie(): Locale | undefined {
 
 /**
  * Language provider component.
- * Wraps the app and provides translation context. Defaults to English (en).
+ * Wraps the app and provides translation context. Defaults to Spanish (es).
  * Persists locale in a cookie when changed.
  */
 export function LanguageProvider({
   children,
-  defaultLocale = "en",
+  defaultLocale = "es",
 }: LanguageProviderProps) {
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
   const [t, setT] = useState<Translations>(() => getTranslations(defaultLocale));
