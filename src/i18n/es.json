@@ -84,7 +84,16 @@
     "tagline": "Nuestro Trabajo",
     "title": "Clientes para los que hemos construido",
     "description": "Explora sitios en vivo y soluciones digitales que hemos entregado. Es prueba de nuestro trabajo—y una oportunidad de descubrir negocios que también podrían ser tus aliados.",
-    "visitSite": "Visitar sitio"
+    "visitSite": "Visitar sitio",
+    "lineOfBusinessOptions": {
+      "retail": "Ventas",
+      "tourism": "Turismo",
+      "medical": "Médico",
+      "restaurant": "Restaurante",
+      "administrative": "Administrativo",
+      "warehouse_logistics": "Almacén / Logística",
+      "other": "Otros"
+    }
   },
   "addOns": {
     "photography": "Fotografía profesional",

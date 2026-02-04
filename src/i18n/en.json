@@ -84,7 +84,16 @@
     "tagline": "Our Work",
     "title": "Clients We've Built For",
     "description": "Explore live sites and digital solutions we've delivered. It's proof of our work—and a chance to discover businesses that might become your partners too.",
-    "visitSite": "Visit site"
+    "visitSite": "Visit site",
+    "lineOfBusinessOptions": {
+      "retail": "Retail",
+      "tourism": "Tourism",
+      "medical": "Medical",
+      "restaurant": "Restaurant",
+      "administrative": "Administrative",
+      "warehouse_logistics": "Warehouse / Logistics",
+      "other": "Other"
+    }
   },
   "addOns": {
     "photography": "Professional photography",
