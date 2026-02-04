@@ -65,7 +65,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen bg-gray-50 bg-grid-pattern flex">
+    <div className="h-screen min-h-0 bg-gray-50 bg-grid-pattern flex overflow-hidden">
       {/* Mobile backdrop: close drawer on tap */}
       {sidebarOpen && (
         <div
@@ -210,7 +210,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
             </div>
           </div>
         </header>
-        <div className="flex-1 min-w-0 min-h-0 flex flex-col p-4 sm:p-6 bg-gray-50 bg-grid-pattern">
+        <div className="flex-1 min-w-0 min-h-0 flex flex-col p-4 sm:p-6 bg-gray-50 bg-grid-pattern overflow-auto">
           {children}
         </div>
       </main>

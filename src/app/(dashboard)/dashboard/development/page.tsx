@@ -112,7 +112,9 @@ export default async function DevelopmentPipelinePage() {
           Start project (from Clients)
         </Link>
       </div>
-      <DevelopmentBoard stages={STAGES} projectsByStage={projectsByStage} />
+      <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
+        <DevelopmentBoard stages={STAGES} projectsByStage={projectsByStage} />
+      </div>
     </div>
   );
 }

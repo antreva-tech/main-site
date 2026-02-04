@@ -30,7 +30,9 @@ export function PipelinePageView({ stages, leadsByStage }: Props) {
         </h1>
         <NewLeadButton />
       </div>
-      <PipelineBoard stages={stages} leadsByStage={leadsByStage} />
+      <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
+        <PipelineBoard stages={stages} leadsByStage={leadsByStage} />
+      </div>
     </div>
   );
 }
