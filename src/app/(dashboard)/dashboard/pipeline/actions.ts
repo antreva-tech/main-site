@@ -33,6 +33,7 @@ function serializeLead(lead: {
   stage: string;
   source: string;
   sourceOther: string | null;
+  referralFrom: string | null;
   notes: string | null;
   lostReason: string | null;
   expectedValue: unknown;
@@ -49,6 +50,7 @@ function serializeLead(lead: {
     stage: lead.stage,
     source: lead.source,
     sourceOther: lead.sourceOther,
+    referralFrom: lead.referralFrom,
     notes: lead.notes,
     lostReason: lead.lostReason,
     expectedValue: lead.expectedValue != null ? Number(lead.expectedValue) : null,
@@ -71,6 +73,7 @@ export async function createLead(formData: FormData) {
   const phone = formData.get("phone") as string | null;
   const source = (formData.get("source") as LeadSource) || "other";
   const sourceOther = (formData.get("sourceOther") as string) || null;
+  const referralFrom = (formData.get("referralFrom") as string) || null;
   const notes = formData.get("notes") as string | null;
   const expectedValue = formData.get("expectedValue") as string | null;
 
@@ -84,6 +87,7 @@ export async function createLead(formData: FormData) {
       phone: normalizePhoneForStorage(phone),
       source,
       sourceOther: source === "other" ? sourceOther : null,
+      referralFrom: source === "referral" ? (referralFrom?.trim() || null) : null,
       notes: notes || null,
       expectedValue: expectedValue ? parseFloat(expectedValue) : null,
       stage: "new",
@@ -150,6 +154,8 @@ export async function updateLead(leadId: string, formData: FormData) {
 
   const source = (formData.get("source") as LeadSource) || lead.source;
   const sourceOther = (formData.get("sourceOther") as string) || null;
+  const referralFromRaw = (formData.get("referralFrom") as string) || null;
+  const referralFrom = source === "referral" ? (referralFromRaw?.trim() || null) : null;
 
   const base = {
     name: formData.get("name") as string,
@@ -158,6 +164,7 @@ export async function updateLead(leadId: string, formData: FormData) {
     phone: normalizePhoneForStorage(formData.get("phone") as string),
     source,
     sourceOther: source === "other" ? sourceOther : null,
+    referralFrom,
     notes: (formData.get("notes") as string) || null,
     expectedValue: formData.get("expectedValue")
       ? parseFloat(formData.get("expectedValue") as string)

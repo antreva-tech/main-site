@@ -94,6 +94,7 @@ model Lead {
   phone             String?
   source            LeadSource  @default(other)
   sourceOther       String?     /// Custom value when source is "other"
+  referralFrom      String?     /// Who referred (when source is referral); for referral payment tracking
   notes             String?     @db.Text
   stage             LeadStage   @default(new)
   lostReason        String?

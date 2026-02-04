@@ -215,6 +215,8 @@
       "stage": "Etapa",
       "lostReason": "Motivo de pérdida",
       "sourceOtherPlaceholder": "Especificar otro origen",
+      "referralFromPlaceholder": "¿Quién refirió este lead? (para pago por referidos)",
+      "referralFromLabel": "Referido por",
       "call": "Llamar",
       "whatsappFollowUp": "Seguimiento por WhatsApp"
     },

@@ -181,6 +181,11 @@ export function LeadViewModal({ lead, open, onClose, onEdit, onStageChange, onRe
           <span className="text-gray-500">{t.dashboard.pipeline.source}</span>
           <span className={lead.source === "other" && lead.sourceOther ? "" : "capitalize"}>
             {sourceDisplay(lead.source, lead.sourceOther)}
+            {lead.source === "referral" && lead.referralFrom && (
+              <span className="block text-sm text-gray-600 mt-0.5">
+                {t.dashboard.pipeline.referralFromLabel}: {lead.referralFrom}
+              </span>
+            )}
           </span>
           <span className="text-gray-500">{t.dashboard.pipeline.stage}</span>
           <span className="sm:col-span-1" ref={dropdownRef}>

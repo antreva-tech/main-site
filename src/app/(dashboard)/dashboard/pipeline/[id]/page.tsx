@@ -89,6 +89,9 @@ export default async function LeadDetailPage({
                 ? lead.sourceOther
                 : lead.source.replace(/_/g, " ")}
             </p>
+            {lead.source === "referral" && lead.referralFrom && (
+              <p className="text-sm text-gray-600 mt-1">Referral from: {lead.referralFrom}</p>
+            )}
           </div>
           {expectedValue && (
             <div>

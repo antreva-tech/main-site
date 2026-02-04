@@ -136,6 +136,19 @@ export function EditLeadModal({ lead, open, onClose }: Props) {
             />
           </div>
         )}
+        {source === "referral" && (
+          <div className="sm:col-span-2">
+            <label className="block text-xs text-gray-500 uppercase mb-1">
+              {t.dashboard.pipeline.referralFromPlaceholder}
+            </label>
+            <input
+              name="referralFrom"
+              defaultValue={lead.referralFrom ?? ""}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              placeholder={t.dashboard.pipeline.referralFromPlaceholder}
+            />
+          </div>
+        )}
         <div>
           <label className="block text-xs text-gray-500 uppercase mb-1">
             {t.dashboard.pipeline.stage}

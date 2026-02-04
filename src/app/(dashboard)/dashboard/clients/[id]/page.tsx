@@ -60,7 +60,7 @@ interface ClientWithRelations {
     notes: string | null;
   }>;
   tickets: Array<{ id: string; subject: string; status: string; priority: string; createdAt: Date }>;
-  lead: { id: string; source: string } | null;
+  lead: { id: string; source: string; referralFrom: string | null } | null;
   supportCredentials: Array<{ id: string; label: string }>;
   developmentProject: { id: string; stage: string } | null;
   _count: { supportCredentials: number; subscriptions: number; singleCharges: number; tickets: number };
@@ -110,7 +110,7 @@ export default async function ClientDetailPage({
           },
         },
         lead: {
-          select: { id: true, source: true },
+          select: { id: true, source: true, referralFrom: true },
         },
         supportCredentials: {
           orderBy: { label: "asc" },
@@ -293,6 +293,9 @@ export default async function ClientDetailPage({
               <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
                 <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Source</p>
                 <p className="text-sm text-[#0B132B]/90 capitalize">{client.lead.source.replace("_", " ")}</p>
+                {client.lead.source === "referral" && client.lead.referralFrom && (
+                  <p className="text-sm text-[#0B132B]/80 mt-1">Referral from: {client.lead.referralFrom}</p>
+                )}
               </div>
             )}
               </div>

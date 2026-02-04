@@ -123,6 +123,19 @@ export function NewLeadModal({ open, onClose, onSuccess }: NewLeadModalProps) {
               </div>
             )}
 
+            {source === "referral" && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t.dashboard.pipeline.referralFromPlaceholder}
+                </label>
+                <input
+                  name="referralFrom"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
+                  placeholder={t.dashboard.pipeline.referralFromPlaceholder}
+                />
+              </div>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t.dashboard.pipeline.estimatedValue}

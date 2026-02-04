@@ -39,6 +39,8 @@ export type LeadRow = {
   stage: LeadStage;
   source: string;
   sourceOther: string | null;
+  /** Who referred (when source is referral); for referral payment tracking. */
+  referralFrom: string | null;
   notes: string | null;
   lostReason: string | null;
   expectedValue: number | null;

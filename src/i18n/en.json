@@ -215,6 +215,8 @@
       "stage": "Stage",
       "lostReason": "Lost reason",
       "sourceOtherPlaceholder": "Specify other source",
+      "referralFromPlaceholder": "Who referred this lead? (for referral payment tracking)",
+      "referralFromLabel": "Referral from",
       "call": "Call",
       "whatsappFollowUp": "WhatsApp follow-up"
     },

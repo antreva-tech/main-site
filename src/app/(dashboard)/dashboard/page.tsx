@@ -401,6 +401,7 @@ function toLeadRow(
     stage: string;
     source: string;
     sourceOther: string | null;
+    referralFrom: string | null;
     notes: string | null;
     lostReason: string | null;
     expectedValue: unknown;
@@ -417,6 +418,7 @@ function toLeadRow(
     stage: l.stage as LeadRow["stage"],
     source: l.source,
     sourceOther: l.sourceOther,
+    referralFrom: l.referralFrom,
     notes: l.notes,
     lostReason: l.lostReason,
     expectedValue: l.expectedValue != null ? Number(l.expectedValue) : null,
@@ -444,6 +446,7 @@ async function RecentLeads({
       stage: true,
       source: true,
       sourceOther: true,
+      referralFrom: true,
       notes: true,
       lostReason: true,
       expectedValue: true,
