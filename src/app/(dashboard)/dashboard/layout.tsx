@@ -34,7 +34,9 @@ export default async function DashboardLayout({
 
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get(LOCALE_COOKIE)?.value;
-  const defaultLocale = localeCookie === "en" || localeCookie === "es" ? localeCookie : "es";
+  const cookieLocale = localeCookie === "en" || localeCookie === "es" ? localeCookie : null;
+  const defaultLocale =
+    session.preferredLocale ?? cookieLocale ?? "es";
 
   return (
     <AuthProvider user={session}>

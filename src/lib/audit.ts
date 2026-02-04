@@ -29,6 +29,8 @@ export interface AuditMetadata {
   after?: Record<string, unknown>;
   /** Additional context */
   context?: Record<string, unknown>;
+  /** User preference e.g. preferredLocale */
+  preferredLocale?: "es" | "en";
 }
 
 /**

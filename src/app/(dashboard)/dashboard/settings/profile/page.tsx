@@ -6,6 +6,7 @@ import { getSession } from "@/lib/auth";
 import { EditNameForm } from "./EditNameForm";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { updatePreferredLocale } from "./actions";
 
 /**
  * Current user profile page.
@@ -28,7 +29,7 @@ export default async function ProfilePage() {
           <p className="text-sm text-[#8A8F98] mb-4">
             Choose your preferred language for the dashboard.
           </p>
-          <LanguageSwitcher variant="light" />
+          <LanguageSwitcher variant="light" onLocaleChange={updatePreferredLocale} />
         </div>
 
         {/* Account Information */}

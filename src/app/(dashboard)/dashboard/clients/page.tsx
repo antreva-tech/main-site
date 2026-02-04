@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { FilterLink } from "../components/FilterLink";
+import { ShowOnSiteCheckbox } from "./ShowOnSiteCheckbox";
 
 /**
  * Clients list page with filters.
@@ -26,6 +27,7 @@ export default async function ClientsPage({
       company: true,
       email: true,
       status: true,
+      showOnWebsite: true,
       startedAt: true,
       developmentProject: {
         select: { stage: true },
@@ -85,6 +87,9 @@ export default async function ClientsPage({
                 Client
               </th>
               <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+                On site
+              </th>
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
                 Status
               </th>
               <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
@@ -121,6 +126,13 @@ export default async function ClientsPage({
                   </Link>
                 </td>
                 <td className="px-6 py-4">
+                  <ShowOnSiteCheckbox
+                    clientId={client.id}
+                    showOnWebsite={client.showOnWebsite}
+                    label={`Show ${client.company || client.name} on main site`}
+                  />
+                </td>
+                <td className="px-6 py-4">
                   <StatusBadge status={client.status} />
                 </td>
                 <td className="px-6 py-4 text-sm text-[#0B132B]/80">
@@ -147,7 +159,7 @@ export default async function ClientsPage({
             ))}
             {clients.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-16 text-center text-[#8A8F98]">
+                <td colSpan={7} className="px-6 py-16 text-center text-[#8A8F98]">
                   No clients found
                 </td>
               </tr>
@@ -164,35 +176,48 @@ export default async function ClientsPage({
           </div>
         ) : (
           clients.map((client) => (
-            <Link
+            <div
               key={client.id}
-              href={`/dashboard/clients/${client.id}`}
-              className="block dashboard-card dashboard-card-accent p-5 active:scale-[0.99] transition-all duration-150"
+              className="dashboard-card dashboard-card-accent p-5"
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-[#0B132B] truncate">
-                    {client.name}
-                  </p>
-                  <p className="text-sm text-[#8A8F98] truncate mt-0.5">
-                    {client.company || client.email}
-                  </p>
+              <Link
+                href={`/dashboard/clients/${client.id}`}
+                className="block active:scale-[0.99] transition-all duration-150"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-[#0B132B] truncate">
+                      {client.name}
+                    </p>
+                    <p className="text-sm text-[#8A8F98] truncate mt-0.5">
+                      {client.company || client.email}
+                    </p>
+                  </div>
+                  <StatusBadge status={client.status} />
                 </div>
-                <StatusBadge status={client.status} />
+              </Link>
+              <div className="mt-3 pt-3 border-t border-gray-100">
+                <ShowOnSiteCheckbox
+                  clientId={client.id}
+                  showOnWebsite={client.showOnWebsite}
+                  label={`Show ${client.company || client.name} on main site`}
+                />
               </div>
-              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-[#0B132B]/70">
-                <span>Started {client.startedAt.toLocaleDateString()}</span>
-                <span>{client._count.subscriptions} subs</span>
-                <span>{client._count.tickets} tickets</span>
-                {client.developmentProject ? (
-                  <span
-                    className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getProjectStageStyles(client.developmentProject.stage)}`}
-                  >
-                    {formatDevStage(client.developmentProject.stage)}
-                  </span>
-                ) : null}
-              </div>
-            </Link>
+              <Link href={`/dashboard/clients/${client.id}`} className="block">
+                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-[#0B132B]/70">
+                  <span>Started {client.startedAt.toLocaleDateString()}</span>
+                  <span>{client._count.subscriptions} subs</span>
+                  <span>{client._count.tickets} tickets</span>
+                  {client.developmentProject ? (
+                    <span
+                      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getProjectStageStyles(client.developmentProject.stage)}`}
+                    >
+                      {formatDevStage(client.developmentProject.stage)}
+                    </span>
+                  ) : null}
+                </div>
+              </Link>
+            </div>
           ))
         )}
       </div>

@@ -3,14 +3,16 @@
 import React from "react";
 import PlanCard from "./PlanCard";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatPlanPrice } from "@/lib/pricing";
 
 /**
  * Plans section component - Mobile-first design
  * Features subtle background pattern and gradient accents
- * Supports Spanish/English translations
+ * Spanish: RD$; English: USD (converted from DOP)
  */
 export function Plans() {
-  const { t } = useLanguage();
+  const { t, currencyLocale } = useLanguage();
+  const currency = currencyLocale === "en" ? "USD" : "DOP";
 
   const plans = [
     {
@@ -18,7 +20,7 @@ export function Plans() {
       tier: "START" as const,
       name: t.plans.start.name,
       description: t.plans.start.description,
-      price: "RD$4,500",
+      price: formatPlanPrice(4500, currency),
       priceNote: t.plans.perMonth,
       features: [
         { text: t.plans.features.whatsappSetup, included: true },
@@ -36,7 +38,7 @@ export function Plans() {
       tier: "PRO" as const,
       name: t.plans.pro.name,
       description: t.plans.pro.description,
-      price: "RD$7,500",
+      price: formatPlanPrice(7500, currency),
       priceNote: t.plans.perMonth,
       highlighted: true,
       features: [
@@ -55,7 +57,7 @@ export function Plans() {
       tier: "PREMIUM" as const,
       name: t.plans.premium.name,
       description: t.plans.premium.description,
-      price: "RD$12,000+",
+      price: formatPlanPrice(12000, currency, { plus: true }),
       priceNote: t.plans.perMonth,
       features: [
         { text: t.plans.features.everythingPro, included: true },

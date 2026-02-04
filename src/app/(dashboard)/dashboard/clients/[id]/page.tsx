@@ -28,6 +28,8 @@ interface ClientWithRelations {
   company: string | null;
   phone: string | null;
   websiteUrl: string | null;
+  showOnWebsite: boolean;
+  logoUrl: string | null;
   cedula: string | null;
   rnc: string | null;
   notes: string | null;
@@ -154,15 +156,26 @@ export default async function ClientDetailPage({
             {/* Left: main client info — full width on mobile */}
             <div className="min-w-0">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="min-w-0">
-                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#0B132B] tracking-tight truncate">
-                    {client.company || client.name}
-                  </h1>
-                  {client.company && (
-                    <p className="text-[#8A8F98] text-sm mt-1.5 font-medium truncate">
-                      {client.name}
-                    </p>
+                <div className="flex items-start gap-3 min-w-0">
+                  {client.logoUrl && (
+                    <img
+                      src={client.logoUrl}
+                      alt=""
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border border-[#0B132B]/[0.08] object-cover flex-shrink-0 bg-white"
+                      width={48}
+                      height={48}
+                    />
                   )}
+                  <div className="min-w-0">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#0B132B] tracking-tight truncate">
+                      {client.company || client.name}
+                    </h1>
+                    {client.company && (
+                      <p className="text-[#8A8F98] text-sm mt-1.5 font-medium truncate">
+                        {client.name}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <StatusBadge status={client.status} />
               </div>
@@ -320,6 +333,8 @@ export default async function ClientDetailPage({
                     company: client.company,
                     phone: client.phone,
                     websiteUrl: client.websiteUrl,
+                    showOnWebsite: client.showOnWebsite,
+                    logoUrl: client.logoUrl,
                     cedula: client.cedula,
                     rnc: client.rnc,
                     notes: client.notes,

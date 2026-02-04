@@ -25,6 +25,7 @@ model User {
   roleId              String
   role                Role      @relation(fields: [roleId], references: [id])
   status              UserStatus @default(active)
+  preferredLocale     String?   // "es" | "en" for dashboard language
   lastLoginAt         DateTime?
   failedLoginAttempts Int       @default(0)
   lockedUntil         DateTime?
@@ -142,6 +143,8 @@ model Client {
   company    String?
   phone      String?
   websiteUrl String?      // Client's website / admin panel URL
+  showOnWebsite Boolean   @default(false) // If true, show in main-site client showcase (requires websiteUrl)
+  logoUrl    String?      // Logo URL for main-site showcase card
   cedula     String?      @unique // Dominican national ID
   rnc        String?      // Business tax ID (RNC)
   notes      String?      @db.Text
@@ -502,6 +505,23 @@ model DevelopmentProjectLog {
 }
 
 // =============================================================================
+// DEMO SITES (Sales / CEO quick access)
+// =============================================================================
+
+/// Demo sites list for sales team and CEO to open quickly (e.g. client demos, product demos).
+model DemoSite {
+  id          String   @id @default(cuid())
+  name        String   // Display label, e.g. "Restaurant X Demo"
+  url         String   // Full URL to open in new tab
+  description String?  @db.Text // Optional note
+  sortOrder   Int      @default(0) // Lower = first in list
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
+// =============================================================================
 // AUDIT AND COMPLIANCE (SOC 2)
 // =============================================================================
 
@@ -538,6 +558,7 @@ enum AuditEntityType {
   role
   development_project
   development_project_log
+  demo_site
 }
 
 enum AuditAction {

@@ -80,6 +80,8 @@ export interface SessionUser {
   roleId: string;
   roleName: string;
   permissions: string[];
+  /** User's preferred dashboard language: "es" | "en", null = use cookie/default */
+  preferredLocale: "es" | "en" | null;
 }
 
 /**
@@ -147,6 +149,10 @@ export async function validateSession(token: string): Promise<SessionUser | null
     return null;
   }
 
+  const preferredLocale = session.user.preferredLocale;
+  const locale =
+    preferredLocale === "es" || preferredLocale === "en" ? preferredLocale : null;
+
   return {
     id: session.user.id,
     email: session.user.email,
@@ -155,6 +161,7 @@ export async function validateSession(token: string): Promise<SessionUser | null
     roleId: session.user.roleId,
     roleName: session.user.role.name,
     permissions: session.user.role.permissions as string[],
+    preferredLocale: locale,
   };
 }
 
@@ -346,6 +353,10 @@ export async function login(
   }
 
   // Check if MFA is required
+  const preferredLocale =
+    user.preferredLocale === "es" || user.preferredLocale === "en"
+      ? user.preferredLocale
+      : null;
   if (user.mfaSecret) {
     return {
       success: false,
@@ -358,6 +369,7 @@ export async function login(
         roleId: user.roleId,
         roleName: user.role.name,
         permissions: user.role.permissions as string[],
+        preferredLocale,
       },
     };
   }
@@ -376,6 +388,7 @@ export async function login(
       roleId: user.roleId,
       roleName: user.role.name,
       permissions: user.role.permissions as string[],
+      preferredLocale,
     },
   };
 }
@@ -497,6 +510,10 @@ export async function completeMfaLogin(
   }
 
   const token = await createSession(userId, ipAddress, userAgent);
+  const preferredLocale =
+    user.preferredLocale === "es" || user.preferredLocale === "en"
+      ? user.preferredLocale
+      : null;
 
   return {
     success: true,
@@ -509,6 +526,7 @@ export async function completeMfaLogin(
       roleId: user.roleId,
       roleName: user.role.name,
       permissions: user.role.permissions as string[],
+      preferredLocale,
     },
   };
 }

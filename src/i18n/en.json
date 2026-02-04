@@ -2,6 +2,7 @@
   "nav": {
     "services": "Services",
     "plans": "Plans",
+    "clients": "Our Clients",
     "contact": "Contact",
     "getStarted": "Get Started"
   },
@@ -74,6 +75,12 @@
       "customIntegrations": "Custom integrations"
     }
   },
+  "showcase": {
+    "tagline": "Our Work",
+    "title": "Clients We've Built For",
+    "description": "Explore live sites and digital solutions we've delivered. It's proof of our work—and a chance to discover businesses that might become your partners too.",
+    "visitSite": "Visit site"
+  },
   "addOns": {
     "photography": "Professional photography",
     "adsManagement": "Paid ads management",
@@ -110,6 +117,7 @@
       "payments": "Payments",
       "tickets": "Tickets",
       "credentials": "Credentials",
+      "demos": "Demo Sites",
       "whatsapp": "WhatsApp"
     },
     "settings": "Settings",

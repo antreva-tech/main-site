@@ -21,6 +21,7 @@ const NAV_KEYS = [
   { key: "payments", href: "/dashboard/payments", icon: "💰", permission: "payments.read" },
   { key: "tickets", href: "/dashboard/tickets", icon: "🎫", permission: "tickets.read" },
   { key: "credentials", href: "/dashboard/credentials", icon: "🔐", permission: "credentials.read" },
+  { key: "demos", href: "/dashboard/demos", icon: "🔗", permission: undefined },
   { key: "whatsapp", href: "/dashboard/whatsapp", icon: "💬", permission: undefined },
 ] as const;
 

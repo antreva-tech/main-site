@@ -2,10 +2,12 @@
 
 /**
  * Edit client details in a modal (shared EditModal).
+ * Logo can be pasted as URL or uploaded to Vercel Blob.
  */
 
-import { useState } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { EditModal } from "../../components/EditModal";
+import { uploadClientLogo } from "../actions";
 
 type ClientForEdit = {
   id: string;
@@ -14,6 +16,8 @@ type ClientForEdit = {
   company: string | null;
   phone: string | null;
   websiteUrl: string | null;
+  showOnWebsite: boolean;
+  logoUrl: string | null;
   cedula: string | null;
   rnc: string | null;
   notes: string | null;
@@ -27,6 +31,33 @@ type Props = {
 
 export function EditClientDetailsModal({ client, updateClient }: Props) {
   const [open, setOpen] = useState(false);
+  const [logoUrl, setLogoUrl] = useState(client.logoUrl ?? "");
+  const [logoUploadError, setLogoUploadError] = useState<string | null>(null);
+  const [isUploading, startUploadTransition] = useTransition();
+
+  useEffect(() => {
+    if (open) {
+      setLogoUrl(client.logoUrl ?? "");
+      setLogoUploadError(null);
+    }
+  }, [open, client.logoUrl]);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLogoUploadError(null);
+    const fd = new FormData();
+    fd.set("file", file);
+    startUploadTransition(async () => {
+      const result = await uploadClientLogo(fd);
+      if (result.url) {
+        setLogoUrl(result.url);
+      } else {
+        setLogoUploadError(result.error ?? "Upload failed");
+      }
+    });
+    e.target.value = "";
+  };
 
   return (
     <>
@@ -90,6 +121,51 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder="https://example.com"
             />
+          </div>
+          <div className="sm:col-span-2 flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="showOnWebsite"
+              name="showOnWebsite"
+              defaultChecked={client.showOnWebsite}
+              className="rounded border-gray-300 text-[#1C6ED5] focus:ring-[#1C6ED5]"
+            />
+            <label htmlFor="showOnWebsite" className="text-sm text-gray-700">
+              Show on main website (client showcase). Requires Website URL.
+            </label>
+          </div>
+          <div className="sm:col-span-2">
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">Logo (showcase card)</label>
+            <input
+              type="url"
+              name="logoUrl"
+              value={logoUrl}
+              onChange={(e) => setLogoUrl(e.target.value)}
+              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              placeholder="Paste URL or upload below"
+            />
+            <div className="mt-2 flex items-center gap-2 flex-wrap">
+              <label className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.webp,.svg,image/jpeg,image/png,image/webp,image/svg+xml"
+                  onChange={handleLogoUpload}
+                  disabled={isUploading}
+                  className="sr-only"
+                />
+                {isUploading ? "Uploading…" : "Upload to Vercel Blob"}
+              </label>
+              {logoUrl && (
+                <span className="text-xs text-gray-500 truncate max-w-[180px]" title={logoUrl}>
+                  Stored in Blob
+                </span>
+              )}
+            </div>
+            {logoUploadError && (
+              <p className="mt-1 text-xs text-red-600" role="alert">
+                {logoUploadError}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-xs text-gray-500 uppercase mb-0.5">Phone</label>

@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 /**
  * Footer component - Mobile-first design
@@ -79,7 +80,7 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="relative border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
-          <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between">
+          <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between md:items-center">
             <Image
               src="/Antreva Tech Transparente.png"
               alt="Antreva Tech"
@@ -93,9 +94,12 @@ export function Footer() {
             <p className="text-slate-gray text-xs sm:text-sm text-center">
               &copy; {currentYear} Antreva Tech. {t.footer.rights}
             </p>
-            <span className="text-slate-gray text-xs sm:text-sm hidden md:block">
-              {t.hero.tagline}
-            </span>
+            <div className="flex items-center gap-2">
+              <LanguageSwitcher variant="dark" />
+              <span className="text-slate-gray text-xs sm:text-sm hidden md:block">
+                {t.hero.tagline}
+              </span>
+            </div>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@
 
 import Link from "next/link";
 import { createClient } from "../actions";
+import { LogoUrlField } from "./LogoUrlField";
 
 /**
  * New client form page.
@@ -76,6 +77,20 @@ export default function NewClientPage() {
               placeholder="https://example.com"
             />
           </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="showOnWebsite"
+              name="showOnWebsite"
+              className="rounded border-gray-300 text-[#1C6ED5] focus:ring-[#1C6ED5]"
+            />
+            <label htmlFor="showOnWebsite" className="text-sm text-gray-700">
+              Show on main website (client showcase). Requires Website URL.
+            </label>
+          </div>
+
+          <LogoUrlField />
 
           {/* Phone */}
           <div>

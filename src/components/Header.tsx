@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
-import LanguageSwitcher from "./LanguageSwitcher";
 
 /**
  * Header component - Mobile-first responsive navigation
@@ -17,6 +16,7 @@ export function Header() {
   const navLinks = [
     { href: "#services", label: t.nav.services },
     { href: "#plans", label: t.nav.plans },
+    { href: "#clients", label: t.nav.clients },
     { href: "#contact", label: t.nav.contact },
   ];
 
@@ -75,7 +75,6 @@ export function Header() {
             >
               {t.nav.getStarted}
             </a>
-            <LanguageSwitcher />
           </nav>
 
           {/* Mobile Menu Button - Large touch target */}
@@ -132,9 +131,6 @@ export function Header() {
               >
                 {t.nav.getStarted}
               </a>
-              <div className="mt-3 flex justify-center">
-                <LanguageSwitcher />
-              </div>
             </div>
           </nav>
         )}

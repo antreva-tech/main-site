@@ -6,11 +6,53 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { put } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { normalizePhoneForStorage } from "@/lib/phone";
 import { logCreate, logUpdate, logDelete } from "@/lib/audit";
 import type { ClientStatus, SubscriptionStatus, SingleChargeStatus } from "@prisma/client";
+
+/** Allowed image types for client logos (Vercel Blob). */
+const LOGO_CONTENT_TYPES = ["image/jpeg", "image/png", "image/webp", "image/svg+xml"];
+const LOGO_MAX_BYTES = 2 * 1024 * 1024; // 2 MB
+
+/**
+ * Uploads a client logo to Vercel Blob. Expects formData with "file" (File).
+ * Returns the public blob URL or an error message.
+ * Requires BLOB_READ_WRITE_TOKEN (set when you add a Blob store in Vercel project Storage).
+ */
+export async function uploadClientLogo(
+  formData: FormData
+): Promise<{ url?: string; error?: string }> {
+  const session = await getSession();
+  if (!session) return { error: "Unauthorized" };
+
+  const file = formData.get("file") as File | null;
+  if (!file || !(file instanceof File)) return { error: "No file provided" };
+
+  const type = (file.type || "").toLowerCase();
+  if (!type || !LOGO_CONTENT_TYPES.includes(type)) {
+    return { error: "Allowed types: JPEG, PNG, WebP, SVG" };
+  }
+  if (file.size > LOGO_MAX_BYTES) return { error: "Logo must be under 2 MB" };
+
+  const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+  const slug = file.name.replace(/\.[^.]+$/, "").replace(/\W+/g, "-").slice(0, 30) || "logo";
+  const pathname = `client-logos/${Date.now()}-${slug}.${ext}`;
+
+  try {
+    const blob = await put(pathname, file, {
+      access: "public",
+      addRandomSuffix: true,
+      contentType: file.type,
+    });
+    return { url: blob.url };
+  } catch (e) {
+    console.error("Vercel Blob upload failed:", e);
+    return { error: "Upload failed. Check BLOB_READ_WRITE_TOKEN." };
+  }
+}
 
 /**
  * Creates a new client (direct entry, not from lead).
@@ -24,6 +66,8 @@ export async function createClient(formData: FormData) {
   const company = formData.get("company") as string | null;
   const phone = formData.get("phone") as string | null;
   const websiteUrl = (formData.get("websiteUrl") as string)?.trim() || null;
+  const showOnWebsite = formData.get("showOnWebsite") === "on";
+  const logoUrl = (formData.get("logoUrl") as string)?.trim() || null;
   const cedula = formData.get("cedula") as string | null;
   const rnc = formData.get("rnc") as string | null;
   const notes = formData.get("notes") as string | null;
@@ -37,6 +81,8 @@ export async function createClient(formData: FormData) {
       company: company || null,
       phone: normalizePhoneForStorage(phone),
       websiteUrl: websiteUrl || null,
+      showOnWebsite,
+      logoUrl,
       cedula: cedula || null,
       rnc: rnc || null,
       notes: notes || null,
@@ -47,6 +93,7 @@ export async function createClient(formData: FormData) {
   await logCreate(session.id, "client", client.id, { name, email });
 
   revalidatePath("/dashboard/clients");
+  revalidatePath("/");
   redirect(`/dashboard/clients/${client.id}`);
 }
 
@@ -76,6 +123,8 @@ export async function updateClient(formData: FormData) {
     company: (formData.get("company") as string)?.trim() || null,
     phone: normalizePhoneForStorage((formData.get("phone") as string)?.trim()),
     websiteUrl: (formData.get("websiteUrl") as string)?.trim() || null,
+    showOnWebsite: formData.get("showOnWebsite") === "on",
+    logoUrl: (formData.get("logoUrl") as string)?.trim() || null,
     cedula: (formData.get("cedula") as string)?.trim() || null,
     rnc: (formData.get("rnc") as string)?.trim() || null,
     notes: (formData.get("notes") as string)?.trim() || null,
@@ -94,6 +143,7 @@ export async function updateClient(formData: FormData) {
 
   revalidatePath("/dashboard/clients");
   revalidatePath(`/dashboard/clients/${clientId}`);
+  revalidatePath("/");
   redirect(`/dashboard/clients/${clientId}`);
 }
 
@@ -120,6 +170,56 @@ export async function updateClientStatus(clientId: string, status: ClientStatus)
   revalidatePath("/dashboard/clients");
   revalidatePath(`/dashboard/clients/${clientId}`);
   return updated;
+}
+
+/**
+ * Updates only the client's logo URL (e.g. after uploading to Vercel Blob).
+ */
+export async function updateClientLogo(clientId: string, logoUrl: string | null) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const client = await prisma.client.findUnique({ where: { id: clientId } });
+  if (!client) throw new Error("Client not found");
+
+  await prisma.client.update({
+    where: { id: clientId },
+    data: { logoUrl },
+  });
+
+  await logUpdate(session.id, "client", clientId,
+    { logoUrl: client.logoUrl },
+    { logoUrl }
+  );
+
+  revalidatePath("/dashboard/clients");
+  revalidatePath(`/dashboard/clients/${clientId}`);
+  revalidatePath("/");
+}
+
+/**
+ * Toggles whether a client is shown on the main website showcase.
+ */
+export async function updateClientShowOnWebsite(clientId: string, showOnWebsite: boolean) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const client = await prisma.client.findUnique({ where: { id: clientId } });
+  if (!client) throw new Error("Client not found");
+
+  await prisma.client.update({
+    where: { id: clientId },
+    data: { showOnWebsite },
+  });
+
+  await logUpdate(session.id, "client", clientId,
+    { showOnWebsite: client.showOnWebsite },
+    { showOnWebsite }
+  );
+
+  revalidatePath("/dashboard/clients");
+  revalidatePath(`/dashboard/clients/${clientId}`);
+  revalidatePath("/");
 }
 
 /**
