@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ScrollReveal } from "./ScrollReveal";
 
 /**
  * Custom Services section - Mobile-first design
@@ -58,7 +59,7 @@ export function CustomServices() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-8 md:grid md:grid-cols-2 md:gap-12 md:items-center">
           {/* Content */}
-          <div className="space-y-4 sm:space-y-5 text-center md:text-left">
+          <ScrollReveal variant="slideRight" className="space-y-4 sm:space-y-5 text-center md:text-left">
             <span className="inline-block text-tech-blue font-medium text-xs sm:text-sm tracking-wider uppercase">
               {t.services.tagline}
             </span>
@@ -123,10 +124,10 @@ export function CustomServices() {
                 </svg>
               </a>
             </div>
-          </div>
+          </ScrollReveal>
 
           {/* Custom Solutions illustration */}
-          <div className="hidden sm:flex justify-center md:justify-end">
+          <ScrollReveal variant="slideLeft" className="hidden sm:flex justify-center md:justify-end">
             <div className="relative w-full max-w-xs md:max-w-md min-h-[280px] md:min-h-[350px]">
               <div className="absolute -inset-2 bg-tech-blue/20 rounded-2xl blur-lg" />
               <Image
@@ -140,11 +141,11 @@ export function CustomServices() {
                 className="relative rounded-xl w-full h-auto object-contain"
               />
             </div>
-          </div>
+          </ScrollReveal>
         </div>
 
         {/* Service categories */}
-        <div className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <ScrollReveal stagger className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {services.map((service, index) => (
             <div
               key={index}
@@ -171,7 +172,7 @@ export function CustomServices() {
               </p>
             </div>
           ))}
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

@@ -4,6 +4,7 @@ import React from "react";
 import PlanCard from "./PlanCard";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatPlanPrice } from "@/lib/pricing";
+import { ScrollReveal } from "./ScrollReveal";
 
 /**
  * Plans section component - Mobile-first design
@@ -84,7 +85,7 @@ export function Plans() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
-        <div className="text-center mb-10 sm:mb-12">
+        <ScrollReveal variant="fadeUp" className="text-center mb-10 sm:mb-12">
           <span className="inline-block text-tech-blue font-medium text-xs sm:text-sm tracking-wider uppercase bg-tech-blue/10 px-3 py-1 rounded-full">
             {t.plans.tagline}
           </span>
@@ -94,21 +95,21 @@ export function Plans() {
           <p className="text-slate-gray/80 mt-3 sm:mt-4 max-w-2xl mx-auto text-sm sm:text-base">
             {t.plans.description}
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Plans grid */}
-        <div className="flex flex-col gap-6 sm:gap-8 md:grid md:grid-cols-3 md:items-start">
+        <ScrollReveal stagger className="flex flex-col gap-6 sm:gap-8 md:grid md:grid-cols-3 md:items-start">
           {plans.map((plan) => (
             <PlanCard key={plan.id} plan={plan} />
           ))}
-        </div>
+        </ScrollReveal>
 
         {/* Short disclaimer */}
-        <div className="mt-8 text-center">
+        <ScrollReveal variant="fade" className="mt-8 text-center">
           <p className="text-midnight-navy/80 text-sm sm:text-base">
             {t.plans.allPlansInclude}
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Custom solution CTA — prominent section below plans */}
         {(() => {
@@ -117,7 +118,7 @@ export function Plans() {
           const description = custom?.description;
           const cta = custom?.cta ?? `${t.plans?.contactUs} ${t.plans?.forTailored}`.trim();
           return (
-            <div className="mt-10 sm:mt-14">
+            <ScrollReveal variant="scale" className="mt-10 sm:mt-14">
               <div
                 className="relative rounded-2xl overflow-hidden bg-midnight-navy text-white px-6 py-10 sm:px-10 sm:py-14 md:px-14 md:py-16"
                 aria-labelledby="custom-solution-heading"
@@ -144,7 +145,7 @@ export function Plans() {
                   </a>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
           );
         })()}
       </div>

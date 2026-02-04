@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ScrollReveal } from "./ScrollReveal";
 
 export type ShowcaseClient = {
   id: string;
@@ -36,7 +37,7 @@ export function ClientShowcase({ clients }: Props) {
       <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-midnight-navy/5 rounded-full blur-3xl" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10 sm:mb-12">
+        <ScrollReveal variant="fadeUp" className="text-center mb-10 sm:mb-12">
           <span className="inline-block text-tech-blue font-medium text-xs sm:text-sm tracking-wider uppercase bg-tech-blue/10 px-3 py-1 rounded-full">
             {t.showcase.tagline}
           </span>
@@ -46,9 +47,9 @@ export function ClientShowcase({ clients }: Props) {
           <p className="text-slate-gray/80 mt-3 sm:mt-4 max-w-2xl mx-auto text-sm sm:text-base">
             {t.showcase.description}
           </p>
-        </div>
+        </ScrollReveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <ScrollReveal stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {withUrl.map((client) => (
             <a
               key={client.id}
@@ -91,7 +92,7 @@ export function ClientShowcase({ clients }: Props) {
               </span>
             </a>
           ))}
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

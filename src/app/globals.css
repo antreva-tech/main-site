@@ -163,6 +163,101 @@ html {
   animation: hero-slide-in-up 0.9s ease-out 0.25s forwards;
 }
 
+/* Scroll-reveal: premium on-scroll animations (respects prefers-reduced-motion) */
+/* Base: desktop */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.scroll-reveal--fade {
+  transform: none;
+}
+.scroll-reveal--slide-left {
+  transform: translateX(1.5rem);
+}
+.scroll-reveal.is-visible.scroll-reveal--slide-left {
+  transform: translateX(0);
+}
+.scroll-reveal--slide-right {
+  transform: translateX(-1.5rem);
+}
+.scroll-reveal.is-visible.scroll-reveal--slide-right {
+  transform: translateX(0);
+}
+.scroll-reveal--scale {
+  transform: translateY(1rem) scale(0.98);
+}
+.scroll-reveal.is-visible.scroll-reveal--scale {
+  transform: translateY(0) scale(1);
+}
+/* Stagger: parent only fades; children animate with delay */
+.scroll-reveal--stagger.scroll-reveal {
+  transform: none;
+}
+.scroll-reveal--stagger > * {
+  opacity: 0;
+  transform: translateY(1rem);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.scroll-reveal--stagger.is-visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+.scroll-reveal--stagger > *:nth-child(1) { transition-delay: 0ms; }
+.scroll-reveal--stagger > *:nth-child(2) { transition-delay: 80ms; }
+.scroll-reveal--stagger > *:nth-child(3) { transition-delay: 160ms; }
+.scroll-reveal--stagger > *:nth-child(4) { transition-delay: 240ms; }
+.scroll-reveal--stagger > *:nth-child(5) { transition-delay: 320ms; }
+.scroll-reveal--stagger > *:nth-child(6) { transition-delay: 400ms; }
+.scroll-reveal--stagger > *:nth-child(n + 7) { transition-delay: 480ms; }
+
+/* Mobile: shorter travel, snappier duration, shorter stagger so sequence finishes faster */
+@media (max-width: 767px) {
+  .scroll-reveal {
+    transform: translateY(0.75rem);
+    transition-duration: 0.5s;
+  }
+  .scroll-reveal--slide-left {
+    transform: translateX(1rem);
+  }
+  .scroll-reveal--slide-right {
+    transform: translateX(-1rem);
+  }
+  .scroll-reveal--scale {
+    transform: translateY(0.5rem) scale(0.99);
+  }
+  .scroll-reveal--stagger > * {
+    transform: translateY(0.6rem);
+    transition-duration: 0.45s;
+  }
+  .scroll-reveal--stagger > *:nth-child(1) { transition-delay: 0ms; }
+  .scroll-reveal--stagger > *:nth-child(2) { transition-delay: 50ms; }
+  .scroll-reveal--stagger > *:nth-child(3) { transition-delay: 100ms; }
+  .scroll-reveal--stagger > *:nth-child(4) { transition-delay: 150ms; }
+  .scroll-reveal--stagger > *:nth-child(5) { transition-delay: 200ms; }
+  .scroll-reveal--stagger > *:nth-child(6) { transition-delay: 250ms; }
+  .scroll-reveal--stagger > *:nth-child(n + 7) { transition-delay: 300ms; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal,
+  .scroll-reveal--stagger > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .scroll-reveal--stagger > *:nth-child(n) { transition-delay: 0ms; }
+}
+
 /* Pipeline scrollbars: thin, branded (Tailwind has no scrollbar utilities) */
 @layer utilities {
   .pipeline-kanban-scroll {

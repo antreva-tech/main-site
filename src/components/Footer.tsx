@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { ScrollReveal } from "./ScrollReveal";
 
 /**
  * Footer component - Mobile-first design
@@ -27,7 +28,7 @@ export function Footer() {
       <div className="absolute bottom-1/4 left-0 w-48 h-48 bg-tech-blue/5 rounded-full blur-3xl" />
 
       {/* Contact Section */}
-      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 text-center">
+      <ScrollReveal variant="fadeUp" className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 text-center">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
           {t.footer.title}
         </h2>
@@ -75,7 +76,7 @@ export function Footer() {
           </svg>
           <span className="text-sm sm:text-base">{t.footer.location}</span>
         </div>
-      </div>
+      </ScrollReveal>
 
       {/* Bottom Bar */}
       <div className="relative border-t border-white/10">

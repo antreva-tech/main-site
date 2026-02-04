@@ -10,3 +10,4 @@ export { Footer } from "./Footer";
 export { PlaceholderImage } from "./PlaceholderImage";
 export { LanguageSwitcher } from "./LanguageSwitcher";
 export { ClientShowcase } from "./ClientShowcase";
+export { ScrollReveal } from "./ScrollReveal";
