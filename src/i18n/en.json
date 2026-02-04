@@ -39,6 +39,11 @@
     "needCustom": "Need something custom?",
     "contactUs": "Contact us",
     "forTailored": "for a tailored solution.",
+    "customSection": {
+      "title": "Need something more personalized?",
+      "description": "Our standard plans cover most needs. If yours are different—custom scope, integrations, or enterprise requirements—we'll design a solution that fits.",
+      "cta": "Contact us for a custom solution"
+    },
     "start": {
       "name": "Start",
       "description": "Perfect for businesses starting their digital journey with essential tools."
@@ -185,7 +190,16 @@
       "removeBankAccount": "Remove bank account",
       "removeBankAccountMessage": "Remove this bank account? Payments that used it will no longer show a receiving bank. This cannot be undone.",
       "createClient": "Create Client",
-      "creatingClient": "Creating..."
+      "creatingClient": "Creating...",
+      "lineOfBusiness": "Line of business",
+      "lineOfBusinessOptions": {
+        "retail": "Retail",
+        "tourism": "Tourism",
+        "medical": "Medical",
+        "restaurant": "Restaurant",
+        "administrative": "Administrative",
+        "warehouse_logistics": "Warehouse / Logistics"
+      }
     },
     "pipeline": {
       "salesPipeline": "Sales Pipeline",

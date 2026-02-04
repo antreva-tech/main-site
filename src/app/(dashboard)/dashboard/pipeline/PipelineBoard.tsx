@@ -41,6 +41,8 @@ export type LeadRow = {
   sourceOther: string | null;
   /** Who referred (when source is referral); for referral payment tracking. */
   referralFrom: string | null;
+  /** Line of business / industry. */
+  lineOfBusiness: string | null;
   notes: string | null;
   lostReason: string | null;
   expectedValue: number | null;

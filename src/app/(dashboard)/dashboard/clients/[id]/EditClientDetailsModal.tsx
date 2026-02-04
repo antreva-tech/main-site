@@ -8,6 +8,8 @@
 import { useState, useTransition, useEffect } from "react";
 import { EditModal } from "../../components/EditModal";
 import { uploadClientLogo } from "../actions";
+import { LINE_OF_BUSINESS_VALUES } from "@/lib/lineOfBusiness";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type ClientForEdit = {
   id: string;
@@ -15,6 +17,7 @@ type ClientForEdit = {
   email: string;
   company: string | null;
   phone: string | null;
+  lineOfBusiness: string | null;
   websiteUrl: string | null;
   showOnWebsite: boolean;
   logoUrl: string | null;
@@ -30,6 +33,7 @@ type Props = {
 };
 
 export function EditClientDetailsModal({ client, updateClient }: Props) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState(client.logoUrl ?? "");
   const [logoUploadError, setLogoUploadError] = useState<string | null>(null);
@@ -111,6 +115,21 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder="Company name"
             />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.common.lineOfBusiness}</label>
+            <select
+              name="lineOfBusiness"
+              defaultValue={client.lineOfBusiness ?? ""}
+              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+            >
+              <option value="">—</option>
+              {LINE_OF_BUSINESS_VALUES.map((value) => (
+                <option key={value} value={value}>
+                  {t.dashboard.common.lineOfBusinessOptions[value as keyof typeof t.dashboard.common.lineOfBusinessOptions]}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="block text-xs text-gray-500 uppercase mb-0.5">Website URL</label>

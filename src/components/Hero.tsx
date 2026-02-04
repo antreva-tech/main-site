@@ -28,8 +28,8 @@ export function Hero() {
 
       <div className="relative w-full max-w-7xl mx-auto px-4 pt-10 pb-52 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         <div className="flex flex-col gap-16 sm:gap-8 md:grid md:grid-cols-2 md:gap-10 md:items-center">
-          {/* Logo as Hero Image - First on mobile, second on desktop */}
-          <div className="flex justify-center md:justify-end md:order-2">
+          {/* Logo as Hero Image - First on mobile, second on desktop; animates in from right */}
+          <div className="flex justify-center md:justify-end md:order-2 opacity-0 animate-hero-slide-in-right">
             <Image
               src="/Antreva Tech Transparente.png"
               alt="Antreva Tech"
@@ -42,8 +42,8 @@ export function Hero() {
             />
           </div>
 
-          {/* Content - Second on mobile, first on desktop */}
-          <div className="space-y-4 sm:space-y-5 text-center md:text-left md:order-1">
+          {/* Content - Second on mobile, first on desktop; animates in from bottom with buttons */}
+          <div className="space-y-4 sm:space-y-5 text-center md:text-left md:order-1 opacity-0 animate-hero-slide-in-up">
             <span className="inline-block text-tech-blue font-medium text-xs sm:text-sm tracking-wider uppercase bg-tech-blue/10 px-3 py-1 rounded-full">
               {t.hero.brand}
             </span>
@@ -54,7 +54,7 @@ export function Hero() {
             <p className="text-base sm:text-lg text-slate-gray max-w-lg mx-auto md:mx-0" aria-label={t.hero.tagline}>
               {t.hero.tagline}
             </p>
-            {/* CTA Buttons */}
+            {/* CTA Buttons - part of content block entrance */}
             <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:gap-4 sm:justify-center md:justify-start">
               <a
                 href="#plans"

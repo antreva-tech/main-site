@@ -23,9 +23,9 @@ export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-gray/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-18 lg:h-20">
+        <div className="relative flex items-center justify-between h-16 sm:h-18 lg:h-20">
           {/* Logo / Brand - Hidden on mobile */}
-          <a href="#" className="hidden md:flex items-center">
+          <a href="#" className="hidden md:flex items-center flex-shrink-0 z-10">
             <Image
               src="/Antreva Tech Transparente.png"
               alt="Antreva Tech"
@@ -58,8 +58,11 @@ export function Header() {
             </svg>
           </a>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+          {/* Desktop Navigation - centered on viewport */}
+          <nav
+            className="hidden md:flex items-center gap-6 lg:gap-8 absolute left-1/2 -translate-x-1/2"
+            aria-label="Main navigation"
+          >
             {navLinks.map((link) => (
               <a
                 key={link.href}
@@ -69,13 +72,15 @@ export function Header() {
                 {link.label}
               </a>
             ))}
-            <a
-              href="#contact"
-              className="bg-tech-blue text-white px-4 lg:px-5 py-2 rounded-lg hover:bg-tech-blue/90 transition-colors font-medium text-sm lg:text-base"
-            >
-              {t.nav.getStarted}
-            </a>
           </nav>
+
+          {/* Comenzar CTA - stays on the right */}
+          <a
+            href="#contact"
+            className="hidden md:inline-flex bg-tech-blue text-white px-4 lg:px-5 py-2 rounded-lg hover:bg-tech-blue/90 transition-colors font-medium text-sm lg:text-base flex-shrink-0 z-10"
+          >
+            {t.nav.getStarted}
+          </a>
 
           {/* Mobile Menu Button - Large touch target */}
           <button

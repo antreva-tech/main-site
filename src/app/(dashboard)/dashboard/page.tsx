@@ -402,6 +402,7 @@ function toLeadRow(
     source: string;
     sourceOther: string | null;
     referralFrom: string | null;
+    lineOfBusiness: string | null;
     notes: string | null;
     lostReason: string | null;
     expectedValue: unknown;
@@ -419,6 +420,7 @@ function toLeadRow(
     source: l.source,
     sourceOther: l.sourceOther,
     referralFrom: l.referralFrom,
+    lineOfBusiness: l.lineOfBusiness,
     notes: l.notes,
     lostReason: l.lostReason,
     expectedValue: l.expectedValue != null ? Number(l.expectedValue) : null,
@@ -447,6 +449,7 @@ async function RecentLeads({
       source: true,
       sourceOther: true,
       referralFrom: true,
+      lineOfBusiness: true,
       notes: true,
       lostReason: true,
       expectedValue: true,

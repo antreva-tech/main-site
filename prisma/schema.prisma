@@ -95,6 +95,7 @@ model Lead {
   source            LeadSource  @default(other)
   sourceOther       String?     /// Custom value when source is "other"
   referralFrom      String?     /// Who referred (when source is referral); for referral payment tracking
+  lineOfBusiness    LineOfBusiness?  /// Industry / vertical (retail, tourism, medical, etc.)
   notes             String?     @db.Text
   stage             LeadStage   @default(new)
   lostReason        String?
@@ -111,6 +112,7 @@ model Lead {
   @@index([source])
   @@index([createdAt(sort: Desc)])
   @@index([email])
+  @@index([lineOfBusiness])
 }
 
 enum LeadSource {
@@ -136,23 +138,24 @@ enum LeadStage {
 
 /// Converted from won Lead, or direct entry
 model Client {
-  id         String       @id @default(cuid())
-  leadId     String?      @unique
-  lead       Lead?        @relation("ConvertedLead")
-  name       String
-  email      String       @unique
-  company    String?
-  phone      String?
-  websiteUrl String?      // Client's website / admin panel URL
-  showOnWebsite Boolean   @default(false) // If true, show in main-site client showcase (requires websiteUrl)
-  logoUrl    String?      // Logo URL for main-site showcase card
-  cedula     String?      @unique // Dominican national ID
-  rnc        String?      // Business tax ID (RNC)
-  notes      String?      @db.Text
-  status     ClientStatus @default(active)
-  startedAt  DateTime     @default(now())
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
+  id              String           @id @default(cuid())
+  leadId          String?           @unique
+  lead            Lead?             @relation("ConvertedLead")
+  name            String
+  email           String            @unique
+  company         String?
+  phone           String?
+  lineOfBusiness  LineOfBusiness?   /// Industry / vertical (retail, tourism, medical, etc.)
+  websiteUrl     String?           // Client's website / admin panel URL
+  showOnWebsite  Boolean           @default(false) // If true, show in main-site client showcase (requires websiteUrl)
+  logoUrl         String?           // Logo URL for main-site showcase card
+  cedula          String?           @unique // Dominican national ID
+  rnc             String?          // Business tax ID (RNC)
+  notes           String?          @db.Text
+  status          ClientStatus      @default(active)
+  startedAt       DateTime          @default(now())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime          @updatedAt
 
   // Relations
   contacts               ClientContact[]
@@ -165,6 +168,17 @@ model Client {
 
   @@index([status])
   @@index([startedAt(sort: Desc)])
+  @@index([lineOfBusiness])
+}
+
+/// Line of business / industry (leads and clients).
+enum LineOfBusiness {
+  retail
+  tourism
+  medical
+  restaurant
+  administrative
+  warehouse_logistics
 }
 
 /// Additional contacts for a client (e.g. admin, support, billing)

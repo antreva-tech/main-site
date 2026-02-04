@@ -19,6 +19,7 @@ import { AddContactForm } from "./AddContactForm";
 import { AddTicketForm } from "./AddTicketForm";
 import { EditClientDetailsModal } from "./EditClientDetailsModal";
 import { StartDevelopmentProjectButton } from "./StartDevelopmentProjectButton";
+import { formatLineOfBusiness } from "@/lib/lineOfBusiness";
 
 /** Shape of client query result for this page (avoids stale Prisma client types). */
 interface ClientWithRelations {
@@ -27,6 +28,7 @@ interface ClientWithRelations {
   email: string;
   company: string | null;
   phone: string | null;
+  lineOfBusiness: string | null;
   websiteUrl: string | null;
   showOnWebsite: boolean;
   logoUrl: string | null;
@@ -298,6 +300,10 @@ export default async function ClientDetailPage({
                 )}
               </div>
             )}
+            <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
+              <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Line of business</p>
+              <p className="text-sm text-[#0B132B]/90">{formatLineOfBusiness(client.lineOfBusiness)}</p>
+            </div>
               </div>
 
               {/* Notes */}
@@ -335,6 +341,7 @@ export default async function ClientDetailPage({
                     email: client.email,
                     company: client.company,
                     phone: client.phone,
+                    lineOfBusiness: client.lineOfBusiness,
                     websiteUrl: client.websiteUrl,
                     showOnWebsite: client.showOnWebsite,
                     logoUrl: client.logoUrl,

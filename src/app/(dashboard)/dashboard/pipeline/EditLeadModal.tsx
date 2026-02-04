@@ -12,6 +12,7 @@ import { EditModal } from "../components/EditModal";
 import { updateLead } from "./actions";
 import type { LeadRow } from "./PipelineBoard";
 import type { LeadStage, LeadSource } from "@prisma/client";
+import { LINE_OF_BUSINESS_VALUES } from "@/lib/lineOfBusiness";
 
 const SOURCE_OPTIONS: Array<{ value: LeadStage; labelKey: LeadStage }> = [
   { value: "new", labelKey: "new" },
@@ -149,6 +150,23 @@ export function EditLeadModal({ lead, open, onClose }: Props) {
             />
           </div>
         )}
+        <div>
+          <label className="block text-xs text-gray-500 uppercase mb-1">
+            {t.dashboard.common.lineOfBusiness}
+          </label>
+          <select
+            name="lineOfBusiness"
+            defaultValue={lead.lineOfBusiness ?? ""}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+          >
+            <option value="">—</option>
+            {LINE_OF_BUSINESS_VALUES.map((value) => (
+              <option key={value} value={value}>
+                {t.dashboard.common.lineOfBusinessOptions[value as keyof typeof t.dashboard.common.lineOfBusinessOptions]}
+              </option>
+            ))}
+          </select>
+        </div>
         <div>
           <label className="block text-xs text-gray-500 uppercase mb-1">
             {t.dashboard.pipeline.stage}

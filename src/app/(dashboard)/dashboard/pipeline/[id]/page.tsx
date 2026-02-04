@@ -8,6 +8,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { LeadStageSelector } from "./LeadStageSelector";
 import { ConvertToClientButton } from "./ConvertToClientButton";
+import { formatLineOfBusiness } from "@/lib/lineOfBusiness";
 
 /**
  * Lead detail page.
@@ -89,9 +90,18 @@ export default async function LeadDetailPage({
                 ? lead.sourceOther
                 : lead.source.replace(/_/g, " ")}
             </p>
-            {lead.source === "referral" && lead.referralFrom && (
-              <p className="text-sm text-gray-600 mt-1">Referral from: {lead.referralFrom}</p>
-            )}
+          </div>
+          {lead.source === "referral" && (
+            <div>
+              <p className="text-xs text-gray-500 uppercase">Referral from</p>
+              <p className="text-[#0B132B] font-medium">
+                {lead.referralFrom?.trim() || "—"}
+              </p>
+            </div>
+          )}
+          <div>
+            <p className="text-xs text-gray-500 uppercase">Line of business</p>
+            <p className="text-[#0B132B]">{formatLineOfBusiness(lead.lineOfBusiness)}</p>
           </div>
           {expectedValue && (
             <div>

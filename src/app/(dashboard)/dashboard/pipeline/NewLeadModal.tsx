@@ -10,6 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { createLead } from "./actions";
 import type { LeadSource } from "@prisma/client";
 import { useState } from "react";
+import { LINE_OF_BUSINESS_VALUES } from "@/lib/lineOfBusiness";
 
 export interface NewLeadModalProps {
   open: boolean;
@@ -135,6 +136,23 @@ export function NewLeadModal({ open, onClose, onSuccess }: NewLeadModalProps) {
                 />
               </div>
             )}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t.dashboard.common.lineOfBusiness}
+              </label>
+              <select
+                name="lineOfBusiness"
+                className="w-full min-h-[44px] px-3 py-2.5 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
+              >
+                <option value="">—</option>
+                {LINE_OF_BUSINESS_VALUES.map((value) => (
+                  <option key={value} value={value}>
+                    {t.dashboard.common.lineOfBusinessOptions[value as keyof typeof t.dashboard.common.lineOfBusinessOptions]}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

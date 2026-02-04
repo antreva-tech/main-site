@@ -103,24 +103,50 @@ export function Plans() {
           ))}
         </div>
 
-        {/* Additional info */}
-        <div className="mt-8 sm:mt-12 text-center">
-          <div className="inline-block bg-white/90 backdrop-blur-sm rounded-xl px-6 py-4 shadow-sm border border-slate-gray/20">
-            <p className="text-midnight-navy/80 text-sm sm:text-base">
-              {t.plans.allPlansInclude}
-            </p>
-            <p className="text-midnight-navy/70 mt-1 text-sm sm:text-base">
-              {t.plans.needCustom}{" "}
-              <a
-                href="#contact"
-                className="text-tech-blue hover:underline active:underline font-medium"
-              >
-                {t.plans.contactUs}
-              </a>{" "}
-              {t.plans.forTailored}
-            </p>
-          </div>
+        {/* Short disclaimer */}
+        <div className="mt-8 text-center">
+          <p className="text-midnight-navy/80 text-sm sm:text-base">
+            {t.plans.allPlansInclude}
+          </p>
         </div>
+
+        {/* Custom solution CTA — prominent section below plans */}
+        {(() => {
+          const custom = t.plans?.customSection;
+          const title = custom?.title ?? t.plans?.needCustom;
+          const description = custom?.description;
+          const cta = custom?.cta ?? `${t.plans?.contactUs} ${t.plans?.forTailored}`.trim();
+          return (
+            <div className="mt-10 sm:mt-14">
+              <div
+                className="relative rounded-2xl overflow-hidden bg-midnight-navy text-white px-6 py-10 sm:px-10 sm:py-14 md:px-14 md:py-16"
+                aria-labelledby="custom-solution-heading"
+              >
+                <div className="absolute inset-0 bg-tech-blue/10" aria-hidden="true" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-tech-blue/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" aria-hidden="true" />
+                <div className="relative max-w-2xl mx-auto text-center">
+                  <h2
+                    id="custom-solution-heading"
+                    className="text-xl sm:text-2xl md:text-3xl font-bold text-white"
+                  >
+                    {title}
+                  </h2>
+                  {description && (
+                    <p className="mt-4 text-white/85 text-sm sm:text-base leading-relaxed">
+                      {description}
+                    </p>
+                  )}
+                  <a
+                    href="#contact"
+                    className="mt-8 inline-flex items-center justify-center rounded-lg bg-tech-blue text-white font-semibold px-6 py-3.5 text-sm sm:text-base hover:bg-tech-blue/90 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-midnight-navy transition-colors"
+                  >
+                    {cta}
+                  </a>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </section>
   );

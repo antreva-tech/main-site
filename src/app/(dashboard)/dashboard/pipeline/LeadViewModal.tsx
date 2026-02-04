@@ -187,6 +187,14 @@ export function LeadViewModal({ lead, open, onClose, onEdit, onStageChange, onRe
               </span>
             )}
           </span>
+          {lead.lineOfBusiness && (
+            <>
+              <span className="text-gray-500">{t.dashboard.common.lineOfBusiness}</span>
+              <span className="capitalize">
+                {t.dashboard.common.lineOfBusinessOptions[lead.lineOfBusiness as keyof typeof t.dashboard.common.lineOfBusinessOptions]}
+              </span>
+            </>
+          )}
           <span className="text-gray-500">{t.dashboard.pipeline.stage}</span>
           <span className="sm:col-span-1" ref={dropdownRef}>
             {lead.stage === "won" ? (

@@ -11,7 +11,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { normalizePhoneForStorage } from "@/lib/phone";
 import { logCreate, logUpdate, logDelete } from "@/lib/audit";
-import type { ClientStatus, SubscriptionStatus, SingleChargeStatus } from "@prisma/client";
+import type { ClientStatus, SubscriptionStatus, SingleChargeStatus, LineOfBusiness } from "@prisma/client";
 
 /** Allowed image types for client logos (Vercel Blob). */
 const LOGO_CONTENT_TYPES = ["image/jpeg", "image/png", "image/webp", "image/svg+xml"];
@@ -71,6 +71,11 @@ export async function createClient(formData: FormData) {
   const cedula = formData.get("cedula") as string | null;
   const rnc = formData.get("rnc") as string | null;
   const notes = formData.get("notes") as string | null;
+  const lineOfBusinessRaw = formData.get("lineOfBusiness") as string | null;
+  const lineOfBusiness: LineOfBusiness | null =
+    lineOfBusinessRaw && ["retail", "tourism", "medical", "restaurant", "administrative", "warehouse_logistics"].includes(lineOfBusinessRaw)
+      ? (lineOfBusinessRaw as LineOfBusiness)
+      : null;
 
   if (!name || !email) throw new Error("Name and email are required");
 
@@ -80,6 +85,7 @@ export async function createClient(formData: FormData) {
       email,
       company: company || null,
       phone: normalizePhoneForStorage(phone),
+      lineOfBusiness,
       websiteUrl: websiteUrl || null,
       showOnWebsite,
       logoUrl,
@@ -117,11 +123,18 @@ export async function updateClient(formData: FormData) {
     ? (statusRaw as ClientStatus)
     : undefined;
 
+  const lineOfBusinessRaw = (formData.get("lineOfBusiness") as string)?.trim() || null;
+  const lineOfBusiness: LineOfBusiness | null =
+    lineOfBusinessRaw && ["retail", "tourism", "medical", "restaurant", "administrative", "warehouse_logistics"].includes(lineOfBusinessRaw)
+      ? (lineOfBusinessRaw as LineOfBusiness)
+      : null;
+
   const data = {
     name: formData.get("name") as string,
     email: formData.get("email") as string,
     company: (formData.get("company") as string)?.trim() || null,
     phone: normalizePhoneForStorage((formData.get("phone") as string)?.trim()),
+    lineOfBusiness,
     websiteUrl: (formData.get("websiteUrl") as string)?.trim() || null,
     showOnWebsite: formData.get("showOnWebsite") === "on",
     logoUrl: (formData.get("logoUrl") as string)?.trim() || null,

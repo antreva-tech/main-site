@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { createClient } from "../actions";
 import { LogoUrlField } from "./LogoUrlField";
+import { LINE_OF_BUSINESS_VALUES, LINE_OF_BUSINESS_LABELS } from "@/lib/lineOfBusiness";
 
 /**
  * New client form page.
@@ -63,6 +64,24 @@ export default function NewClientPage() {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder="Company name"
             />
+          </div>
+
+          {/* Line of business */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Line of business
+            </label>
+            <select
+              name="lineOfBusiness"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1C6ED5]"
+            >
+              <option value="">—</option>
+              {LINE_OF_BUSINESS_VALUES.map((value) => (
+                <option key={value} value={value}>
+                  {LINE_OF_BUSINESS_LABELS[value]}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Website URL */}
