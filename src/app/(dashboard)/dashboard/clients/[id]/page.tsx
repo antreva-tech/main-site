@@ -1,9 +1,11 @@
 /**
  * Client Detail Page
+ * Uses locale from cookie for Spanish/English (section titles, form labels, status text).
  */
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { createClientContact, deleteClientContact, updateClientContact, updateClient, createSubscription, updateSubscription, deleteSubscription, createSingleCharge, updateSingleCharge, deleteSingleCharge } from "../actions";
@@ -19,7 +21,10 @@ import { AddContactForm } from "./AddContactForm";
 import { AddTicketForm } from "./AddTicketForm";
 import { EditClientDetailsModal } from "./EditClientDetailsModal";
 import { StartDevelopmentProjectButton } from "./StartDevelopmentProjectButton";
-import { formatLineOfBusiness } from "@/lib/lineOfBusiness";
+import { getTranslations } from "@/i18n";
+import type { Translations } from "@/i18n";
+
+const LOCALE_COOKIE = "locale";
 
 /** Shape of client query result for this page (avoids stale Prisma client types). */
 interface ClientWithRelations {
@@ -77,6 +82,11 @@ export default async function ClientDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get(LOCALE_COOKIE)?.value;
+  const locale = localeCookie === "en" || localeCookie === "es" ? localeCookie : "es";
+  const t = getTranslations(locale);
 
   const [session, clientRaw, services] = await Promise.all([
     getSession(),
@@ -179,7 +189,7 @@ export default async function ClientDetailPage({
                     )}
                   </div>
                 </div>
-                <StatusBadge status={client.status} />
+                <StatusBadge status={client.status} t={t} />
               </div>
 
               {/* Project status — card-style UI; pipeline link only for CTO and Developer */}
@@ -199,21 +209,21 @@ export default async function ClientDetailPage({
                           <span
                             className={`inline-flex items-center px-3 py-1.5 rounded-lg font-semibold text-sm ${getProjectStageStyles(client.developmentProject.stage)}`}
                           >
-                            {formatDevStage(client.developmentProject.stage)}
+                            {formatDevStage(client.developmentProject.stage, t)}
                           </span>
                           {canViewPipeline && (
                             <Link
                               href={`/dashboard/development/${client.developmentProject.id}`}
                               className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1C6ED5] hover:text-[#1559B3] rounded-lg hover:bg-[#1C6ED5]/[0.06] transition-colors"
                             >
-                              View in Development Pipeline
+                              {t.dashboard.nav.development}
                               <span aria-hidden>→</span>
                             </Link>
                           )}
                         </div>
                       ) : (
                         <div className="flex flex-wrap items-center gap-3">
-                          <span className="text-sm text-[#8A8F98]">No active project</span>
+                          <span className="text-sm text-[#8A8F98]">{(t.dashboard as { development: { noActiveProject: string } }).development.noActiveProject}</span>
                           {canViewPipeline && (
                             <StartDevelopmentProjectButton clientId={client.id} />
                           )}
@@ -227,18 +237,18 @@ export default async function ClientDetailPage({
               {/* Contact grid: 1 col mobile → 2 → 4 on larger */}
               <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-              <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Email</p>
+              <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.email}</p>
               <a
                 href={`mailto:${client.email}`}
                 title={client.email}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 bg-[#1C6ED5]/[0.08] text-[#1C6ED5] hover:bg-[#1C6ED5]/15 hover:border-[#1C6ED5]/50 transition-all"
               >
-                <span aria-hidden>✉️</span> Email
+                <span aria-hidden>✉️</span> {t.dashboard.clients.email}
               </a>
             </div>
             {client.phone && (
               <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Phone</p>
+                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.phone}</p>
                 <div className="flex flex-wrap gap-1.5">
                   <a
                     href={`tel:${client.phone}`}
@@ -261,7 +271,7 @@ export default async function ClientDetailPage({
             )}
             {client.websiteUrl && (
               <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Website</p>
+                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.website}</p>
                 <a
                   href={client.websiteUrl.startsWith("http") ? client.websiteUrl : `https://${client.websiteUrl}`}
                   target="_blank"
@@ -275,25 +285,25 @@ export default async function ClientDetailPage({
             )}
             {client.cedula && (
               <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Cedula</p>
-                <p className="text-sm text-[#0B132B]/90 truncate font-mono" title="Full number hidden for privacy">
+                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.cedula}</p>
+                <p className="text-sm text-[#0B132B]/90 truncate font-mono" title={t.dashboard.clients.fullNumberHidden}>
                   {maskCedula(client.cedula)}
                 </p>
               </div>
             )}
             {client.rnc && (
               <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">RNC</p>
+                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.rnc}</p>
                 <p className="text-sm text-[#0B132B]/90 truncate font-mono" title={client.rnc}>{client.rnc}</p>
               </div>
             )}
             <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-              <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Started</p>
+              <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.started}</p>
               <p className="text-sm text-[#0B132B]/90">{client.startedAt.toLocaleDateString()}</p>
             </div>
             {client.lead && (
               <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Source</p>
+                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.source}</p>
                 <p className="text-sm text-[#0B132B]/90 capitalize">{client.lead.source.replace("_", " ")}</p>
                 {client.lead.source === "referral" && client.lead.referralFrom && (
                   <p className="text-sm text-[#0B132B]/80 mt-1">Referral from: {client.lead.referralFrom}</p>
@@ -301,15 +311,15 @@ export default async function ClientDetailPage({
               </div>
             )}
             <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-              <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">Line of business</p>
-              <p className="text-sm text-[#0B132B]/90">{formatLineOfBusiness(client.lineOfBusiness)}</p>
+              <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.common.lineOfBusiness}</p>
+              <p className="text-sm text-[#0B132B]/90">{client.lineOfBusiness ? (t.dashboard.common.lineOfBusinessOptions as Record<string, string>)[client.lineOfBusiness] ?? client.lineOfBusiness.replace(/_/g, " ") : "—"}</p>
             </div>
               </div>
 
               {/* Notes */}
               {client.notes && (
                 <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-[#0B132B]/[0.08]">
-                  <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-2">Notes</p>
+                  <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-2">{t.dashboard.clients.notes}</p>
                   <p className="text-[#0B132B]/85 text-sm whitespace-pre-wrap leading-relaxed">
                     {client.notes}
                   </p>
@@ -322,13 +332,13 @@ export default async function ClientDetailPage({
                   href={`/dashboard/credentials?clientId=${client.id}`}
                   className="min-h-[44px] flex items-center justify-center px-4 py-2.5 border border-[#0B132B]/[0.12] rounded-xl hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 text-sm font-medium text-[#0B132B] transition-all w-full sm:w-auto touch-manipulation"
                 >
-                  View Credentials ({client._count.supportCredentials})
+                  {t.dashboard.clients.viewCredentials} ({client._count.supportCredentials})
                 </Link>
                 <Link
                   href={`/dashboard/tickets?clientId=${client.id}`}
                   className="min-h-[44px] flex items-center justify-center px-4 py-2.5 border border-[#0B132B]/[0.12] rounded-xl hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 text-sm font-medium text-[#0B132B] transition-all w-full sm:w-auto touch-manipulation"
                 >
-                  View All Tickets
+                  {t.dashboard.clients.viewAllTickets}
                 </Link>
               </div>
 
@@ -359,23 +369,23 @@ export default async function ClientDetailPage({
             <aside className="hidden lg:flex flex-col gap-4 min-w-0">
               <div className="rounded-xl border border-[#0B132B]/[0.08] bg-white/50 p-5 flex-shrink-0">
                 <h2 className="text-sm font-semibold text-[#8A8F98] uppercase tracking-wider mb-4">
-                  At a glance
+                  {t.dashboard.atAGlance}
                 </h2>
                 <dl className="space-y-3">
                   <div className="flex justify-between items-center gap-2">
-                    <dt className="text-sm text-[#0B132B]/80">Subscriptions</dt>
+                    <dt className="text-sm text-[#0B132B]/80">{t.dashboard.clients.subscriptions}</dt>
                     <dd className="text-sm font-semibold text-[#0B132B]">{client._count.subscriptions}</dd>
                   </div>
                   <div className="flex justify-between items-center gap-2">
-                    <dt className="text-sm text-[#0B132B]/80">Single charges</dt>
+                    <dt className="text-sm text-[#0B132B]/80">{t.dashboard.clients.singleCharges}</dt>
                     <dd className="text-sm font-semibold text-[#0B132B]">{client._count.singleCharges}</dd>
                   </div>
                   <div className="flex justify-between items-center gap-2">
-                    <dt className="text-sm text-[#0B132B]/80">Tickets</dt>
+                    <dt className="text-sm text-[#0B132B]/80">{t.dashboard.nav.tickets}</dt>
                     <dd className="text-sm font-semibold text-[#0B132B]">{client._count.tickets}</dd>
                   </div>
                   <div className="flex justify-between items-center gap-2">
-                    <dt className="text-sm text-[#0B132B]/80">Credentials</dt>
+                    <dt className="text-sm text-[#0B132B]/80">{t.dashboard.clients.adminCredentials}</dt>
                     <dd className="text-sm font-semibold text-[#0B132B]">{client._count.supportCredentials}</dd>
                   </div>
                 </dl>
@@ -385,13 +395,13 @@ export default async function ClientDetailPage({
                   href={`/dashboard/credentials?clientId=${client.id}`}
                   className="min-h-[44px] flex items-center justify-center px-4 py-2.5 bg-[#1C6ED5] text-white rounded-xl font-medium text-sm hover:bg-[#1559B3] transition-colors shadow-sm touch-manipulation"
                 >
-                  View Credentials ({client._count.supportCredentials})
+                  {t.dashboard.clients.viewCredentials} ({client._count.supportCredentials})
                 </Link>
                 <Link
                   href={`/dashboard/tickets?clientId=${client.id}`}
                   className="min-h-[44px] flex items-center justify-center px-4 py-2.5 border border-[#0B132B]/[0.12] rounded-xl font-medium text-sm text-[#0B132B] hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 transition-colors touch-manipulation"
                 >
-                  View All Tickets
+                  {t.dashboard.clients.viewAllTickets}
                 </Link>
               </div>
             </aside>
@@ -403,7 +413,7 @@ export default async function ClientDetailPage({
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
       {/* Contacts */}
       <div className="dashboard-card p-5 sm:p-6">
-        <h2 className="dashboard-section-title text-lg mb-1">Contacts</h2>
+        <h2 className="dashboard-section-title text-lg mb-1">{t.dashboard.clients.contacts}</h2>
         {client.contacts.length > 0 ? (
           <ClientContacts
             contacts={client.contacts}
@@ -412,7 +422,7 @@ export default async function ClientDetailPage({
             deleteClientContact={deleteClientContact}
           />
         ) : (
-          <p className="text-[#8A8F98] text-sm mb-5">No additional contacts yet.</p>
+          <p className="text-[#8A8F98] text-sm mb-5">{t.dashboard.clients.noContactsYet}</p>
         )}
         <AddContactForm clientId={client.id} createClientContact={createClientContact} />
       </div>
@@ -420,30 +430,30 @@ export default async function ClientDetailPage({
       {/* Subscriptions */}
       <div className="dashboard-card p-5 sm:p-6">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="dashboard-section-title text-lg">Subscriptions</h2>
+          <h2 className="dashboard-section-title text-lg">{t.dashboard.clients.subscriptions}</h2>
         </div>
 
         {/* Add subscription form */}
         {services.length === 0 && (
           <p className="text-sm text-[#8A8F98] mb-5">
-            No active services in the catalog. Add services in Settings to offer subscriptions.
+            {t.dashboard.clients.noActiveServices}
           </p>
         )}
         {services.length > 0 && (
           <details className="mb-6 group">
             <summary className="cursor-pointer text-sm font-semibold text-[#1C6ED5] hover:text-[#1559B3] list-none py-1 transition-colors">
-              + Add Subscription
+              + {t.dashboard.clients.addSubscription}
             </summary>
             <form action={createSubscription} className="mt-4 p-4 sm:p-5 rounded-xl bg-[#0B132B]/[0.03] border border-[#0B132B]/[0.06] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <input type="hidden" name="clientId" value={client.id} />
               <div>
-                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">Service *</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.service}</label>
                 <select
                   name="serviceId"
                   required
                   className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 >
-                  <option value="">Select service</option>
+                  <option value="">{t.dashboard.clients.selectService}</option>
                   {services.map((svc) => (
                     <option key={svc.id} value={svc.id}>
                       {svc.name}
@@ -455,7 +465,7 @@ export default async function ClientDetailPage({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">Amount *</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.amount}</label>
                 <input
                   type="number"
                   name="amount"
@@ -467,7 +477,7 @@ export default async function ClientDetailPage({
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">Currency</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.currency}</label>
                 <select
                   name="currency"
                   className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
@@ -477,19 +487,19 @@ export default async function ClientDetailPage({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">Billing cycle</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.billingCycle}</label>
                 <select
                   name="billingCycle"
                   className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 >
-                  <option value="monthly">Monthly</option>
-                  <option value="quarterly">Quarterly</option>
-                  <option value="annual">Annual</option>
-                  <option value="one_time">One-time</option>
+                  <option value="monthly">{t.dashboard.clients.monthly}</option>
+                  <option value="quarterly">{t.dashboard.clients.quarterly}</option>
+                  <option value="annual">{t.dashboard.clients.annual}</option>
+                  <option value="one_time">{t.dashboard.clients.oneTime}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">Start date *</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.startDate}</label>
                 <input
                   type="date"
                   name="startDate"
@@ -503,7 +513,7 @@ export default async function ClientDetailPage({
                   type="submit"
                   className="min-h-[44px] w-full sm:w-auto px-4 py-2.5 bg-[#1C6ED5] text-white text-sm rounded-xl font-medium shadow-sm hover:bg-[#1559B3] hover:shadow transition-all"
                 >
-                  Add subscription
+                  {t.dashboard.clients.addSubscriptionSubmit}
                 </button>
               </div>
             </form>
@@ -530,7 +540,7 @@ export default async function ClientDetailPage({
           />
         ) : (
           <p className="text-[#8A8F98] text-sm py-6 text-center">
-            No subscriptions yet
+            {t.dashboard.clients.noSubscriptionsYet}
           </p>
         )}
       </div>
@@ -538,10 +548,10 @@ export default async function ClientDetailPage({
       {/* Single charges */}
       <div className="dashboard-card p-5 sm:p-6">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="dashboard-section-title text-lg">Single charges</h2>
+          <h2 className="dashboard-section-title text-lg">{t.dashboard.clients.singleCharges}</h2>
         </div>
         <p className="text-sm text-[#8A8F98] mb-5">
-          One-time charges (setup fees, migrations, one-off projects).
+          {t.dashboard.clients.singleChargesHint}
         </p>
         <div className="mb-5">
           <AddSingleChargeForm clientId={client.id} createSingleCharge={createSingleCharge} />
@@ -563,16 +573,16 @@ export default async function ClientDetailPage({
           />
         ) : (
           <p className="text-[#8A8F98] text-sm py-6 text-center">
-            No single charges yet
+            {t.dashboard.clients.noSingleChargesYet}
           </p>
         )}
       </div>
 
       {/* Admin credentials */}
       <div className="dashboard-card p-5 sm:p-6">
-        <h2 className="dashboard-section-title text-lg mb-1">Admin credentials</h2>
+        <h2 className="dashboard-section-title text-lg mb-1">{t.dashboard.clients.adminCredentials}</h2>
         <p className="text-sm text-[#8A8F98] mb-5">
-          Store client admin panel / cPanel / FTP credentials. Values are encrypted. Decrypt from Support Credentials when needed.
+          {t.dashboard.clients.adminCredentialsHint}
         </p>
         {client.supportCredentials.length > 0 ? (
           <ClientCredentials
@@ -582,7 +592,7 @@ export default async function ClientDetailPage({
             deleteCredential={deleteCredential}
           />
         ) : (
-          <p className="text-[#8A8F98] text-sm mb-4">No credentials yet.</p>
+          <p className="text-[#8A8F98] text-sm mb-4">{t.dashboard.clients.noCredentialsYet}</p>
         )}
         <AddCredentialForm clientId={client.id} createCredential={createCredential} />
       </div>
@@ -590,12 +600,12 @@ export default async function ClientDetailPage({
       {/* Recent Tickets */}
       <div className="dashboard-card p-5 sm:p-6 lg:min-h-0">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="dashboard-section-title text-lg">Recent Tickets</h2>
+          <h2 className="dashboard-section-title text-lg">{t.dashboard.clients.recentTickets}</h2>
           <Link
             href={`/dashboard/tickets?clientId=${client.id}`}
             className="text-sm font-semibold text-[#1C6ED5] hover:text-[#1559B3] transition-colors"
           >
-            View All
+            {t.dashboard.clients.viewAll}
           </Link>
         </div>
 
@@ -615,13 +625,13 @@ export default async function ClientDetailPage({
                     {ticket.createdAt.toLocaleDateString()}
                   </p>
                 </div>
-                <TicketStatus status={ticket.status} />
+                <TicketStatus status={ticket.status} t={t} />
               </Link>
             ))}
           </div>
         ) : (
           <p className="text-[#8A8F98] text-sm py-6 text-center">
-            No tickets yet
+            {t.dashboard.clients.noTicketsYet}
           </p>
         )}
       </div>
@@ -629,8 +639,8 @@ export default async function ClientDetailPage({
 
       {/* Metadata */}
       <div className="mt-6 text-xs text-[#8A8F98]/80">
-        <p>Created: {client.createdAt.toLocaleString()}</p>
-        <p>Updated: {client.updatedAt.toLocaleString()}</p>
+        <p>{t.dashboard.clients.created}: {client.createdAt.toLocaleString()}</p>
+        <p>{t.dashboard.clients.updated}: {client.updatedAt.toLocaleString()}</p>
         <p>ID: {client.id}</p>
       </div>
     </div>
@@ -638,19 +648,11 @@ export default async function ClientDetailPage({
 }
 
 /**
- * Human-readable development stage label for sales team.
+ * Human-readable development stage label using i18n.
  */
-function formatDevStage(stage: string): string {
-  const labels: Record<string, string> = {
-    discovery: "Discovery",
-    design: "Design",
-    development: "Development",
-    qa: "QA",
-    deployment: "Deployment",
-    completed: "Completed",
-    on_hold: "On Hold",
-  };
-  return labels[stage] ?? stage;
+function formatDevStage(stage: string, t: Translations): string {
+  const dev = (t.dashboard as { development?: Record<string, string> }).development;
+  return dev?.[stage] ?? stage;
 }
 
 /**
@@ -679,28 +681,29 @@ function maskCedula(cedula: string): string {
 }
 
 /**
- * Status badge component.
+ * Status badge component; label from i18n.
  */
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status, t }: { status: string; t: Translations }) {
   const styles: Record<string, string> = {
     active: "bg-emerald-500/12 text-emerald-700",
     inactive: "bg-amber-500/12 text-amber-700",
     churned: "bg-red-500/12 text-red-700",
   };
+  const label = status === "active" ? t.dashboard.clients.active : status === "inactive" ? t.dashboard.clients.inactive : status === "churned" ? t.dashboard.clients.churned : status;
 
   return (
     <span
       className={`inline-flex px-3 py-1.5 rounded-full text-sm font-semibold ${styles[status] || styles.active}`}
     >
-      {status}
+      {label}
     </span>
   );
 }
 
 /**
- * Ticket status badge.
+ * Ticket status badge; label from i18n.
  */
-function TicketStatus({ status }: { status: string }) {
+function TicketStatus({ status, t }: { status: string; t: Translations }) {
   const styles: Record<string, string> = {
     open: "bg-[#1C6ED5]/12 text-[#1C6ED5]",
     in_progress: "bg-purple-500/12 text-purple-700",
@@ -708,12 +711,14 @@ function TicketStatus({ status }: { status: string }) {
     resolved: "bg-emerald-500/12 text-emerald-700",
     closed: "bg-[#8A8F98]/20 text-[#8A8F98]",
   };
+  const statuses = t.dashboard.tickets.statuses as Record<string, string>;
+  const label = statuses[status] ?? status.replace("_", " ");
 
   return (
     <span
       className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${styles[status] || styles.open}`}
     >
-      {status.replace("_", " ")}
+      {label}
     </span>
   );
 }

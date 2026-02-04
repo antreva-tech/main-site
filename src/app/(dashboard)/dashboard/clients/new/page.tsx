@@ -1,75 +1,80 @@
 /**
  * New Client Page (Direct Entry)
+ * Uses locale from cookie for Spanish/English labels and placeholders.
  */
 
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { createClient } from "../actions";
 import { LogoUrlField } from "./LogoUrlField";
-import { LINE_OF_BUSINESS_VALUES, LINE_OF_BUSINESS_LABELS } from "@/lib/lineOfBusiness";
+import { LINE_OF_BUSINESS_VALUES } from "@/lib/lineOfBusiness";
+import { getTranslations } from "@/i18n";
+
+const LOCALE_COOKIE = "locale";
 
 /**
- * New client form page.
+ * New client form page. Locale from cookie so labels/placeholders match dashboard language.
  */
-export default function NewClientPage() {
+export default async function NewClientPage() {
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get(LOCALE_COOKIE)?.value;
+  const locale = localeCookie === "en" || localeCookie === "es" ? localeCookie : "es";
+  const t = getTranslations(locale);
+
   return (
     <div className="max-w-2xl">
-      {/* Breadcrumb */}
       <div className="mb-4">
         <Link
           href="/dashboard/clients"
           className="text-[#1C6ED5] hover:underline text-sm"
         >
-          ← Back to Clients
+          ← {t.dashboard.clients.backToClients}
         </Link>
       </div>
 
-      <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">New Client</h1>
+      <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">{t.dashboard.clients.newClient}</h1>
 
       <form action={createClient} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
         <div className="space-y-4">
-          {/* Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name *
+              {t.dashboard.clients.nameRequired}
             </label>
             <input
               name="name"
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="Client name"
+              placeholder={t.dashboard.clients.clientNamePlaceholder}
             />
           </div>
 
-          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email *
+              {t.dashboard.clients.emailRequired}
             </label>
             <input
               type="email"
               name="email"
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="email@example.com"
+              placeholder={t.dashboard.clients.emailPlaceholder}
             />
           </div>
 
-          {/* Company */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Company
+              {t.dashboard.clients.company}
             </label>
             <input
               name="company"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="Company name"
+              placeholder={t.dashboard.clients.companyPlaceholder}
             />
           </div>
 
-          {/* Line of business */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Line of business
+              {t.dashboard.common.lineOfBusiness}
             </label>
             <select
               name="lineOfBusiness"
@@ -78,22 +83,21 @@ export default function NewClientPage() {
               <option value="">—</option>
               {LINE_OF_BUSINESS_VALUES.map((value) => (
                 <option key={value} value={value}>
-                  {LINE_OF_BUSINESS_LABELS[value]}
+                  {t.dashboard.common.lineOfBusinessOptions[value as keyof typeof t.dashboard.common.lineOfBusinessOptions]}
                 </option>
               ))}
             </select>
           </div>
 
-          {/* Website URL */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Website URL
+              {t.dashboard.clients.websiteUrl}
             </label>
             <input
               type="url"
               name="websiteUrl"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="https://example.com"
+              placeholder={t.dashboard.clients.websitePlaceholder}
             />
           </div>
 
@@ -105,82 +109,77 @@ export default function NewClientPage() {
               className="rounded border-gray-300 text-[#1C6ED5] focus:ring-[#1C6ED5]"
             />
             <label htmlFor="showOnWebsite" className="text-sm text-gray-700">
-              Show on main website (client showcase). Requires Website URL.
+              {t.dashboard.clients.showOnWebsiteLabel}
             </label>
           </div>
 
           <LogoUrlField />
 
-          {/* Phone */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Phone
+              {t.dashboard.clients.phone}
             </label>
             <input
               type="tel"
               name="phone"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="+1 809 555 1234"
+              placeholder={t.dashboard.clients.phonePlaceholder}
             />
           </div>
 
-          {/* Cedula */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Cedula (National ID)
+              {t.dashboard.clients.cedulaLabel}
             </label>
             <input
               name="cedula"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="000-0000000-0"
+              placeholder={t.dashboard.clients.cedulaPlaceholder}
             />
             <p className="text-xs text-gray-500 mt-1">
-              Required for Dominican clients (invoicing)
+              {t.dashboard.clients.cedulaHint}
             </p>
           </div>
 
-          {/* RNC */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              RNC (Business Tax ID)
+              {t.dashboard.clients.rncLabel}
             </label>
             <input
               name="rnc"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="000000000"
+              placeholder={t.dashboard.clients.rncPlaceholder}
             />
             <p className="text-xs text-gray-500 mt-1">
-              Required for business clients
+              {t.dashboard.clients.rncHint}
             </p>
           </div>
 
-          {/* Notes */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Notes
+              {t.dashboard.clients.notes}
             </label>
             <textarea
               name="notes"
               rows={4}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="Additional notes..."
+              placeholder={t.dashboard.clients.notesPlaceholder}
             />
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-gray-100">
           <Link
             href="/dashboard/clients"
             className="flex-1 px-4 py-3 text-center border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition min-h-[44px] flex items-center justify-center"
           >
-            Cancel
+            {t.dashboard.common.cancel}
           </Link>
           <button
             type="submit"
             className="flex-1 px-4 py-3 min-h-[44px] bg-[#1C6ED5] text-white rounded-lg hover:bg-[#1559B3] transition font-medium"
           >
-            Create Client
+            {t.dashboard.common.createClient}
           </button>
         </div>
       </form>

@@ -1,10 +1,11 @@
 "use client";
 
 /**
- * Modal to edit an existing demo site (name, url, description, sortOrder).
+ * Modal to edit an existing demo site. Uses LanguageContext for labels and buttons.
  */
 
 import { useState, useTransition } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import type { DemoSiteRow } from "./DemoSiteList";
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export function EditDemoModal({ demo, onClose, onSaved, updateAction }: Props) {
+  const { t } = useLanguage();
   const [name, setName] = useState(demo.name);
   const [url, setUrl] = useState(demo.url);
   const [description, setDescription] = useState(demo.description ?? "");
@@ -36,7 +38,7 @@ export function EditDemoModal({ demo, onClose, onSaved, updateAction }: Props) {
         await updateAction(formData);
         onSaved();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Update failed");
+        setError(err instanceof Error ? err.message : t.dashboard.demos.updateFailed);
       }
     });
   };
@@ -55,7 +57,7 @@ export function EditDemoModal({ demo, onClose, onSaved, updateAction }: Props) {
       >
         <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4">
           <h2 id="edit-demo-title" className="text-lg font-semibold text-[#0B132B]">
-            Edit demo site
+            {t.dashboard.demos.editDemoSite}
           </h2>
           {error && (
             <p className="text-sm text-red-600" role="alert">
@@ -64,7 +66,7 @@ export function EditDemoModal({ demo, onClose, onSaved, updateAction }: Props) {
           )}
           <div>
             <label htmlFor="edit-demo-name" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
-              Name
+              {t.dashboard.demos.name}
             </label>
             <input
               id="edit-demo-name"
@@ -77,7 +79,7 @@ export function EditDemoModal({ demo, onClose, onSaved, updateAction }: Props) {
           </div>
           <div>
             <label htmlFor="edit-demo-url" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
-              URL
+              {t.dashboard.demos.url}
             </label>
             <input
               id="edit-demo-url"
@@ -90,7 +92,7 @@ export function EditDemoModal({ demo, onClose, onSaved, updateAction }: Props) {
           </div>
           <div>
             <label htmlFor="edit-demo-desc" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
-              Description (optional)
+              {t.dashboard.demos.descriptionOptional}
             </label>
             <input
               id="edit-demo-desc"
@@ -102,7 +104,7 @@ export function EditDemoModal({ demo, onClose, onSaved, updateAction }: Props) {
           </div>
           <div>
             <label htmlFor="edit-demo-sort" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
-              Sort order
+              {t.dashboard.demos.sortOrder}
             </label>
             <input
               id="edit-demo-sort"
@@ -118,14 +120,14 @@ export function EditDemoModal({ demo, onClose, onSaved, updateAction }: Props) {
               disabled={isPending}
               className="px-4 py-2 bg-[#1C6ED5] text-white rounded-lg font-medium hover:bg-[#1559B3] disabled:opacity-50"
             >
-              {isPending ? "Saving…" : "Save"}
+              {isPending ? t.dashboard.demos.saving : t.dashboard.demos.save}
             </button>
             <button
               type="button"
               onClick={onClose}
               className="px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50"
             >
-              Cancel
+              {t.dashboard.common.cancel}
             </button>
           </div>
         </form>

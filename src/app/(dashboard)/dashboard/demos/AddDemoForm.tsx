@@ -1,13 +1,15 @@
 "use client";
 
 /**
- * Inline form to add a new demo site. Shown only to users.manage.
+ * Inline form to add a new demo site. Uses LanguageContext for labels/placeholders.
  */
 
 import { useState, useTransition } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { createDemoSite } from "./actions";
 
 export function AddDemoForm() {
+  const { t } = useLanguage();
   const [showForm, setShowForm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +25,7 @@ export function AddDemoForm() {
         setShowForm(false);
         form.reset();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to add");
+        setError(err instanceof Error ? err.message : t.dashboard.demos.failedToAdd);
       }
     });
   };
@@ -35,7 +37,7 @@ export function AddDemoForm() {
         onClick={() => setShowForm(true)}
         className="w-full sm:w-auto px-5 py-2.5 bg-[#1C6ED5] text-white rounded-xl font-medium shadow-sm hover:bg-[#1559B3] transition-all text-center"
       >
-        + Add Demo Site
+        + {t.dashboard.demos.addDemoSite}
       </button>
     );
   }
@@ -45,7 +47,7 @@ export function AddDemoForm() {
       onSubmit={handleSubmit}
       className="dashboard-card p-4 sm:p-5 space-y-4 max-w-md"
     >
-      <h3 className="font-semibold text-[#0B132B]">New demo site</h3>
+      <h3 className="font-semibold text-[#0B132B]">{t.dashboard.demos.newDemoSite}</h3>
       {error && (
         <p className="text-sm text-red-600" role="alert">
           {error}
@@ -53,45 +55,45 @@ export function AddDemoForm() {
       )}
       <div>
         <label htmlFor="demo-name" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
-          Name
+          {t.dashboard.demos.name}
         </label>
         <input
           id="demo-name"
           name="name"
           type="text"
           required
-          placeholder="e.g. Restaurant X Demo"
+          placeholder={t.dashboard.demos.descriptionPlaceholder}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
         />
       </div>
       <div>
         <label htmlFor="demo-url" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
-          URL
+          {t.dashboard.demos.url}
         </label>
         <input
           id="demo-url"
           name="url"
           type="url"
           required
-          placeholder="https://..."
+          placeholder={t.dashboard.demos.urlPlaceholder}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
         />
       </div>
       <div>
         <label htmlFor="demo-desc" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
-          Description (optional)
+          {t.dashboard.demos.descriptionOptional}
         </label>
         <input
           id="demo-desc"
           name="description"
           type="text"
-          placeholder="Short note for the team"
+          placeholder={t.dashboard.demos.shortNotePlaceholder}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
         />
       </div>
       <div>
         <label htmlFor="demo-sort" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
-          Sort order (lower = first)
+          {t.dashboard.demos.sortOrderLowerFirst}
         </label>
         <input
           id="demo-sort"
@@ -107,14 +109,14 @@ export function AddDemoForm() {
           disabled={isPending}
           className="px-4 py-2 bg-[#1C6ED5] text-white rounded-lg font-medium hover:bg-[#1559B3] disabled:opacity-50"
         >
-          {isPending ? "Adding…" : "Add"}
+          {isPending ? t.dashboard.demos.adding : t.dashboard.demos.add}
         </button>
         <button
           type="button"
           onClick={() => setShowForm(false)}
           className="px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50"
         >
-          Cancel
+          {t.dashboard.common.cancel}
         </button>
       </div>
     </form>

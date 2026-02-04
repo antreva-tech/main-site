@@ -70,12 +70,12 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
         onClick={() => setOpen(true)}
         className="text-sm font-medium text-[#1C6ED5] hover:underline"
       >
-        Edit client details
+        {t.dashboard.clients.editClientDetails}
       </button>
       <EditModal
         open={open}
         onClose={() => setOpen(false)}
-        title="Edit client details"
+        title={t.dashboard.clients.editClientDetails}
         titleId="edit-client-modal-title"
         maxWidth="max-w-xl"
         scrollContent={true}
@@ -87,33 +87,33 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
         >
           <input type="hidden" name="clientId" value={client.id} />
           <div className="sm:col-span-2">
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">Name *</label>
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.nameRequired}</label>
             <input
               name="name"
               required
               defaultValue={client.name}
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="Client name"
+              placeholder={t.dashboard.clients.clientNamePlaceholder}
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">Email *</label>
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.emailRequired}</label>
             <input
               type="email"
               name="email"
               required
               defaultValue={client.email}
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="email@example.com"
+              placeholder={t.dashboard.clients.emailPlaceholder}
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">Company</label>
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.company}</label>
             <input
               name="company"
               defaultValue={client.company ?? ""}
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="Company name"
+              placeholder={t.dashboard.clients.companyPlaceholder}
             />
           </div>
           <div>
@@ -132,13 +132,13 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
             </select>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">Website URL</label>
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.websiteUrl}</label>
             <input
               type="url"
               name="websiteUrl"
               defaultValue={client.websiteUrl ?? ""}
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="https://example.com"
+              placeholder={t.dashboard.clients.websitePlaceholder}
             />
           </div>
           <div className="sm:col-span-2 flex items-center gap-2">
@@ -150,18 +150,18 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
               className="rounded border-gray-300 text-[#1C6ED5] focus:ring-[#1C6ED5]"
             />
             <label htmlFor="showOnWebsite" className="text-sm text-gray-700">
-              Show on main website (client showcase). Requires Website URL.
+              {t.dashboard.clients.showOnWebsiteLabel}
             </label>
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">Logo (showcase card)</label>
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.logoLabel}</label>
             <input
               type="url"
               name="logoUrl"
               value={logoUrl}
               onChange={(e) => setLogoUrl(e.target.value)}
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="Paste URL or upload below"
+              placeholder={t.dashboard.clients.logoPlaceholder}
             />
             <div className="mt-2 flex items-center gap-2 flex-wrap">
               <label className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
@@ -172,11 +172,11 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
                   disabled={isUploading}
                   className="sr-only"
                 />
-                {isUploading ? "Uploading…" : "Upload to Vercel Blob"}
+                {isUploading ? t.dashboard.clients.uploadUploading : t.dashboard.clients.uploadButton}
               </label>
               {logoUrl && (
                 <span className="text-xs text-gray-500 truncate max-w-[180px]" title={logoUrl}>
-                  Stored in Blob
+                  {t.dashboard.clients.storedInBlob}
                 </span>
               )}
             </div>
@@ -187,53 +187,53 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
             )}
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">Phone</label>
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.phone}</label>
             <input
               type="tel"
               name="phone"
               defaultValue={client.phone ?? ""}
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="+1 809 555 1234"
+              placeholder={t.dashboard.clients.phonePlaceholder}
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">Status</label>
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.status}</label>
             <select
               name="status"
               defaultValue={client.status}
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="churned">Churned</option>
+              <option value="active">{t.dashboard.clients.active}</option>
+              <option value="inactive">{t.dashboard.clients.inactive}</option>
+              <option value="churned">{t.dashboard.clients.churned}</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">Cedula (National ID)</label>
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.cedulaLabel}</label>
             <input
               name="cedula"
               defaultValue={client.cedula ?? ""}
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="000-0000000-0"
+              placeholder={t.dashboard.clients.cedulaPlaceholder}
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">RNC (Business Tax ID)</label>
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.rncLabel}</label>
             <input
               name="rnc"
               defaultValue={client.rnc ?? ""}
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="000000000"
+              placeholder={t.dashboard.clients.rncPlaceholder}
             />
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">Notes</label>
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.notes}</label>
             <textarea
               name="notes"
               rows={2}
               defaultValue={client.notes ?? ""}
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
-              placeholder="Additional notes..."
+              placeholder={t.dashboard.clients.notesPlaceholder}
             />
           </div>
           <div className="sm:col-span-2 flex gap-2">
@@ -241,14 +241,14 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
               type="submit"
               className="px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium"
             >
-              Save changes
+              {t.dashboard.common.saveChanges}
             </button>
             <button
               type="button"
               onClick={() => setOpen(false)}
               className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition font-medium"
             >
-              Cancel
+              {t.dashboard.common.cancel}
             </button>
           </div>
         </form>
