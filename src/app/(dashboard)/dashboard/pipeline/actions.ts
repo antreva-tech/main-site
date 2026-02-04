@@ -22,6 +22,43 @@ const LEAD_STAGES: LeadStage[] = [
 ];
 
 /**
+ * Serializes a Prisma lead to a plain object for client (no Decimal/Date).
+ */
+function serializeLead(lead: {
+  id: string;
+  name: string;
+  company: string | null;
+  email: string | null;
+  phone: string | null;
+  stage: string;
+  source: string;
+  sourceOther: string | null;
+  notes: string | null;
+  lostReason: string | null;
+  expectedValue: unknown;
+  createdAt: Date;
+  updatedAt: Date;
+  convertedClientId: string | null;
+}) {
+  return {
+    id: lead.id,
+    name: lead.name,
+    company: lead.company,
+    email: lead.email,
+    phone: lead.phone,
+    stage: lead.stage,
+    source: lead.source,
+    sourceOther: lead.sourceOther,
+    notes: lead.notes,
+    lostReason: lead.lostReason,
+    expectedValue: lead.expectedValue != null ? Number(lead.expectedValue) : null,
+    createdAt: lead.createdAt.toISOString(),
+    updatedAt: lead.updatedAt.toISOString(),
+    convertedClientId: lead.convertedClientId,
+  };
+}
+
+/**
  * Creates a new lead.
  */
 export async function createLead(formData: FormData) {
@@ -61,7 +98,7 @@ export async function createLead(formData: FormData) {
   });
 
   revalidatePath("/dashboard/pipeline");
-  return lead;
+  return serializeLead(lead);
 }
 
 /**
@@ -85,7 +122,7 @@ export async function updateLeadStage(leadId: string, stage: LeadStage) {
 
   const oldStage = lead.stage;
 
-  const updated = await prisma.lead.update({
+  await prisma.lead.update({
     where: { id: leadId },
     data: { stage },
   });
@@ -93,7 +130,6 @@ export async function updateLeadStage(leadId: string, stage: LeadStage) {
   await logUpdate(session.id, "lead", leadId, { stage: oldStage }, { stage });
 
   revalidatePath("/dashboard/pipeline");
-  return updated;
 }
 
 /**
@@ -133,7 +169,7 @@ export async function updateLead(leadId: string, formData: FormData) {
     lead.stage === "won" ? undefined : stage != null ? stage : undefined;
   const data = stageToApply != null ? { ...base, stage: stageToApply } : base;
 
-  const updated = await prisma.lead.update({
+  await prisma.lead.update({
     where: { id: leadId },
     data,
   });
@@ -142,7 +178,6 @@ export async function updateLead(leadId: string, formData: FormData) {
 
   revalidatePath("/dashboard/pipeline");
   revalidatePath(`/dashboard/pipeline/${leadId}`);
-  return updated;
 }
 
 /**
@@ -190,7 +225,7 @@ export async function convertLeadToClient(leadId: string, formData: FormData) {
 
   revalidatePath("/dashboard/pipeline");
   revalidatePath("/dashboard/clients");
-  return client;
+  return { id: client.id, name: client.name };
 }
 
 /**
