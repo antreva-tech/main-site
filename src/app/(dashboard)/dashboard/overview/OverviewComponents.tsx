@@ -19,6 +19,8 @@ const STAT_CARD_COLORS: Record<StatCardColor, string> = {
 export interface StatCardProps {
   title: string;
   value: number;
+  /** When set, shown as the main value instead of `value` (e.g. formatted currency). */
+  valueFormatted?: string;
   label: string;
   detail: string;
   href: string;
@@ -27,17 +29,19 @@ export interface StatCardProps {
 }
 
 /**
- * KPI stat card: title, value, label, detail, link; optional alert dot.
+ * KPI stat card: title, value (or valueFormatted), label, detail, link; optional alert dot.
  */
 export function StatCard({
   title,
   value,
+  valueFormatted,
   label,
   detail,
   href,
   color,
   alert,
 }: StatCardProps) {
+  const displayValue = valueFormatted ?? String(value);
   return (
     <Link
       href={href}
@@ -49,7 +53,7 @@ export function StatCard({
           <span className="inline-flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />
         )}
       </div>
-      <p className="text-3xl font-bold">{value}</p>
+      <p className="text-3xl font-bold">{displayValue}</p>
       <p className="text-sm font-medium mt-1">{label}</p>
       <p className="text-xs opacity-70 mt-1">{detail}</p>
     </Link>

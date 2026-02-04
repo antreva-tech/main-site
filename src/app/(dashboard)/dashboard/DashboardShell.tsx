@@ -6,9 +6,10 @@
  * Uses LanguageContext for Spanish/English translations (language set in Profile Settings).
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { SessionUser } from "@/lib/auth";
 
@@ -50,9 +51,18 @@ function closeDrawer(setOpen: (open: boolean) => void) {
  */
 export function DashboardShell({ user, children }: DashboardShellProps) {
   const { t } = useLanguage();
+  const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [settingsExpanded, setSettingsExpanded] = useState(false);
   const nav = t.dashboard.nav;
   const settingsNav = t.dashboard.settingsNav;
+
+  /** Auto-expand Settings when viewing a settings page. */
+  useEffect(() => {
+    if (pathname?.startsWith("/dashboard/settings")) {
+      setSettingsExpanded(true);
+    }
+  }, [pathname]);
 
   return (
     <div className="min-h-screen bg-gray-50 bg-grid-pattern flex">
@@ -108,30 +118,55 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
           </ul>
 
           <div className="mt-8">
-            <h3 className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              {t.dashboard.settings}
-            </h3>
-            <ul className="space-y-1">
-              {SETTINGS_KEYS.filter((item) => {
-                if ("ctoOnly" in item && item.ctoOnly) {
-                  return user.title === "CTO";
-                }
-                if (!("permission" in item)) return false;
-                return !item.permission || user.permissions.includes(item.permission);
-              }).map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    prefetch={false}
-                    onClick={() => closeDrawer(setSidebarOpen)}
-                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-[#1C6ED5]/20 transition-colors"
-                  >
-                    <span>{item.icon}</span>
-                    <span>{settingsNav[item.key]}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <button
+              type="button"
+              onClick={() => setSettingsExpanded((prev) => !prev)}
+              className="flex w-full items-center justify-between gap-2 px-4 py-2 rounded-lg hover:bg-[#1C6ED5]/10 transition-colors text-left"
+              aria-expanded={settingsExpanded}
+              aria-controls="settings-nav-list"
+              id="settings-nav-toggle"
+            >
+              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                {t.dashboard.settings}
+              </h3>
+              <svg
+                className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200 ${settingsExpanded ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div
+              id="settings-nav-list"
+              role="region"
+              aria-labelledby="settings-nav-toggle"
+              className={`grid min-h-0 transition-[grid-template-rows] duration-200 ease-out ${settingsExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+            >
+              <ul className="min-h-0 space-y-1 overflow-hidden">
+                {SETTINGS_KEYS.filter((item) => {
+                  if ("ctoOnly" in item && item.ctoOnly) {
+                    return user.title === "CTO";
+                  }
+                  if (!("permission" in item)) return false;
+                  return !item.permission || user.permissions.includes(item.permission);
+                }).map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      prefetch={false}
+                      onClick={() => closeDrawer(setSidebarOpen)}
+                      className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-[#1C6ED5]/20 transition-colors"
+                    >
+                      <span>{item.icon}</span>
+                      <span>{settingsNav[item.key]}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </nav>
 

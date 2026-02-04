@@ -74,7 +74,7 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
         title="Edit client details"
         titleId="edit-client-modal-title"
         maxWidth="max-w-xl"
-        scrollContent={false}
+        scrollContent={true}
       >
         <form
           action={updateClient}

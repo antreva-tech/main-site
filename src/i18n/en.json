@@ -150,7 +150,11 @@
       "noPendingConfirmations": "No pending confirmations",
       "openTickets": "Open Tickets",
       "noOpenTickets": "No open tickets",
-      "noModulesForRole": "No modules available for your role."
+      "noModulesForRole": "No modules available for your role.",
+      "pipelinePotential": "Potential",
+      "revenue": "Revenue",
+      "mrr": "Monthly recurring",
+      "activeSubscriptions": "active subscriptions"
     },
     "common": {
       "back": "Back",

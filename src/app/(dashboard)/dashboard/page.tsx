@@ -26,9 +26,21 @@ import {
   formatDate,
 } from "./overview/OverviewComponents";
 import { RecentLeadsWithModal } from "./overview/RecentLeadsWithModal";
+import { OverviewCharts } from "./overview/OverviewCharts";
 import type { LeadRow } from "./pipeline/PipelineBoard";
+import { dopToUsd } from "@/lib/pricing";
 
 const LOCALE_COOKIE = "locale";
+
+type Locale = "es" | "en";
+
+/** Format amount for overview: in English show USD (DOP converted); otherwise show in given currency. */
+function formatOverviewMoney(amount: number, currency: "DOP" | "USD", locale: Locale): string {
+  if (locale === "en" && currency === "DOP") {
+    return formatCurrency(dopToUsd(amount), "USD");
+  }
+  return formatCurrency(amount, currency);
+}
 
 /**
  * Dashboard overview: session-driven widget visibility (RBAC) and optional quick actions.
@@ -55,16 +67,21 @@ export default async function DashboardPage() {
       {/* KPI cards: only those the user can read */}
       {kpiKeys.length > 0 && (
         <div
-          className={`grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 ${kpiKeys.length === 2 ? "lg:grid-cols-2" : ""} ${kpiKeys.length === 3 ? "lg:grid-cols-3" : ""} ${kpiKeys.length === 4 ? "lg:grid-cols-4" : ""}`}
+          className={`grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 ${kpiKeys.length === 2 ? "lg:grid-cols-2" : ""} ${kpiKeys.length === 3 ? "lg:grid-cols-3" : ""} ${kpiKeys.length === 4 ? "lg:grid-cols-4" : ""} ${kpiKeys.length >= 5 ? "lg:grid-cols-5" : ""}`}
         >
           {kpiKeys.includes("pipeline") && (
             <Suspense fallback={<StatCardSkeleton />}>
-              <PipelineStats t={t} />
+              <PipelineStats t={t} locale={locale} />
             </Suspense>
           )}
           {kpiKeys.includes("clients") && (
             <Suspense fallback={<StatCardSkeleton />}>
               <ClientStats t={t} />
+            </Suspense>
+          )}
+          {kpiKeys.includes("revenue") && (
+            <Suspense fallback={<StatCardSkeleton />}>
+              <RevenueStats t={t} locale={locale} />
             </Suspense>
           )}
           {kpiKeys.includes("payments") && (
@@ -78,6 +95,16 @@ export default async function DashboardPage() {
             </Suspense>
           )}
         </div>
+      )}
+
+      {/* Desktop-only charts: pipeline, revenue, tickets */}
+      {kpiKeys.length > 0 && (
+        <Suspense fallback={null}>
+          <OverviewChartsSection
+            locale={locale}
+            stageLabels={t.dashboard.pipeline.stages as Record<string, string>}
+          />
+        </Suspense>
       )}
 
       {/* List widgets: only those the user can read; optional primary action (e.g. Create Lead) */}
@@ -121,27 +148,157 @@ export default async function DashboardPage() {
 }
 
 // =============================================================================
+// CHART DATA (desktop-only section)
+// =============================================================================
+
+/** Monthly multiplier per billing cycle for MRR calculation. */
+const CYCLE_TO_MONTHLY = { monthly: 1, quarterly: 1 / 3, annual: 1 / 12, one_time: 0 } as const;
+const PIPELINE_STAGE_ORDER = ["new", "qualified", "proposal", "negotiation", "won", "lost"] as const;
+
+/**
+ * Fetches overview chart data and renders the desktop-only charts section.
+ * Shows pipeline by stage, revenue by currency, and open tickets by priority.
+ */
+async function OverviewChartsSection({
+  locale,
+  stageLabels,
+}: {
+  locale: Locale;
+  stageLabels: Record<string, string>;
+}) {
+  const [pipelineGroups, subs, ticketGroups] = await Promise.all([
+    prisma.lead.groupBy({
+      by: ["stage"],
+      _count: { id: true },
+      _sum: { expectedValue: true },
+    }),
+    prisma.clientSubscription.findMany({
+      where: { status: "active" },
+      select: { amount: true, billingCycle: true, currency: true },
+    }),
+    prisma.ticket.groupBy({
+      by: ["priority"],
+      where: { status: { in: ["open", "in_progress", "waiting"] } },
+      _count: { id: true },
+    }),
+  ]);
+
+  const pipelineByStage = PIPELINE_STAGE_ORDER.map((stage) => {
+    const g = pipelineGroups.find((x) => x.stage === stage);
+    return {
+      stage,
+      label: stageLabels[stage] ?? stage,
+      count: g?._count.id ?? 0,
+      value: Number(g?._sum.expectedValue ?? 0),
+    };
+  });
+
+  const mrrByCurrency: Record<string, number> = {};
+  for (const s of subs) {
+    const monthly = Number(s.amount) * (CYCLE_TO_MONTHLY[s.billingCycle] ?? 0);
+    if (monthly > 0) {
+      mrrByCurrency[s.currency] = (mrrByCurrency[s.currency] ?? 0) + monthly;
+    }
+  }
+  const revenueByCurrency = (["DOP", "USD"] as const)
+    .filter((c) => (mrrByCurrency[c] ?? 0) > 0)
+    .map((c) => ({
+      currency: c,
+      label: c,
+      mrr: mrrByCurrency[c]!,
+    }));
+
+  const priorityOrder = ["urgent", "high", "medium", "low"] as const;
+  const ticketsByPriority = priorityOrder.map((priority) => {
+    const g = ticketGroups.find((x) => x.priority === priority);
+    const count = g?._count.id ?? 0;
+    return {
+      priority,
+      label: priority.charAt(0).toUpperCase() + priority.slice(1),
+      count,
+    };
+  });
+
+  return (
+    <OverviewCharts
+      pipelineByStage={pipelineByStage}
+      revenueByCurrency={revenueByCurrency}
+      ticketsByPriority={ticketsByPriority}
+      stageOrder={[...PIPELINE_STAGE_ORDER]}
+    />
+  );
+}
+
+// =============================================================================
 // KPI WIDGETS (async, permission-filtered by parent)
 // =============================================================================
 
-async function PipelineStats({ t }: { t: Translations }) {
-  const counts = await prisma.lead.groupBy({
-    by: ["stage"],
-    _count: { id: true },
-  });
+async function PipelineStats({ t, locale }: { t: Translations; locale: Locale }) {
+  const [counts, pipelineSum] = await Promise.all([
+    prisma.lead.groupBy({
+      by: ["stage"],
+      _count: { id: true },
+    }),
+    prisma.lead.aggregate({
+      where: { stage: { not: "lost" } },
+      _sum: { expectedValue: true },
+    }),
+  ]);
   const total = counts.reduce((sum, c) => sum + c._count.id, 0);
   const active = counts
     .filter((c) => !["won", "lost"].includes(c.stage))
     .reduce((sum, c) => sum + c._count.id, 0);
+  const potential = Number(pipelineSum._sum.expectedValue ?? 0);
+  const detail =
+    potential > 0
+      ? `${total} ${t.dashboard.overview.total} · ${t.dashboard.overview.pipelinePotential}: ${formatOverviewMoney(potential, "DOP", locale)}`
+      : `${total} ${t.dashboard.overview.total}`;
 
   return (
     <StatCard
       title={t.dashboard.overview.pipeline}
       value={active}
       label={t.dashboard.overview.activeLeads}
-      detail={`${total} ${t.dashboard.overview.total}`}
+      detail={detail}
       href="/dashboard/pipeline"
       color="blue"
+    />
+  );
+}
+
+async function RevenueStats({ t, locale }: { t: Translations; locale: Locale }) {
+  const subs = await prisma.clientSubscription.findMany({
+    where: { status: "active" },
+    select: { amount: true, billingCycle: true, currency: true },
+  });
+  const mrrByCurrency: Record<string, number> = {};
+  for (const s of subs) {
+    const monthly = Number(s.amount) * (CYCLE_TO_MONTHLY[s.billingCycle] ?? 0);
+    if (monthly > 0) {
+      mrrByCurrency[s.currency] = (mrrByCurrency[s.currency] ?? 0) + monthly;
+    }
+  }
+  let valueFormatted: string;
+  if (locale === "en") {
+    const totalUsd =
+      dopToUsd(mrrByCurrency.DOP ?? 0) + (mrrByCurrency.USD ?? 0);
+    valueFormatted = formatCurrency(totalUsd, "USD");
+  } else {
+    const parts = (["DOP", "USD"] as const)
+      .filter((c) => (mrrByCurrency[c] ?? 0) > 0)
+      .map((c) => formatCurrency(mrrByCurrency[c]!, c));
+    valueFormatted = parts.length > 0 ? parts.join(" / ") : formatCurrency(0, "DOP");
+  }
+
+  return (
+    <StatCard
+      title={t.dashboard.overview.revenue}
+      value={0}
+      valueFormatted={valueFormatted}
+      label={t.dashboard.overview.mrr}
+      detail={`${subs.length} ${t.dashboard.overview.activeSubscriptions}`}
+      href="/dashboard/clients"
+      color="green"
     />
   );
 }

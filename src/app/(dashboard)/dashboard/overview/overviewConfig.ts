@@ -7,6 +7,7 @@
 export const KPI_PERMISSION: Record<string, string> = {
   pipeline: "leads.read",
   clients: "clients.read",
+  revenue: "clients.read",
   payments: "payments.read",
   tickets: "tickets.read",
 };

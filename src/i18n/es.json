@@ -150,7 +150,11 @@
       "noPendingConfirmations": "Sin confirmaciones pendientes",
       "openTickets": "Tickets abiertos",
       "noOpenTickets": "Sin tickets abiertos",
-      "noModulesForRole": "No hay módulos disponibles para tu rol."
+      "noModulesForRole": "No hay módulos disponibles para tu rol.",
+      "pipelinePotential": "Potencial",
+      "revenue": "Ingresos",
+      "mrr": "Recurrente mensual",
+      "activeSubscriptions": "suscripciones activas"
     },
     "common": {
       "back": "Volver",
