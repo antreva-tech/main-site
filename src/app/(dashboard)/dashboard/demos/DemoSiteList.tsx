@@ -1,10 +1,11 @@
 "use client";
 
 /**
- * List of demo sites with Open link and optional Edit/Delete for users.manage.
+ * List of demo sites with Website and Admin portal buttons; optional Edit/Delete for users.manage.
  */
 
 import { useState, useTransition } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { updateDemoSite, deleteDemoSite } from "./actions";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { EditDemoModal } from "./EditDemoModal";
@@ -13,6 +14,7 @@ export type DemoSiteRow = {
   id: string;
   name: string;
   url: string;
+  adminPortalUrl: string | null;
   description: string | null;
   sortOrder: number;
 };
@@ -22,7 +24,11 @@ type Props = {
   canManage: boolean;
 };
 
+const linkButtonClass =
+  "inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 bg-[#1C6ED5]/[0.08] text-[#1C6ED5] hover:bg-[#1C6ED5]/15 hover:border-[#1C6ED5]/50 transition-all";
+
 export function DemoSiteList({ demos, canManage }: Props) {
+  const { t } = useLanguage();
   const [editing, setEditing] = useState<DemoSiteRow | null>(null);
   const [deleting, setDeleting] = useState<DemoSiteRow | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -62,16 +68,25 @@ export function DemoSiteList({ demos, canManage }: Props) {
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               <a
-                href={demo.url}
+                href={demo.url.startsWith("http") ? demo.url : `https://${demo.url}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#1C6ED5] text-white text-sm font-medium rounded-lg hover:bg-[#1559B3] transition-colors"
+                title={demo.url}
+                className={linkButtonClass}
               >
-                Open
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
+                <span aria-hidden>↗</span> {t.dashboard.clients.openWebsite}
               </a>
+              {demo.adminPortalUrl && (
+                <a
+                  href={demo.adminPortalUrl.startsWith("http") ? demo.adminPortalUrl : `https://${demo.adminPortalUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={demo.adminPortalUrl}
+                  className={linkButtonClass}
+                >
+                  <span aria-hidden>↗</span> {t.dashboard.clients.openAdminPortal}
+                </a>
+              )}
               {canManage && (
                 <>
                   <button

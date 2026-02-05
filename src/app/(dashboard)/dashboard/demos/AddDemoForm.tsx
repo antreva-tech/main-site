@@ -68,14 +68,26 @@ export function AddDemoForm() {
       </div>
       <div>
         <label htmlFor="demo-url" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
-          {t.dashboard.demos.url}
+          {t.dashboard.clients.websiteUrl}
         </label>
         <input
           id="demo-url"
           name="url"
           type="url"
           required
-          placeholder={t.dashboard.demos.urlPlaceholder}
+          placeholder={t.dashboard.clients.websitePlaceholder}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
+        />
+      </div>
+      <div>
+        <label htmlFor="demo-admin-url" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
+          {t.dashboard.clients.adminPortalUrl}
+        </label>
+        <input
+          id="demo-admin-url"
+          name="adminPortalUrl"
+          type="url"
+          placeholder={t.dashboard.clients.adminPortalPlaceholder}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
         />
       </div>

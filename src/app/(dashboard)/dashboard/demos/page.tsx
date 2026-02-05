@@ -20,6 +20,7 @@ export default async function DemosPage() {
             id: true,
             name: true,
             url: true,
+            adminPortalUrl: true,
             description: true,
             sortOrder: true,
           },

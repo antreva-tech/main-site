@@ -26,14 +26,15 @@ export async function createDemoSite(formData: FormData) {
 
   const name = (formData.get("name") as string)?.trim();
   const url = (formData.get("url") as string)?.trim();
-  if (!name || !url) throw new Error("Name and URL are required");
+  if (!name || !url) throw new Error("Name and website URL are required");
 
+  const adminPortalUrl = (formData.get("adminPortalUrl") as string)?.trim() || null;
   const description = (formData.get("description") as string)?.trim() || null;
   const sortOrderRaw = formData.get("sortOrder");
   const sortOrder = sortOrderRaw !== null && sortOrderRaw !== "" ? Number(sortOrderRaw) : 0;
 
   const demo = await prisma.demoSite.create({
-    data: { name, url, description, sortOrder },
+    data: { name, url, adminPortalUrl, description, sortOrder },
   });
 
   await logAction({
@@ -59,13 +60,16 @@ export async function updateDemoSite(formData: FormData) {
   const id = formData.get("id") as string;
   const name = (formData.get("name") as string)?.trim();
   const url = (formData.get("url") as string)?.trim();
-  if (!id || !name || !url) throw new Error("ID, name and URL are required");
+  if (!id || !name || !url) throw new Error("ID, name and website URL are required");
+
+  const adminPortalUrl = (formData.get("adminPortalUrl") as string)?.trim() || null;
 
   await prisma.demoSite.update({
     where: { id },
     data: {
       name,
       url,
+      adminPortalUrl,
       description: (formData.get("description") as string)?.trim() || null,
       sortOrder: (() => {
         const raw = formData.get("sortOrder");
