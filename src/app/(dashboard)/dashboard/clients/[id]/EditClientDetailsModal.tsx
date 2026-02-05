@@ -19,6 +19,7 @@ type ClientForEdit = {
   phone: string | null;
   lineOfBusiness: string | null;
   websiteUrl: string | null;
+  adminPortalUrl: string | null;
   showOnWebsite: boolean;
   logoUrl: string | null;
   cedula: string | null;
@@ -139,6 +140,16 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
               defaultValue={client.websiteUrl ?? ""}
               className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.clients.websitePlaceholder}
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.adminPortalUrl}</label>
+            <input
+              type="url"
+              name="adminPortalUrl"
+              defaultValue={client.adminPortalUrl ?? ""}
+              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              placeholder={t.dashboard.clients.adminPortalPlaceholder}
             />
           </div>
           <div className="sm:col-span-2 flex items-center gap-2">

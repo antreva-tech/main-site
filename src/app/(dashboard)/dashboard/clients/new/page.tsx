@@ -101,6 +101,18 @@ export default async function NewClientPage() {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t.dashboard.clients.adminPortalUrl}
+            </label>
+            <input
+              type="url"
+              name="adminPortalUrl"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1C6ED5]"
+              placeholder={t.dashboard.clients.adminPortalPlaceholder}
+            />
+          </div>
+
           <div className="flex items-center gap-2">
             <input
               type="checkbox"

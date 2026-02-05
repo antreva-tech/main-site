@@ -146,7 +146,8 @@ model Client {
   company         String?
   phone           String?
   lineOfBusiness  LineOfBusiness?   /// Industry / vertical (retail, tourism, medical, etc.)
-  websiteUrl     String?           // Client's website / admin panel URL
+  websiteUrl     String?           // Client's public website URL
+  adminPortalUrl String?           // Admin / login portal URL (opens in new tab from client page)
   showOnWebsite  Boolean           @default(false) // If true, show in main-site client showcase (requires websiteUrl)
   logoUrl         String?           // Logo URL for main-site showcase card
   cedula          String?           @unique // Dominican national ID

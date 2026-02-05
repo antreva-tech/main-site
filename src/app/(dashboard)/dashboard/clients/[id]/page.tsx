@@ -35,6 +35,7 @@ interface ClientWithRelations {
   phone: string | null;
   lineOfBusiness: string | null;
   websiteUrl: string | null;
+  adminPortalUrl: string | null;
   showOnWebsite: boolean;
   logoUrl: string | null;
   cedula: string | null;
@@ -277,9 +278,23 @@ export default async function ClientDetailPage({
                   target="_blank"
                   rel="noopener noreferrer"
                   title={client.websiteUrl}
-                  className="text-[#1C6ED5] hover:text-[#1559B3] text-sm font-medium block truncate transition-colors"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 bg-[#1C6ED5]/[0.08] text-[#1C6ED5] hover:bg-[#1C6ED5]/15 hover:border-[#1C6ED5]/50 transition-all"
                 >
-                  {client.websiteUrl.replace(/^https?:\/\//i, "")}
+                  <span aria-hidden>↗</span> {t.dashboard.clients.openWebsite}
+                </a>
+              </div>
+            )}
+            {client.adminPortalUrl && (
+              <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
+                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.adminPortal}</p>
+                <a
+                  href={client.adminPortalUrl.startsWith("http") ? client.adminPortalUrl : `https://${client.adminPortalUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={client.adminPortalUrl}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 bg-[#1C6ED5]/[0.08] text-[#1C6ED5] hover:bg-[#1C6ED5]/15 hover:border-[#1C6ED5]/50 transition-all"
+                >
+                  <span aria-hidden>↗</span> {t.dashboard.clients.openAdminPortal}
                 </a>
               </div>
             )}
@@ -353,6 +368,7 @@ export default async function ClientDetailPage({
                     phone: client.phone,
                     lineOfBusiness: client.lineOfBusiness,
                     websiteUrl: client.websiteUrl,
+                    adminPortalUrl: client.adminPortalUrl,
                     showOnWebsite: client.showOnWebsite,
                     logoUrl: client.logoUrl,
                     cedula: client.cedula,

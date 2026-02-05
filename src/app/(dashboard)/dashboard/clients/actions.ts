@@ -66,6 +66,7 @@ export async function createClient(formData: FormData) {
   const company = formData.get("company") as string | null;
   const phone = formData.get("phone") as string | null;
   const websiteUrl = (formData.get("websiteUrl") as string)?.trim() || null;
+  const adminPortalUrl = (formData.get("adminPortalUrl") as string)?.trim() || null;
   const showOnWebsite = formData.get("showOnWebsite") === "on";
   const logoUrl = (formData.get("logoUrl") as string)?.trim() || null;
   const cedula = formData.get("cedula") as string | null;
@@ -87,6 +88,7 @@ export async function createClient(formData: FormData) {
       phone: normalizePhoneForStorage(phone),
       lineOfBusiness,
       websiteUrl: websiteUrl || null,
+      adminPortalUrl: adminPortalUrl || null,
       showOnWebsite,
       logoUrl,
       cedula: cedula || null,
@@ -136,6 +138,7 @@ export async function updateClient(formData: FormData) {
     phone: normalizePhoneForStorage((formData.get("phone") as string)?.trim()),
     lineOfBusiness,
     websiteUrl: (formData.get("websiteUrl") as string)?.trim() || null,
+    adminPortalUrl: (formData.get("adminPortalUrl") as string)?.trim() || null,
     showOnWebsite: formData.get("showOnWebsite") === "on",
     logoUrl: (formData.get("logoUrl") as string)?.trim() || null,
     cedula: (formData.get("cedula") as string)?.trim() || null,
