@@ -21,6 +21,8 @@ export default async function DemosPage() {
             name: true,
             url: true,
             adminPortalUrl: true,
+            demoLoginUsername: true,
+            demoLoginPassword: true,
             description: true,
             sortOrder: true,
           },

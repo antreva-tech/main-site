@@ -526,14 +526,16 @@ model DevelopmentProjectLog {
 
 /// Demo sites list for sales team and CEO to open quickly (e.g. client demos, product demos).
 model DemoSite {
-  id              String   @id @default(cuid())
-  name            String   // Display label, e.g. "Restaurant X Demo"
-  url             String   // Website URL (opens in new tab)
-  adminPortalUrl  String?  // Admin / login URL (optional, opens in new tab)
-  description     String?  @db.Text // Optional note
-  sortOrder       Int      @default(0) // Lower = first in list
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  name               String   // Display label, e.g. "Restaurant X Demo"
+  url                String   // Website URL (opens in new tab)
+  adminPortalUrl     String?  // Admin / login URL (optional, opens in new tab)
+  demoLoginUsername  String?  // Demo account username or email (shown on card)
+  demoLoginPassword  String?  // Demo account password (shown on card, mask by default)
+  description        String?  @db.Text // Optional note
+  sortOrder          Int      @default(0) // Lower = first in list
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@index([sortOrder])
 }

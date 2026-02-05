@@ -15,6 +15,8 @@ export type DemoSiteRow = {
   name: string;
   url: string;
   adminPortalUrl: string | null;
+  demoLoginUsername: string | null;
+  demoLoginPassword: string | null;
   description: string | null;
   sortOrder: number;
 };
@@ -64,6 +66,13 @@ export function DemoSiteList({ demos, canManage }: Props) {
                 <p className="text-sm text-[#8A8F98] mt-1 line-clamp-2">
                   {demo.description}
                 </p>
+              )}
+              {(demo.demoLoginUsername || demo.demoLoginPassword) && (
+                <DemoLoginBlock
+                  username={demo.demoLoginUsername}
+                  password={demo.demoLoginPassword}
+                  t={t}
+                />
               )}
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -128,5 +137,47 @@ export function DemoSiteList({ demos, canManage }: Props) {
         onClose={() => setDeleting(null)}
       />
     </>
+  );
+}
+
+/** Shows demo login (username / password) with optional mask toggle for password. */
+function DemoLoginBlock({
+  username,
+  password,
+  t,
+}: {
+  username: string | null;
+  password: string | null;
+  t: { dashboard: { demos: { demoLogin: string; showPassword: string; hidePassword: string } } };
+}) {
+  const [showPassword, setShowPassword] = useState(false);
+  if (!username && !password) return null;
+  return (
+    <div className="mt-3 pt-3 border-t border-[#0B132B]/[0.08]">
+      <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">
+        {t.dashboard.demos.demoLogin}
+      </p>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+        {username && (
+          <span className="text-[#0B132B]/90 font-mono truncate" title={username}>
+            {username}
+          </span>
+        )}
+        {password && (
+          <span className="flex items-center gap-1.5">
+            <code className={showPassword ? "text-[#0B132B]/90 font-mono" : "text-[#8A8F98] font-mono"}>
+              {showPassword ? password : "••••••••"}
+            </code>
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="text-xs font-medium text-[#1C6ED5] hover:text-[#1559B3]"
+            >
+              {showPassword ? t.dashboard.demos.hidePassword : t.dashboard.demos.showPassword}
+            </button>
+          </span>
+        )}
+      </div>
+    </div>
   );
 }

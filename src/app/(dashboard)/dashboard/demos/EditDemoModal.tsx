@@ -20,6 +20,8 @@ export function EditDemoModal({ demo, onClose, onSaved, updateAction }: Props) {
   const [name, setName] = useState(demo.name);
   const [url, setUrl] = useState(demo.url);
   const [adminPortalUrl, setAdminPortalUrl] = useState(demo.adminPortalUrl ?? "");
+  const [demoLoginUsername, setDemoLoginUsername] = useState(demo.demoLoginUsername ?? "");
+  const [demoLoginPassword, setDemoLoginPassword] = useState(demo.demoLoginPassword ?? "");
   const [description, setDescription] = useState(demo.description ?? "");
   const [sortOrder, setSortOrder] = useState(String(demo.sortOrder));
   const [isPending, startTransition] = useTransition();
@@ -33,6 +35,8 @@ export function EditDemoModal({ demo, onClose, onSaved, updateAction }: Props) {
     formData.set("name", name.trim());
     formData.set("url", url.trim());
     formData.set("adminPortalUrl", adminPortalUrl.trim());
+    formData.set("demoLoginUsername", demoLoginUsername.trim());
+    formData.set("demoLoginPassword", demoLoginPassword.trim());
     formData.set("description", description.trim());
     formData.set("sortOrder", sortOrder);
     startTransition(async () => {
@@ -101,6 +105,32 @@ export function EditDemoModal({ demo, onClose, onSaved, updateAction }: Props) {
               type="url"
               value={adminPortalUrl}
               onChange={(e) => setAdminPortalUrl(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
+            />
+          </div>
+          <div>
+            <label htmlFor="edit-demo-login-username" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
+              {t.dashboard.demos.demoLoginUsername}
+            </label>
+            <input
+              id="edit-demo-login-username"
+              type="text"
+              value={demoLoginUsername}
+              onChange={(e) => setDemoLoginUsername(e.target.value)}
+              autoComplete="off"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
+            />
+          </div>
+          <div>
+            <label htmlFor="edit-demo-login-password" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
+              {t.dashboard.demos.demoLoginPassword}
+            </label>
+            <input
+              id="edit-demo-login-password"
+              type="text"
+              value={demoLoginPassword}
+              onChange={(e) => setDemoLoginPassword(e.target.value)}
+              autoComplete="off"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
             />
           </div>

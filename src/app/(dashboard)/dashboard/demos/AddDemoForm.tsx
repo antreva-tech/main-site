@@ -92,6 +92,32 @@ export function AddDemoForm() {
         />
       </div>
       <div>
+        <label htmlFor="demo-login-username" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
+          {t.dashboard.demos.demoLoginUsername}
+        </label>
+        <input
+          id="demo-login-username"
+          name="demoLoginUsername"
+          type="text"
+          autoComplete="off"
+          placeholder={t.dashboard.demos.demoLoginUsernamePlaceholder}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
+        />
+      </div>
+      <div>
+        <label htmlFor="demo-login-password" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
+          {t.dashboard.demos.demoLoginPassword}
+        </label>
+        <input
+          id="demo-login-password"
+          name="demoLoginPassword"
+          type="text"
+          autoComplete="off"
+          placeholder={t.dashboard.demos.demoLoginPasswordPlaceholder}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5] focus:border-[#1C6ED5]"
+        />
+      </div>
+      <div>
         <label htmlFor="demo-desc" className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">
           {t.dashboard.demos.descriptionOptional}
         </label>
