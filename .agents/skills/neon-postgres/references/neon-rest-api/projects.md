@@ -186,10 +186,10 @@ Example response
   },
   "connection_uris": [
     {
-      "connection_uri": "postgresql://neondb_owner:npg_N67FDMtGvJke@ep-round-unit-afbn7qv4.c-2.us-west-2.aws.neon.tech/neondb?sslmode=require",
+      "connection_uri": "postgresql://neondb_owner:YOUR_PASSWORD@ep-xxxxx.region.aws.neon.tech/neondb?sslmode=require",
       "connection_parameters": {
         "database": "neondb",
-        "password": "npg_N67FDMtGvJke",
+        "password": "YOUR_PASSWORD",
         "role": "neondb_owner",
         "host": "ep-round-unit-afbn7qv4.c-2.us-west-2.aws.neon.tech",
         "pooler_host": "ep-round-unit-afbn7qv4-pooler.c-2.us-west-2.aws.neon.tech"
@@ -200,7 +200,7 @@ Example response
     {
       "branch_id": "br-green-mode-afe3fl9y",
       "name": "neondb_owner",
-      "password": "npg_N67FDMtGvJke",
+      "password": "YOUR_PASSWORD",
       "protected": false,
       "created_at": "2025-09-10T07:58:16Z",
       "updated_at": "2025-09-10T07:58:16Z"
@@ -571,6 +571,6 @@ Example response:
 
 ```json
 {
-  "uri": "postgresql://neondb_owner:npg_IDNnorOST71P@ep-shiny-morning-a1bfdvjs-pooler.ap-southeast-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
+  "uri": "postgresql://neondb_owner:YOUR_PASSWORD@ep-xxxxx-pooler.region.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
 }
 ```

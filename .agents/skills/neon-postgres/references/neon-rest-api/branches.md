@@ -149,10 +149,10 @@ Example response
   ],
   "connection_uris": [
     {
-      "connection_uri": "postgresql://neondb_owner:npg_EwcS9IOgFfb7@ep-raspy-glade-ad8e3gvy.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require",
+      "connection_uri": "postgresql://neondb_owner:YOUR_PASSWORD@ep-xxxxx.region.aws.neon.tech/neondb?sslmode=require",
       "connection_parameters": {
         "database": "neondb",
-        "password": "npg_EwcS9IOgFfb7",
+        "password": "YOUR_PASSWORD",
         "role": "neondb_owner",
         "host": "ep-raspy-glade-ad8e3gvy.c-2.us-east-1.aws.neon.tech",
         "pooler_host": "ep-raspy-glade-ad8e3gvy-pooler.c-2.us-east-1.aws.neon.tech"
