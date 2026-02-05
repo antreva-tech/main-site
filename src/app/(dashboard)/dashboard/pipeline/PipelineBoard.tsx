@@ -196,10 +196,10 @@ export function PipelineBoard({ stages, leadsByStage }: Props) {
 
   return (
     <div className="min-w-0 flex-1 min-h-0 flex flex-col">
-      {/* Mobile: stage selector + vertical list */}
-      <div className="md:hidden flex-shrink-0">
+      {/* Mobile: stage selector + scrollable vertical list (flex-1 min-h-0 so list can overflow-y-auto). */}
+      <div className="md:hidden flex flex-col flex-1 min-h-0">
         {/* Stage pills - horizontal scroll with snap */}
-        <div className="flex gap-2 overflow-x-auto pb-3 -mx-1 px-1 snap-x snap-mandatory scrollbar-none">
+        <div className="flex gap-2 overflow-x-auto pb-3 -mx-1 px-1 snap-x snap-mandatory scrollbar-none flex-shrink-0">
           {stages.map((stage) => {
             const count = (leadsByStage[stage.key] ?? []).length;
             const isActive = selectedStage === stage.key;
@@ -229,8 +229,8 @@ export function PipelineBoard({ stages, leadsByStage }: Props) {
           })}
         </div>
 
-        {/* Lead list for selected stage */}
-        <div className="mt-4 space-y-3">
+        {/* Lead list for selected stage - scrollable on mobile so list is not clipped. */}
+        <div className="mt-4 flex-1 min-h-0 overflow-y-auto overflow-x-hidden space-y-3 pb-4">
           {leads.length === 0 ? (
             <div className="bg-white rounded-2xl border border-gray-200 px-6 py-12 text-center">
               <p className="text-gray-500 text-sm">{t.dashboard.pipeline.noLeadsInStage} {stageLabel}</p>
