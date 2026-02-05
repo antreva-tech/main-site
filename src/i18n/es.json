@@ -371,6 +371,8 @@
       "url": "URL",
       "urlPlaceholder": "https://...",
       "demoLogin": "Acceso demo",
+      "userLabel": "Usuario",
+      "passwordLabel": "Contraseña",
       "demoLoginUsername": "Usuario o correo",
       "demoLoginUsernamePlaceholder": "demo@ejemplo.com",
       "demoLoginPassword": "Contraseña",

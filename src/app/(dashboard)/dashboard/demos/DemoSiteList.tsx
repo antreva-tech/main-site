@@ -140,7 +140,7 @@ export function DemoSiteList({ demos, canManage }: Props) {
   );
 }
 
-/** Shows demo login (username / password) with optional mask toggle for password. */
+/** Shows demo login with User and Password labels; password has show/hide toggle. */
 function DemoLoginBlock({
   username,
   password,
@@ -148,23 +148,28 @@ function DemoLoginBlock({
 }: {
   username: string | null;
   password: string | null;
-  t: { dashboard: { demos: { demoLogin: string; showPassword: string; hidePassword: string } } };
+  t: { dashboard: { demos: { demoLogin: string; userLabel: string; passwordLabel: string; showPassword: string; hidePassword: string } } };
 }) {
   const [showPassword, setShowPassword] = useState(false);
   if (!username && !password) return null;
+  const { userLabel, passwordLabel } = t.dashboard.demos;
   return (
     <div className="mt-3 pt-3 border-t border-[#0B132B]/[0.08]">
       <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">
         {t.dashboard.demos.demoLogin}
       </p>
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+      <div className="flex flex-col gap-1.5 text-sm">
         {username && (
-          <span className="text-[#0B132B]/90 font-mono truncate" title={username}>
-            {username}
-          </span>
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-[#8A8F98] shrink-0">{userLabel}:</span>
+            <span className="text-[#0B132B]/90 font-mono truncate" title={username}>
+              {username}
+            </span>
+          </div>
         )}
         {password && (
-          <span className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[#8A8F98] shrink-0">{passwordLabel}:</span>
             <code className={showPassword ? "text-[#0B132B]/90 font-mono" : "text-[#8A8F98] font-mono"}>
               {showPassword ? password : "••••••••"}
             </code>
@@ -175,7 +180,7 @@ function DemoLoginBlock({
             >
               {showPassword ? t.dashboard.demos.hidePassword : t.dashboard.demos.showPassword}
             </button>
-          </span>
+          </div>
         )}
       </div>
     </div>
