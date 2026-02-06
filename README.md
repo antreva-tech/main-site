@@ -20,7 +20,7 @@ Corporate landing site and CRM dashboard for Antreva Tech: software development,
    - `DATABASE_URL` — Neon Postgres connection string ([Neon Console](https://console.neon.tech))
    - `ENCRYPTION_KEY` — 64-char hex (e.g. `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`)
    - `SESSION_SECRET` — 64-char hex for cookie signing
-   - Optional: `WHATSAPP_*` for WhatsApp Business Cloud API; `SEED_*` for seed data
+   - Optional: `WHATSAPP_*` for WhatsApp Business Cloud API; `SEED_*` for seed data; `BLOB_READ_WRITE_TOKEN` for Vercel Blob (client logos, uploads)
 2. Run:
 
 ```bash
@@ -50,26 +50,28 @@ Open [http://localhost:3000](http://localhost:3000). Use seeded credentials to l
 ```
 src/
 ├── app/
-│   ├── (auth)/         # login, logout
-│   ├── (dashboard)/    # dashboard/* (overview, pipeline, clients, etc.)
-│   ├── api/webhooks/   # WhatsApp webhook
+│   ├── (auth)/           # login, logout
+│   ├── (dashboard)/      # dashboard (overview, pipeline, clients, credentials, demos,
+│   │   dashboard/        #   development, payments, tickets, whatsapp, settings)
+│   ├── api/webhooks/     # WhatsApp webhook
 │   ├── layout.tsx, page.tsx, globals.css, robots.ts, sitemap.ts
-├── components/         # Header, Hero, CustomServices, Plans, Footer
-├── contexts/           # AuthContext, LanguageContext
-├── data/               # Plans and static content
-├── i18n/               # en.json, es.json
-└── lib/                # auth, prisma, encryption, audit, whatsapp, seo, etc.
+├── components/           # Header, Hero, CustomServices, Plans, ClientShowcase, Footer, etc.
+├── contexts/             # AuthContext, LanguageContext
+├── data/                 # Plans and static content
+├── i18n/                 # en.json, es.json
+└── lib/                  # auth, prisma, encryption, audit, whatsapp, seo, pricing, etc.
 prisma/
-├── schema.prisma       # CRM schema (Users, Roles, Leads, Clients, Tickets, etc.)
+├── schema.prisma         # CRM schema (Users, Roles, Leads, Clients, Tickets, DemoSite, etc.)
 └── seed.ts
 ```
 
 ## Dashboard (CRM)
 
 - **Overview** — Recent leads and key metrics
-- **Pipeline** — Lead stages, convert to client
-- **Clients** — Contacts, credentials, subscriptions, single charges, tickets, development projects
+- **Pipeline** — Lead stages, convert to client (drag-and-drop board)
+- **Clients** — Contacts, credentials, subscriptions, single charges, tickets, development projects, logo upload
 - **Credentials** — Stored credentials list
+- **Demos** — Demo sites list and management
 - **Development** — Project board and logs
 - **Payments** — Payment list and actions
 - **Tickets** — Support tickets and comments
