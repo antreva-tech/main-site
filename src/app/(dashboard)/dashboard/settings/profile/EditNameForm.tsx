@@ -56,7 +56,7 @@ export function EditNameForm({ currentName }: EditNameFormProps) {
   if (!isEditing) {
     return (
       <div className="flex items-center gap-3">
-        <p className="text-gray-900">{currentName}</p>
+        <p className="text-gray-900 dark:text-gray-100">{currentName}</p>
         <button
           type="button"
           onClick={() => setIsEditing(true)}
@@ -76,7 +76,7 @@ export function EditNameForm({ currentName }: EditNameFormProps) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1C6ED5] focus:border-transparent"
+          className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-md text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5] focus:border-transparent"
           placeholder="Your name"
           autoFocus
           disabled={isPending}
@@ -94,14 +94,14 @@ export function EditNameForm({ currentName }: EditNameFormProps) {
             type="button"
             onClick={handleCancel}
             disabled={isPending}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition disabled:opacity-50 text-sm font-medium min-h-[40px]"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition disabled:opacity-50 text-sm font-medium min-h-[40px]"
           >
             Cancel
           </button>
         </div>
       </div>
       {error && (
-        <p className="text-sm text-red-600">{error}</p>
+        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
       )}
     </div>
   );

@@ -10,10 +10,10 @@ import Link from "next/link";
 export type StatCardColor = "blue" | "green" | "yellow" | "purple";
 
 const STAT_CARD_COLORS: Record<StatCardColor, string> = {
-  blue: "bg-blue-50 text-blue-700 border-blue-200",
-  green: "bg-green-50 text-green-700 border-green-200",
-  yellow: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  purple: "bg-purple-50 text-purple-700 border-purple-200",
+  blue: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:border-blue-800",
+  green: "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-200 dark:border-green-800",
+  yellow: "bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-200 dark:border-yellow-800",
+  purple: "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-200 dark:border-purple-800",
 };
 
 export interface StatCardProps {
@@ -45,7 +45,7 @@ export function StatCard({
   return (
     <Link
       href={href}
-      className={`block p-6 rounded-xl border-2 ${STAT_CARD_COLORS[color]} hover:shadow-md transition`}
+      className={`block p-6 rounded-xl border-2 ${STAT_CARD_COLORS[color]} hover:shadow-md dark:hover:shadow-lg dark:shadow-black/20 transition`}
     >
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-medium opacity-80">{title}</h3>
@@ -65,11 +65,11 @@ export function StatCard({
  */
 export function StatCardSkeleton() {
   return (
-    <div className="p-6 rounded-xl border-2 border-gray-200 animate-pulse">
-      <div className="h-4 w-20 bg-gray-200 rounded mb-4" />
-      <div className="h-8 w-16 bg-gray-200 rounded mb-2" />
-      <div className="h-4 w-24 bg-gray-200 rounded mb-1" />
-      <div className="h-3 w-32 bg-gray-200 rounded" />
+    <div className="p-6 rounded-xl border-2 border-gray-200 dark:border-gray-600 animate-pulse">
+      <div className="h-4 w-20 bg-gray-200 dark:bg-gray-600 rounded mb-4" />
+      <div className="h-8 w-16 bg-gray-200 dark:bg-gray-600 rounded mb-2" />
+      <div className="h-4 w-24 bg-gray-200 dark:bg-gray-600 rounded mb-1" />
+      <div className="h-3 w-32 bg-gray-200 dark:bg-gray-600 rounded" />
     </div>
   );
 }
@@ -105,22 +105,22 @@ export function ListCard({
   const showPrimary = primaryActionNode ?? (primaryAction && (
     <Link
       href={primaryAction.href}
-      className="text-sm font-medium text-[#1C6ED5] hover:underline"
+      className="text-sm font-medium text-[#1C6ED5] hover:underline dark:text-[#5ba3f5]"
     >
       {primaryAction.label}
     </Link>
   ));
-  const listClass = listContainerClassName ?? "divide-y divide-gray-100";
+  const listClass = listContainerClassName ?? "divide-y divide-gray-100 dark:divide-gray-600";
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
         <div className="flex items-center gap-3">
           {showPrimary}
           <Link
             href={href}
-            className="text-sm text-[#1C6ED5] hover:underline"
+            className="text-sm text-[#1C6ED5] hover:underline dark:text-[#5ba3f5]"
           >
             {viewAllLabel}
           </Link>
@@ -129,7 +129,7 @@ export function ListCard({
       {hasItems ? (
         <div className={listClass}>{children}</div>
       ) : (
-        <p className="text-gray-500 text-sm py-4 text-center">{emptyMessage}</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm py-4 text-center">{emptyMessage}</p>
       )}
     </div>
   );
@@ -140,18 +140,18 @@ export function ListCard({
  */
 export function ListSkeleton({ title }: { title: string }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 animate-pulse">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 p-6 animate-pulse">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
       </div>
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
           <div key={i} className="flex items-center justify-between py-2">
             <div>
-              <div className="h-4 w-32 bg-gray-200 rounded mb-1" />
-              <div className="h-3 w-24 bg-gray-200 rounded" />
+              <div className="h-4 w-32 bg-gray-200 dark:bg-gray-600 rounded mb-1" />
+              <div className="h-3 w-24 bg-gray-200 dark:bg-gray-600 rounded" />
             </div>
-            <div className="h-6 w-16 bg-gray-200 rounded" />
+            <div className="h-6 w-16 bg-gray-200 dark:bg-gray-600 rounded" />
           </div>
         ))}
       </div>
@@ -159,14 +159,14 @@ export function ListSkeleton({ title }: { title: string }) {
   );
 }
 
-/** Stage badge colors; "new" uses Tech Blue for brand consistency. */
+/** Stage badge colors; "new" uses Tech Blue for brand consistency. Dark mode variants appended. */
 const STAGE_STYLES: Record<string, string> = {
-  new: "bg-[#1C6ED5]/15 text-[#1C6ED5]",
-  qualified: "bg-cyan-100 text-cyan-700",
-  proposal: "bg-purple-100 text-purple-700",
-  negotiation: "bg-yellow-100 text-yellow-700",
-  won: "bg-green-100 text-green-700",
-  lost: "bg-gray-100 text-gray-500",
+  new: "bg-[#1C6ED5]/15 text-[#1C6ED5] dark:bg-[#1C6ED5]/30 dark:text-[#5ba3f5]",
+  qualified: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-200",
+  proposal: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-200",
+  negotiation: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-200",
+  won: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-200",
+  lost: "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400",
 };
 
 /**
@@ -189,10 +189,10 @@ export function StageBadge({
 }
 
 const PRIORITY_STYLES: Record<string, string> = {
-  low: "bg-gray-100 text-gray-600",
-  medium: "bg-slate-100 text-slate-700",
-  high: "bg-amber-100 text-amber-700",
-  urgent: "bg-red-100 text-red-700",
+  low: "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:border dark:border-gray-500",
+  medium: "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-100 dark:border dark:border-slate-500",
+  high: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200 dark:border dark:border-amber-600/60",
+  urgent: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200 dark:border dark:border-red-600/60",
 };
 
 /**
@@ -210,6 +210,32 @@ export function PriorityBadge({
       className={`px-2 py-1 rounded-full text-xs font-medium ${PRIORITY_STYLES[priority] ?? PRIORITY_STYLES.medium}`}
     >
       {label ?? priority}
+    </span>
+  );
+}
+
+const STATUS_STYLES: Record<string, string> = {
+  open: "bg-blue-100 text-blue-700 dark:bg-blue-400/20 dark:text-blue-300",
+  in_progress: "bg-purple-100 text-purple-700 dark:bg-purple-400/20 dark:text-purple-300",
+  waiting: "bg-yellow-100 text-yellow-700 dark:bg-amber-400/20 dark:text-amber-300",
+  resolved: "bg-green-100 text-green-700 dark:bg-emerald-400/20 dark:text-emerald-300",
+  closed: "bg-gray-100 text-gray-500 dark:bg-gray-500/25 dark:text-gray-400",
+};
+
+/**
+ * Ticket status badge (open, in_progress, waiting, resolved, closed).
+ */
+export function StatusBadge({
+  status,
+  label,
+}: {
+  status: string;
+  label?: string;
+}) {
+  const display = label ?? status.replace("_", " ");
+  return (
+    <span className={`px-2 py-1 rounded-full text-xs font-medium ${STATUS_STYLES[status] ?? STATUS_STYLES.open}`}>
+      {display}
     </span>
   );
 }

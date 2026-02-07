@@ -50,8 +50,10 @@ export default async function UsersPage() {
 
   return (
     <div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">User Management</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-[#0B132B] dark:text-gray-100 tracking-tight">
+          User Management
+        </h1>
         <div className="flex flex-wrap items-center gap-3">
           {canManageRoles && (
             <Link

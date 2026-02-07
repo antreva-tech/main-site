@@ -40,24 +40,26 @@ export default async function AuditLogPage({
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Audit Log</h1>
+      <div className="mb-8">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-[#0B132B] dark:text-gray-100 tracking-tight">
+          Audit Log
+        </h1>
       </div>
 
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-        <p className="text-sm text-yellow-800">
+      <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-xl p-4 mb-6">
+        <p className="text-sm text-amber-800 dark:text-amber-200">
           <strong>SOC 2 Compliance:</strong> All actions are logged and retained
           for 7 years. This log is immutable.
         </p>
       </div>
 
-      <Suspense fallback={<div className="h-12 mb-6 rounded-xl bg-white/80 animate-pulse" />}>
+      <Suspense fallback={<div className="h-12 mb-6 rounded-xl bg-white/80 dark:bg-gray-700/50 animate-pulse" />}>
         <AuditLogFilters entityType={entityType} action={action} />
       </Suspense>
 
       <AuditLogTable logs={logs} />
 
-      <p className="text-sm text-gray-400 mt-4">
+      <p className="text-sm text-[#8A8F98] dark:text-gray-400 mt-4">
         Showing {logs.length} most recent entries
       </p>
     </div>

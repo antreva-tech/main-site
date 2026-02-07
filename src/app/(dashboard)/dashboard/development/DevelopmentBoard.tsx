@@ -68,13 +68,13 @@ function DraggableProjectCard({
   return (
     <div
       ref={setNodeRef}
-      className={`bg-white rounded-lg border border-gray-200 overflow-hidden ${isDragging ? "opacity-50 shadow-lg" : "hover:shadow-md hover:border-gray-300"} transition`}
+      className={`bg-white dark:bg-gray-800/95 rounded-lg border border-gray-200 dark:border-gray-500/70 overflow-hidden shadow-sm dark:shadow-md dark:shadow-black/25 ${isDragging ? "opacity-50 shadow-lg" : "hover:shadow-md hover:border-gray-300 dark:hover:border-gray-400 dark:hover:shadow-lg dark:hover:shadow-black/30"} transition`}
     >
       <div className="flex">
         <button
           type="button"
           aria-label="Drag to move"
-          className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 cursor-grab active:cursor-grabbing touch-none"
+          className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700/80 cursor-grab active:cursor-grabbing touch-none"
           {...listeners}
           {...attributes}
         >
@@ -87,13 +87,13 @@ function DraggableProjectCard({
           onClick={onView}
           className="flex-1 min-w-0 text-left p-3 pr-2 focus:outline-none focus:ring-2 focus:ring-[#1C6ED5] focus:ring-inset rounded-r-lg"
         >
-          <p className="font-medium text-gray-900 truncate">{displayName}</p>
+          <p className="font-medium text-gray-900 dark:text-gray-100 truncate">{displayName}</p>
           {project.company && (
-            <p className="text-xs text-gray-500 truncate mt-0.5">{project.clientName}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-300 truncate mt-0.5">{project.clientName}</p>
           )}
-                <p className="text-xs text-gray-400 mt-1">
-                  Updated {project.updatedAtDisplay}
-                </p>
+          <p className="text-xs text-gray-400 dark:text-gray-400 mt-1">
+            Updated {project.updatedAtDisplay}
+          </p>
         </button>
       </div>
     </div>
@@ -156,15 +156,15 @@ export function DevelopmentBoard({ stages, projectsByStage }: Props) {
                 aria-label={stage.label}
                 className={`flex-shrink-0 snap-start flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
                   isActive
-                    ? "bg-[#0B132B] text-white shadow-md"
-                    : "bg-white border border-gray-200 text-gray-700 hover:border-[#1C6ED5]/40 hover:bg-gray-50"
+                    ? "bg-[#0B132B] dark:bg-gray-700 text-white shadow-md"
+                    : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-[#1C6ED5]/40 dark:hover:border-[#1C6ED5]/50 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }`}
               >
                 <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${stage.color}`} />
                 <span>{stage.label}</span>
                 <span
                   className={`min-w-[1.25rem] text-center text-xs rounded-full px-1.5 py-0.5 ${
-                    isActive ? "bg-white/20" : "bg-gray-100 text-gray-500"
+                    isActive ? "bg-white/20" : "bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-300"
                   }`}
                 >
                   {count}
@@ -175,9 +175,9 @@ export function DevelopmentBoard({ stages, projectsByStage }: Props) {
         </div>
         <div className="mt-4 space-y-3">
           {projects.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-gray-200 px-6 py-12 text-center">
-              <p className="text-gray-500 text-sm">No projects in {stageLabel}</p>
-              <p className="text-gray-400 text-xs mt-1">Start a project from a client page</p>
+            <div className="bg-white dark:bg-gray-800/95 rounded-2xl border border-gray-200 dark:border-gray-500/70 px-6 py-12 text-center shadow-sm dark:shadow-md dark:shadow-black/25">
+              <p className="text-gray-500 dark:text-gray-400 text-sm">No projects in {stageLabel}</p>
+              <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">Start a project from a client page</p>
             </div>
           ) : (
             projects.map((project) => (
@@ -185,15 +185,15 @@ export function DevelopmentBoard({ stages, projectsByStage }: Props) {
                 key={project.id}
                 type="button"
                 onClick={() => setProjectToView(project)}
-                className="w-full text-left bg-white rounded-2xl border border-gray-200 p-4 active:bg-gray-50 transition shadow-sm hover:shadow-md hover:border-gray-300 min-h-[88px]"
+                className="w-full text-left bg-white dark:bg-gray-800/95 rounded-2xl border border-gray-200 dark:border-gray-500/70 p-4 active:bg-gray-50 dark:active:bg-gray-700 transition shadow-sm dark:shadow-md dark:shadow-black/25 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-400 min-h-[88px]"
               >
-                <p className="font-semibold text-gray-900 truncate">
+                <p className="font-semibold text-gray-900 dark:text-gray-100 truncate">
                   {project.company || project.clientName}
                 </p>
                 {project.company && (
-                  <p className="text-sm text-gray-500 truncate mt-0.5">{project.clientName}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-300 truncate mt-0.5">{project.clientName}</p>
                 )}
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                   Updated {project.updatedAtDisplay}
                 </p>
               </button>
@@ -214,13 +214,13 @@ export function DevelopmentBoard({ stages, projectsByStage }: Props) {
               <DroppableColumn
                 key={stage.key}
                 stageKey={stage.key}
-                className="flex-shrink-0 min-w-[260px] w-72 bg-gray-100 rounded-xl flex flex-col h-full min-h-0"
+                className="flex-shrink-0 min-w-[260px] w-72 bg-gray-100 dark:bg-gray-800/80 rounded-xl flex flex-col h-full min-h-0"
               >
-                <div className="p-3 border-b border-gray-200 flex-shrink-0">
+                <div className="p-3 border-b border-gray-200 dark:border-gray-600 flex-shrink-0">
                   <div className="flex items-center gap-2">
                     <div className={`w-3 h-3 rounded-full flex-shrink-0 ${stage.color}`} />
-                    <h3 className="font-semibold text-gray-700 truncate">{stage.label}</h3>
-                    <span className="ml-auto text-sm text-gray-500 flex-shrink-0">
+                    <h3 className="font-semibold text-gray-700 dark:text-gray-200 truncate">{stage.label}</h3>
+                    <span className="ml-auto text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
                       {(projectsByStage[stage.key] ?? []).length}
                     </span>
                   </div>
@@ -234,7 +234,7 @@ export function DevelopmentBoard({ stages, projectsByStage }: Props) {
                     />
                   ))}
                   {(projectsByStage[stage.key] ?? []).length === 0 && (
-                    <p className="text-center text-sm text-gray-400 py-8">No projects</p>
+                    <p className="text-center text-sm text-gray-400 dark:text-gray-500 py-8">No projects</p>
                   )}
                 </div>
               </DroppableColumn>
@@ -243,14 +243,14 @@ export function DevelopmentBoard({ stages, projectsByStage }: Props) {
 
           <DragOverlay dropAnimation={null}>
             {activeProject ? (
-              <div className="bg-white rounded-lg border-2 border-[#1C6ED5] shadow-xl p-3 w-72 opacity-95 cursor-grabbing">
-                <p className="font-medium text-gray-900 truncate">
+              <div className="bg-white dark:bg-gray-800/95 rounded-lg border-2 border-[#1C6ED5] shadow-xl dark:shadow-2xl dark:shadow-black/40 p-3 w-72 opacity-95 cursor-grabbing">
+                <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
                   {activeProject.company || activeProject.clientName}
                 </p>
                 {activeProject.company && (
-                  <p className="text-xs text-gray-500 truncate mt-0.5">{activeProject.clientName}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-300 truncate mt-0.5">{activeProject.clientName}</p>
                 )}
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-gray-400 dark:text-gray-400 mt-1">
                   Updated {activeProject.updatedAtDisplay}
                 </p>
               </div>

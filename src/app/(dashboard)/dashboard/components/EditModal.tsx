@@ -73,17 +73,17 @@ export function EditModal({
     >
       <div
         ref={panelRef}
-        className={`bg-white rounded-xl border border-gray-200 shadow-xl w-full max-w-[calc(100vw-2rem)] ${maxWidth} flex flex-col min-w-0 max-h-[85vh] ${allowContentOverflow ? "overflow-visible" : scrollContent ? "" : "overflow-hidden"}`}
+        className={`bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 shadow-xl w-full max-w-[calc(100vw-2rem)] ${maxWidth} flex flex-col min-w-0 max-h-[85vh] ${allowContentOverflow ? "overflow-visible" : scrollContent ? "" : "overflow-hidden"}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
-          <h2 id={titleId} className="text-lg font-semibold text-gray-900 truncate min-w-0">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-600 flex-shrink-0">
+          <h2 id={titleId} className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate min-w-0">
             {title}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="min-h-[44px] min-w-[44px] p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition flex-shrink-0 flex items-center justify-center"
+            className="min-h-[44px] min-w-[44px] p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 transition flex-shrink-0 flex items-center justify-center"
             aria-label="Close"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,7 +99,7 @@ export function EditModal({
         </div>
 
         {footer != null && (
-          <div className="p-4 border-t border-gray-200 bg-gray-50 rounded-b-xl flex justify-end flex-shrink-0">
+          <div className="p-4 border-t border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 rounded-b-xl flex justify-end flex-shrink-0">
             {footer}
           </div>
         )}

@@ -102,12 +102,12 @@ export default async function DevelopmentPipelinePage() {
   return (
     <div className="min-w-0 flex flex-col flex-1 min-h-0">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 flex-shrink-0">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 truncate">
           Development Pipeline
         </h1>
         <Link
           href="/dashboard/clients"
-          className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm text-center"
+          className="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-500 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm text-center text-gray-700 dark:text-gray-200"
         >
           Start project (from Clients)
         </Link>

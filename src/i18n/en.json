@@ -122,6 +122,8 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "darkMode": "Switch to dark mode",
+    "lightMode": "Switch to light mode",
     "signOut": "Sign Out",
     "nav": {
       "overview": "Overview",
@@ -402,6 +404,9 @@
       "noTicketsFound": "No tickets found",
       "addComment": "Add Comment",
       "addCommentPlaceholder": "Add a comment...",
+      "deleteComment": "Delete",
+      "deleteCommentConfirmTitle": "Delete comment",
+      "deleteCommentConfirmMessage": "This cannot be undone.",
       "sending": "Sending...",
       "subject": "Subject",
       "priority": "Priority",

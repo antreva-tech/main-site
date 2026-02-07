@@ -60,7 +60,7 @@ export function RecentLeadsWithModal({
     <button
       type="button"
       onClick={() => setNewLeadModalOpen(true)}
-      className="text-sm font-medium text-[#1C6ED5] hover:underline"
+      className="text-sm font-medium text-[#1C6ED5] hover:underline dark:text-[#5ba3f5] dark:hover:text-[#7ab8ff]"
     >
       {primaryAction.label}
     </button>
@@ -108,16 +108,16 @@ export function RecentLeadsWithModal({
             key={lead.id}
             type="button"
             onClick={() => openModal(lead)}
-            className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg border border-gray-100 bg-slate-50/80 px-4 py-3.5 text-left transition hover:border-[#1C6ED5]/30 hover:bg-[#1C6ED5]/5"
+            className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg border border-gray-100 dark:border-gray-600 bg-slate-50/80 dark:bg-gray-700/60 px-4 py-3.5 text-left transition hover:border-[#1C6ED5]/30 dark:hover:border-[#1C6ED5]/40 hover:bg-[#1C6ED5]/5 dark:hover:bg-[#1C6ED5]/15"
           >
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-[#0B132B] truncate">{lead.name}</p>
-              <p className="text-sm text-[#8A8F98] truncate">{lead.company || "—"}</p>
+              <p className="font-semibold text-[#0B132B] dark:text-gray-100 truncate">{lead.name}</p>
+              <p className="text-sm text-[#8A8F98] dark:text-gray-300 truncate">{lead.company || "—"}</p>
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <StageBadge stage={lead.stage} label={stageLabels[lead.stage]} />
               <span
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1C6ED5]/10 text-[#1C6ED5] opacity-0 transition-opacity group-hover:opacity-100"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1C6ED5]/10 dark:bg-[#1C6ED5]/25 text-[#1C6ED5] dark:text-[#5ba3f5] opacity-0 transition-opacity group-hover:opacity-100"
                 aria-hidden
               >
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>

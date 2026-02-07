@@ -50,7 +50,7 @@ type FilterDropdownProps = {
 };
 
 const TRIGGER_CLASS =
-  "w-full min-w-[160px] sm:w-[180px] pl-4 pr-10 py-3 text-sm text-left text-gray-900 bg-white border border-[#0B132B]/[0.12] rounded-xl shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[#1C6ED5]/30 focus:border-[#1C6ED5] focus:shadow-[0_0_0_3px_rgba(28,110,213,0.12)] cursor-pointer flex items-center justify-between gap-2";
+  "w-full min-w-[160px] sm:w-[180px] pl-4 pr-10 py-3 text-sm text-left text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 border border-[#0B132B]/[0.12] dark:border-gray-500 rounded-xl shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[#1C6ED5]/30 focus:border-[#1C6ED5] focus:shadow-[0_0_0_3px_rgba(28,110,213,0.12)] cursor-pointer flex items-center justify-between gap-2";
 
 /**
  * Custom dropdown: trigger button + styled option list (brand colors, hover).
@@ -92,7 +92,7 @@ function FilterDropdown({ id, label, options, value, onSelect }: FilterDropdownP
         onClick={() => setOpen((o) => !o)}
       >
         <span className="truncate">{selectedLabel}</span>
-        <span className={`flex-shrink-0 text-[#8A8F98] transition-transform ${open ? "rotate-180" : ""}`}>
+        <span className={`flex-shrink-0 text-[#8A8F98] dark:text-gray-400 transition-transform ${open ? "rotate-180" : ""}`}>
           <ChevronDown />
         </span>
       </button>
@@ -100,7 +100,7 @@ function FilterDropdown({ id, label, options, value, onSelect }: FilterDropdownP
         <ul
           role="listbox"
           aria-labelledby={`${id}-label`}
-          className="absolute z-50 mt-1.5 w-full min-w-[160px] sm:min-w-[180px] max-h-[280px] overflow-y-auto rounded-xl border border-[#0B132B]/[0.12] bg-white shadow-lg py-1.5"
+          className="absolute z-50 mt-1.5 w-full min-w-[160px] sm:min-w-[180px] max-h-[280px] overflow-y-auto rounded-xl border border-[#0B132B]/[0.12] dark:border-gray-500 bg-white dark:bg-gray-700 shadow-lg py-1.5"
         >
           {options.map(({ value: v, label: l }) => (
             <li
@@ -109,8 +109,8 @@ function FilterDropdown({ id, label, options, value, onSelect }: FilterDropdownP
               aria-selected={v === value}
               className={`px-4 py-2.5 text-sm cursor-pointer transition-colors first:rounded-t-[10px] last:rounded-b-[10px] ${
                 v === value
-                  ? "bg-[#1C6ED5]/12 text-[#0B132B] font-medium"
-                  : "text-gray-700 hover:bg-[#1C6ED5]/10 hover:text-gray-900"
+                  ? "bg-[#1C6ED5]/12 dark:bg-[#1C6ED5]/25 text-[#0B132B] dark:text-gray-100 font-medium"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-[#1C6ED5]/10 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-gray-100"
               }`}
               onClick={() => {
                 onSelect(v);

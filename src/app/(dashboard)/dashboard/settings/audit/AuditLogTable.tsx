@@ -42,29 +42,29 @@ export function AuditLogTable({ logs }: Props) {
 
   return (
     <>
-      {/* Desktop: Log Table — clickable rows */}
+      {/* Desktop: premium table — navy header, subtle row hover (matches users/roles list) */}
       <div className="hidden md:block dashboard-card overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="bg-[#0B132B]">
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+            <tr className="bg-[#0B132B] dark:bg-gray-700">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Timestamp
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 User
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Action
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Entity
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Details
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100/80 font-mono text-sm">
+          <tbody className="divide-y divide-gray-100/80 dark:divide-gray-600 font-mono text-sm">
             {rows.map((log) => (
               <tr
                 key={log.id}
@@ -77,21 +77,21 @@ export function AuditLogTable({ logs }: Props) {
                     openModal(log);
                   }
                 }}
-                className="hover:bg-[#1C6ED5]/[0.06] transition-colors duration-150 cursor-pointer"
+                className="hover:bg-[#1C6ED5]/[0.06] dark:hover:bg-white/[0.06] transition-colors duration-150 cursor-pointer"
               >
-                <td className="px-6 py-3 text-gray-600">
+                <td className="px-6 py-3.5 text-[#0B132B]/80 dark:text-gray-300">
                   {new Date(log.createdAt).toLocaleString()}
                 </td>
-                <td className="px-6 py-3">
+                <td className="px-6 py-3.5 font-sans font-semibold text-[#0B132B] dark:text-gray-100">
                   {log.user?.name || log.user?.email || "System"}
                 </td>
-                <td className="px-6 py-3">
+                <td className="px-6 py-3.5">
                   <ActionBadge action={log.action} />
                 </td>
-                <td className="px-6 py-3 text-gray-600">
+                <td className="px-6 py-3.5 text-[#0B132B]/80 dark:text-gray-300">
                   {log.entityType}:{log.entityId.slice(0, 8)}...
                 </td>
-                <td className="px-6 py-3 text-gray-500 truncate max-w-xs">
+                <td className="px-6 py-3.5 text-[#8A8F98] dark:text-gray-400 truncate max-w-xs">
                   {log.metadata != null && typeof log.metadata === "object"
                     ? Object.keys(log.metadata as object).length > 0
                       ? `${Object.keys(log.metadata as object).length} field(s)`
@@ -104,7 +104,7 @@ export function AuditLogTable({ logs }: Props) {
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                <td colSpan={5} className="px-6 py-16 text-center text-[#8A8F98] dark:text-gray-400">
                   No audit logs found
                 </td>
               </tr>
@@ -113,10 +113,10 @@ export function AuditLogTable({ logs }: Props) {
         </table>
       </div>
 
-      {/* Mobile: card list — tappable cards */}
-      <div className="md:hidden space-y-3">
+      {/* Mobile: premium cards with left accent (matches users/roles list) */}
+      <div className="md:hidden space-y-4">
         {rows.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 px-4 py-12 text-center text-gray-500">
+          <div className="dashboard-card px-6 py-14 text-center text-[#8A8F98] dark:text-gray-400">
             No audit logs found
           </div>
         ) : (
@@ -125,29 +125,29 @@ export function AuditLogTable({ logs }: Props) {
               key={log.id}
               type="button"
               onClick={() => openModal(log)}
-              className="w-full text-left bg-white rounded-xl border border-gray-200 p-4 hover:border-[#1C6ED5]/30 hover:bg-[#1C6ED5]/[0.04] transition-all active:scale-[0.99]"
+              className="w-full text-left dashboard-card dashboard-card-accent p-5 hover:bg-[#1C6ED5]/[0.04] dark:hover:bg-white/[0.04] transition-all active:scale-[0.99]"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-[#8A8F98] dark:text-gray-400">
                     {new Date(log.createdAt).toLocaleString()}
                   </p>
-                  <p className="font-medium text-gray-900 mt-1">
+                  <p className="font-semibold text-[#0B132B] dark:text-gray-100 mt-1">
                     {log.user?.name || log.user?.email || "System"}
                   </p>
                 </div>
                 <ActionBadge action={log.action} />
               </div>
-              <div className="mt-2 pt-2 border-t border-gray-100 text-sm font-mono">
-                <p className="text-gray-600">
+              <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-600 text-sm font-mono">
+                <p className="text-[#0B132B]/80 dark:text-gray-300">
                   {log.entityType}:{log.entityId.slice(0, 8)}...
                 </p>
                 {log.metadata != null && typeof log.metadata === "object" && Object.keys(log.metadata as object).length > 0 ? (
-                  <p className="text-gray-500 mt-1 text-xs">
+                  <p className="text-[#8A8F98] dark:text-gray-400 mt-1 text-xs">
                     {Object.keys(log.metadata as object).length} field(s) — tap to view
                   </p>
                 ) : log.metadata != null ? (
-                  <p className="text-gray-500 truncate mt-1 text-xs">
+                  <p className="text-[#8A8F98] dark:text-gray-400 truncate mt-1 text-xs">
                     {String(log.metadata).slice(0, 60)}
                   </p>
                 ) : null}

@@ -36,37 +36,37 @@ export function BankAccountCards({ accounts, updateBankAccount, deleteBankAccoun
         {accounts.map((account) => (
           <div
             key={account.id}
-            className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6"
+            className="dashboard-card dashboard-card-accent p-4 sm:p-6"
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+                <h3 className="text-base sm:text-lg font-semibold text-[#0B132B] dark:text-gray-100">
                   {account.bankName}
                 </h3>
-                <p className="text-gray-600 mt-1 text-sm">
+                <p className="text-[#8A8F98] dark:text-gray-400 mt-1 text-sm">
                   {account.routingNumber && (
                     <span className="mr-2">Routing {account.routingNumber}</span>
                   )}
                   ****{account.accountNumberLast4} · {account.accountType} · {account.currency}
                 </p>
-                <p className="text-sm text-gray-500 mt-2 truncate">
+                <p className="text-sm text-[#8A8F98] dark:text-gray-500 mt-2 truncate">
                   {account.accountHolder}
                 </p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 {account.isActive ? (
-                  <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                  <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/12 text-emerald-700 dark:bg-emerald-400/20 dark:text-emerald-300">
                     Active
                   </span>
                 ) : (
-                  <span className="px-2 py-1 bg-gray-100 text-gray-500 text-xs rounded-full">
+                  <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-500/12 text-gray-600 dark:bg-gray-500/25 dark:text-gray-400">
                     Inactive
                   </span>
                 )}
                 <button
                   type="button"
                   onClick={() => setEditingAccount(account)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition"
                 >
                   Edit
                 </button>
@@ -95,7 +95,7 @@ export function BankAccountCards({ accounts, updateBankAccount, deleteBankAccoun
               <button
                 type="button"
                 onClick={() => setShowConfirmRemove(true)}
-                className="px-4 py-2 text-sm font-medium rounded-lg border border-red-200 bg-white text-red-600 hover:bg-red-50 hover:border-red-300 transition"
+                className="px-4 py-2 text-sm font-medium rounded-lg border border-red-200 dark:border-red-800 bg-white dark:bg-gray-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 dark:hover:border-red-700 transition"
               >
                 Remove
               </button>

@@ -164,7 +164,7 @@ export default async function ClientDetailPage({
 
       {/* Hero: mobile-first — single column; lg: 2 cols with At a glance right panel */}
       <div className="dashboard-card overflow-hidden mb-6">
-        <div className="bg-gradient-to-br from-[#0B132B]/[0.03] via-transparent to-[#1C6ED5]/[0.04] p-4 sm:p-6 lg:p-8">
+        <div className="bg-gradient-to-br from-[#0B132B]/[0.03] via-transparent to-[#1C6ED5]/[0.04] dark:from-white/[0.02] dark:via-transparent dark:to-[#1C6ED5]/[0.06] p-4 sm:p-6 lg:p-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             {/* Left: main client info — full width on mobile */}
             <div className="min-w-0">
@@ -174,17 +174,17 @@ export default async function ClientDetailPage({
                     <img
                       src={client.logoUrl}
                       alt=""
-                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border border-[#0B132B]/[0.08] object-cover flex-shrink-0 bg-white"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border border-[#0B132B]/[0.08] dark:border-white/15 object-cover flex-shrink-0 bg-white dark:bg-gray-700"
                       width={48}
                       height={48}
                     />
                   )}
                   <div className="min-w-0">
-                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#0B132B] tracking-tight truncate">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#0B132B] dark:text-gray-100 tracking-tight truncate">
                       {client.company || client.name}
                     </h1>
                     {client.company && (
-                      <p className="text-[#8A8F98] text-sm mt-1.5 font-medium truncate">
+                      <p className="text-[#8A8F98] dark:text-gray-400 text-sm mt-1.5 font-medium truncate">
                         {client.name}
                       </p>
                     )}
@@ -200,9 +200,9 @@ export default async function ClientDetailPage({
                   session?.title === "Developer" ||
                   session?.roleName?.toLowerCase() === "developer";
                 return (
-                  <div className="mt-4 sm:mt-5 pt-4 sm:pt-5 border-t border-[#0B132B]/[0.08]">
-                    <div className="rounded-xl border border-[#0B132B]/[0.08] bg-white/60 p-4">
-                      <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-3">
+                  <div className="mt-4 sm:mt-5 pt-4 sm:pt-5 border-t border-[#0B132B]/[0.08] dark:border-white/10">
+                    <div className="rounded-xl border border-[#0B132B]/[0.08] dark:border-white/10 bg-white/60 dark:bg-white/[0.06] p-4">
+                      <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-3">
                         Project status
                       </p>
                       {client.developmentProject ? (
@@ -215,7 +215,7 @@ export default async function ClientDetailPage({
                           {canViewPipeline && (
                             <Link
                               href={`/dashboard/development/${client.developmentProject.id}`}
-                              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1C6ED5] hover:text-[#1559B3] rounded-lg hover:bg-[#1C6ED5]/[0.06] transition-colors"
+                              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1C6ED5] dark:text-[#7eb8ff] hover:text-[#1559B3] dark:hover:text-[#9ec9ff] rounded-lg hover:bg-[#1C6ED5]/[0.06] dark:hover:bg-[#1C6ED5]/20 transition-colors"
                             >
                               {t.dashboard.nav.development}
                               <span aria-hidden>→</span>
@@ -224,7 +224,7 @@ export default async function ClientDetailPage({
                         </div>
                       ) : (
                         <div className="flex flex-wrap items-center gap-3">
-                          <span className="text-sm text-[#8A8F98]">{(t.dashboard as { development: { noActiveProject: string } }).development.noActiveProject}</span>
+                          <span className="text-sm text-[#8A8F98] dark:text-gray-400">{(t.dashboard as { development: { noActiveProject: string } }).development.noActiveProject}</span>
                           {canViewPipeline && (
                             <StartDevelopmentProjectButton clientId={client.id} />
                           )}
@@ -237,24 +237,24 @@ export default async function ClientDetailPage({
 
               {/* Contact grid: 1 col mobile → 2 → 4 on larger */}
               <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-            <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-              <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.email}</p>
+            <div className="min-w-0 p-3 rounded-lg bg-white/60 dark:bg-white/[0.06] border border-[#0B132B]/[0.06] dark:border-white/10">
+              <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1">{t.dashboard.clients.email}</p>
               <a
                 href={`mailto:${client.email}`}
                 title={client.email}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 bg-[#1C6ED5]/[0.08] text-[#1C6ED5] hover:bg-[#1C6ED5]/15 hover:border-[#1C6ED5]/50 transition-all"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 dark:border-[#1C6ED5]/40 bg-[#1C6ED5]/[0.08] dark:bg-[#1C6ED5]/20 text-[#1C6ED5] dark:text-[#7eb8ff] hover:bg-[#1C6ED5]/15 dark:hover:bg-[#1C6ED5]/30 hover:border-[#1C6ED5]/50 transition-all"
               >
                 <span aria-hidden>✉️</span> {t.dashboard.clients.email}
               </a>
             </div>
             {client.phone && (
-              <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.phone}</p>
+              <div className="min-w-0 p-3 rounded-lg bg-white/60 dark:bg-white/[0.06] border border-[#0B132B]/[0.06] dark:border-white/10">
+                <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1">{t.dashboard.clients.phone}</p>
                 <div className="flex flex-wrap gap-1.5">
                   <a
                     href={`tel:${client.phone}`}
                     title={client.phone}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-violet-500/30 bg-violet-500/[0.08] text-violet-700 hover:bg-violet-500/15 hover:border-violet-500/50 transition-all"
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-violet-500/30 dark:border-violet-400/40 bg-violet-500/[0.08] dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 hover:bg-violet-500/15 dark:hover:bg-violet-500/30 hover:border-violet-500/50 transition-all"
                   >
                     <span aria-hidden>📞</span> Call
                   </a>
@@ -263,7 +263,7 @@ export default async function ClientDetailPage({
                     target="_blank"
                     rel="noopener noreferrer"
                     title={`WhatsApp ${client.phone}`}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#25D366]/40 bg-[#25D366]/[0.12] text-[#128C7E] hover:bg-[#25D366]/20 hover:border-[#25D366]/60 transition-all"
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#25D366]/40 dark:border-[#25D366]/50 bg-[#25D366]/[0.12] dark:bg-[#25D366]/25 text-[#128C7E] dark:text-[#5cdb9a] hover:bg-[#25D366]/20 dark:hover:bg-[#25D366]/35 hover:border-[#25D366]/60 transition-all"
                   >
                     <span aria-hidden>💬</span> WhatsApp
                   </a>
@@ -271,94 +271,94 @@ export default async function ClientDetailPage({
               </div>
             )}
             {client.websiteUrl && (
-              <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.website}</p>
+              <div className="min-w-0 p-3 rounded-lg bg-white/60 dark:bg-white/[0.06] border border-[#0B132B]/[0.06] dark:border-white/10">
+                <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1">{t.dashboard.clients.website}</p>
                 <a
                   href={client.websiteUrl.startsWith("http") ? client.websiteUrl : `https://${client.websiteUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   title={client.websiteUrl}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 bg-[#1C6ED5]/[0.08] text-[#1C6ED5] hover:bg-[#1C6ED5]/15 hover:border-[#1C6ED5]/50 transition-all"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 dark:border-[#1C6ED5]/40 bg-[#1C6ED5]/[0.08] dark:bg-[#1C6ED5]/20 text-[#1C6ED5] dark:text-[#7eb8ff] hover:bg-[#1C6ED5]/15 dark:hover:bg-[#1C6ED5]/30 hover:border-[#1C6ED5]/50 transition-all"
                 >
                   <span aria-hidden>↗</span> {t.dashboard.clients.openWebsite}
                 </a>
               </div>
             )}
             {client.adminPortalUrl && (
-              <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.adminPortal}</p>
+              <div className="min-w-0 p-3 rounded-lg bg-white/60 dark:bg-white/[0.06] border border-[#0B132B]/[0.06] dark:border-white/10">
+                <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1">{t.dashboard.clients.adminPortal}</p>
                 <a
                   href={client.adminPortalUrl.startsWith("http") ? client.adminPortalUrl : `https://${client.adminPortalUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   title={client.adminPortalUrl}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 bg-[#1C6ED5]/[0.08] text-[#1C6ED5] hover:bg-[#1C6ED5]/15 hover:border-[#1C6ED5]/50 transition-all"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 dark:border-[#1C6ED5]/40 bg-[#1C6ED5]/[0.08] dark:bg-[#1C6ED5]/20 text-[#1C6ED5] dark:text-[#7eb8ff] hover:bg-[#1C6ED5]/15 dark:hover:bg-[#1C6ED5]/30 hover:border-[#1C6ED5]/50 transition-all"
                 >
                   <span aria-hidden>↗</span> {t.dashboard.clients.openAdminPortal}
                 </a>
               </div>
             )}
             {client.cedula && (
-              <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.cedula}</p>
-                <p className="text-sm text-[#0B132B]/90 truncate font-mono" title={t.dashboard.clients.fullNumberHidden}>
+              <div className="min-w-0 p-3 rounded-lg bg-white/60 dark:bg-white/[0.06] border border-[#0B132B]/[0.06] dark:border-white/10">
+                <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1">{t.dashboard.clients.cedula}</p>
+                <p className="text-sm text-[#0B132B]/90 dark:text-gray-200 truncate font-mono" title={t.dashboard.clients.fullNumberHidden}>
                   {maskCedula(client.cedula)}
                 </p>
               </div>
             )}
             {client.rnc && (
-              <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.rnc}</p>
-                <p className="text-sm text-[#0B132B]/90 truncate font-mono" title={client.rnc}>{client.rnc}</p>
+              <div className="min-w-0 p-3 rounded-lg bg-white/60 dark:bg-white/[0.06] border border-[#0B132B]/[0.06] dark:border-white/10">
+                <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1">{t.dashboard.clients.rnc}</p>
+                <p className="text-sm text-[#0B132B]/90 dark:text-gray-200 truncate font-mono" title={client.rnc}>{client.rnc}</p>
               </div>
             )}
-            <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-              <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.started}</p>
-              <p className="text-sm text-[#0B132B]/90">{client.startedAt.toLocaleDateString()}</p>
+            <div className="min-w-0 p-3 rounded-lg bg-white/60 dark:bg-white/[0.06] border border-[#0B132B]/[0.06] dark:border-white/10">
+              <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1">{t.dashboard.clients.started}</p>
+              <p className="text-sm text-[#0B132B]/90 dark:text-gray-200">{client.startedAt.toLocaleDateString()}</p>
             </div>
             {client.lead && (
-              <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-                <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.clients.source}</p>
-                <p className="text-sm text-[#0B132B]/90 capitalize">{client.lead.source.replace("_", " ")}</p>
+              <div className="min-w-0 p-3 rounded-lg bg-white/60 dark:bg-white/[0.06] border border-[#0B132B]/[0.06] dark:border-white/10">
+                <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1">{t.dashboard.clients.source}</p>
+                <p className="text-sm text-[#0B132B]/90 dark:text-gray-200 capitalize">{client.lead.source.replace("_", " ")}</p>
                 {client.lead.source === "referral" && client.lead.referralFrom && (
-                  <p className="text-sm text-[#0B132B]/80 mt-1">Referral from: {client.lead.referralFrom}</p>
+                  <p className="text-sm text-[#0B132B]/80 dark:text-gray-300 mt-1">Referral from: {client.lead.referralFrom}</p>
                 )}
               </div>
             )}
-            <div className="min-w-0 p-3 rounded-lg bg-white/60 border border-[#0B132B]/[0.06]">
-              <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1">{t.dashboard.common.lineOfBusiness}</p>
-              <p className="text-sm text-[#0B132B]/90">{client.lineOfBusiness ? (t.dashboard.common.lineOfBusinessOptions as Record<string, string>)[client.lineOfBusiness] ?? client.lineOfBusiness.replace(/_/g, " ") : "—"}</p>
+            <div className="min-w-0 p-3 rounded-lg bg-white/60 dark:bg-white/[0.06] border border-[#0B132B]/[0.06] dark:border-white/10">
+              <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1">{t.dashboard.common.lineOfBusiness}</p>
+              <p className="text-sm text-[#0B132B]/90 dark:text-gray-200">{client.lineOfBusiness ? (t.dashboard.common.lineOfBusinessOptions as Record<string, string>)[client.lineOfBusiness] ?? client.lineOfBusiness.replace(/_/g, " ") : "—"}</p>
             </div>
               </div>
 
               {/* Notes */}
               {client.notes && (
-                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-[#0B132B]/[0.08]">
-                  <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-2">{t.dashboard.clients.notes}</p>
-                  <p className="text-[#0B132B]/85 text-sm whitespace-pre-wrap leading-relaxed">
+                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-[#0B132B]/[0.08] dark:border-white/10">
+                  <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-2">{t.dashboard.clients.notes}</p>
+                  <p className="text-[#0B132B]/85 dark:text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">
                     {client.notes}
                   </p>
                 </div>
               )}
 
               {/* Quick Actions — mobile / single column only; on lg shown in right panel */}
-              <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-[#0B132B]/[0.08] flex flex-col sm:flex-row gap-3 lg:hidden">
+              <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-[#0B132B]/[0.08] dark:border-white/10 flex flex-col sm:flex-row gap-3 lg:hidden">
                 <Link
                   href={`/dashboard/credentials?clientId=${client.id}`}
-                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 border border-[#0B132B]/[0.12] rounded-xl hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 text-sm font-medium text-[#0B132B] transition-all w-full sm:w-auto touch-manipulation"
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-xl hover:bg-[#1C6ED5]/[0.06] dark:hover:bg-[#1C6ED5]/20 hover:border-[#1C6ED5]/30 text-sm font-medium text-[#0B132B] dark:text-gray-100 transition-all w-full sm:w-auto touch-manipulation"
                 >
                   {t.dashboard.clients.viewCredentials} ({client._count.supportCredentials})
                 </Link>
                 <Link
                   href={`/dashboard/tickets?clientId=${client.id}`}
-                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 border border-[#0B132B]/[0.12] rounded-xl hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 text-sm font-medium text-[#0B132B] transition-all w-full sm:w-auto touch-manipulation"
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-xl hover:bg-[#1C6ED5]/[0.06] dark:hover:bg-[#1C6ED5]/20 hover:border-[#1C6ED5]/30 text-sm font-medium text-[#0B132B] dark:text-gray-100 transition-all w-full sm:w-auto touch-manipulation"
                 >
                   {t.dashboard.clients.viewAllTickets}
                 </Link>
               </div>
 
               {/* Edit client details */}
-              <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-[#0B132B]/[0.08]">
+              <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-[#0B132B]/[0.08] dark:border-white/10">
                 <EditClientDetailsModal
                   client={{
                     id: client.id,
@@ -383,26 +383,26 @@ export default async function ClientDetailPage({
 
             {/* Right: At a glance — visible on lg+ only; fills empty space dynamically */}
             <aside className="hidden lg:flex flex-col gap-4 min-w-0">
-              <div className="rounded-xl border border-[#0B132B]/[0.08] bg-white/50 p-5 flex-shrink-0">
-                <h2 className="text-sm font-semibold text-[#8A8F98] uppercase tracking-wider mb-4">
+              <div className="rounded-xl border border-[#0B132B]/[0.08] dark:border-white/10 bg-white/50 dark:bg-white/[0.06] p-5 flex-shrink-0">
+                <h2 className="text-sm font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-4">
                   {t.dashboard.atAGlance}
                 </h2>
                 <dl className="space-y-3">
                   <div className="flex justify-between items-center gap-2">
-                    <dt className="text-sm text-[#0B132B]/80">{t.dashboard.clients.subscriptions}</dt>
-                    <dd className="text-sm font-semibold text-[#0B132B]">{client._count.subscriptions}</dd>
+                    <dt className="text-sm text-[#0B132B]/80 dark:text-gray-400">{t.dashboard.clients.subscriptions}</dt>
+                    <dd className="text-sm font-semibold text-[#0B132B] dark:text-gray-100">{client._count.subscriptions}</dd>
                   </div>
                   <div className="flex justify-between items-center gap-2">
-                    <dt className="text-sm text-[#0B132B]/80">{t.dashboard.clients.singleCharges}</dt>
-                    <dd className="text-sm font-semibold text-[#0B132B]">{client._count.singleCharges}</dd>
+                    <dt className="text-sm text-[#0B132B]/80 dark:text-gray-400">{t.dashboard.clients.singleCharges}</dt>
+                    <dd className="text-sm font-semibold text-[#0B132B] dark:text-gray-100">{client._count.singleCharges}</dd>
                   </div>
                   <div className="flex justify-between items-center gap-2">
-                    <dt className="text-sm text-[#0B132B]/80">{t.dashboard.nav.tickets}</dt>
-                    <dd className="text-sm font-semibold text-[#0B132B]">{client._count.tickets}</dd>
+                    <dt className="text-sm text-[#0B132B]/80 dark:text-gray-400">{t.dashboard.nav.tickets}</dt>
+                    <dd className="text-sm font-semibold text-[#0B132B] dark:text-gray-100">{client._count.tickets}</dd>
                   </div>
                   <div className="flex justify-between items-center gap-2">
-                    <dt className="text-sm text-[#0B132B]/80">{t.dashboard.clients.adminCredentials}</dt>
-                    <dd className="text-sm font-semibold text-[#0B132B]">{client._count.supportCredentials}</dd>
+                    <dt className="text-sm text-[#0B132B]/80 dark:text-gray-400">{t.dashboard.clients.adminCredentials}</dt>
+                    <dd className="text-sm font-semibold text-[#0B132B] dark:text-gray-100">{client._count.supportCredentials}</dd>
                   </div>
                 </dl>
               </div>
@@ -415,7 +415,7 @@ export default async function ClientDetailPage({
                 </Link>
                 <Link
                   href={`/dashboard/tickets?clientId=${client.id}`}
-                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 border border-[#0B132B]/[0.12] rounded-xl font-medium text-sm text-[#0B132B] hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 transition-colors touch-manipulation"
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-xl font-medium text-sm text-[#0B132B] dark:text-gray-100 hover:bg-[#1C6ED5]/[0.06] dark:hover:bg-[#1C6ED5]/20 hover:border-[#1C6ED5]/30 transition-colors touch-manipulation"
                 >
                   {t.dashboard.clients.viewAllTickets}
                 </Link>
@@ -460,14 +460,14 @@ export default async function ClientDetailPage({
             <summary className="cursor-pointer text-sm font-semibold text-[#1C6ED5] hover:text-[#1559B3] list-none py-1 transition-colors">
               + {t.dashboard.clients.addSubscription}
             </summary>
-            <form action={createSubscription} className="mt-4 p-4 sm:p-5 rounded-xl bg-[#0B132B]/[0.03] border border-[#0B132B]/[0.06] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <form action={createSubscription} className="mt-4 p-4 sm:p-5 rounded-xl bg-[#0B132B]/[0.03] dark:bg-white/[0.04] border border-[#0B132B]/[0.06] dark:border-white/10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <input type="hidden" name="clientId" value={client.id} />
               <div>
-                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.service}</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.clients.service}</label>
                 <select
                   name="serviceId"
                   required
-                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 dark:bg-white/5 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 >
                   <option value="">{t.dashboard.clients.selectService}</option>
                   {services.map((svc) => (
@@ -481,7 +481,7 @@ export default async function ClientDetailPage({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.amount}</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.clients.amount}</label>
                 <input
                   type="number"
                   name="amount"
@@ -489,24 +489,24 @@ export default async function ClientDetailPage({
                   min="0"
                   step="0.01"
                   placeholder="0.00"
-                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 dark:bg-white/5 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.currency}</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.clients.currency}</label>
                 <select
                   name="currency"
-                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 dark:bg-white/5 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 >
                   <option value="DOP">DOP (RD$)</option>
                   <option value="USD">USD ($)</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.billingCycle}</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.clients.billingCycle}</label>
                 <select
                   name="billingCycle"
-                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 dark:bg-white/5 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 >
                   <option value="monthly">{t.dashboard.clients.monthly}</option>
                   <option value="quarterly">{t.dashboard.clients.quarterly}</option>
@@ -515,13 +515,13 @@ export default async function ClientDetailPage({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.startDate}</label>
+                <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.clients.startDate}</label>
                 <input
                   type="date"
                   name="startDate"
                   required
                   defaultValue={new Date().toISOString().slice(0, 10)}
-                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+                  className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 dark:bg-white/5 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 />
               </div>
               <div className="flex items-end">
@@ -633,11 +633,11 @@ export default async function ClientDetailPage({
               <Link
                 key={ticket.id}
                 href={`/dashboard/tickets/${ticket.id}`}
-                className="flex items-center justify-between p-3.5 rounded-xl border border-[#0B132B]/[0.06] hover:bg-[#1C6ED5]/[0.05] hover:border-[#1C6ED5]/20 transition-all"
+                className="flex items-center justify-between p-3.5 rounded-xl border border-[#0B132B]/[0.06] dark:border-white/10 hover:bg-[#1C6ED5]/[0.05] dark:hover:bg-[#1C6ED5]/15 hover:border-[#1C6ED5]/20 transition-all"
               >
                 <div>
-                  <p className="font-semibold text-[#0B132B]">{ticket.subject}</p>
-                  <p className="text-xs text-[#8A8F98] mt-0.5">
+                  <p className="font-semibold text-[#0B132B] dark:text-gray-100">{ticket.subject}</p>
+                  <p className="text-xs text-[#8A8F98] dark:text-gray-400 mt-0.5">
                     {ticket.createdAt.toLocaleDateString()}
                   </p>
                 </div>
@@ -654,7 +654,7 @@ export default async function ClientDetailPage({
       </div>
 
       {/* Metadata */}
-      <div className="mt-6 text-xs text-[#8A8F98]/80">
+      <div className="mt-6 text-xs text-[#8A8F98]/80 dark:text-gray-500">
         <p>{t.dashboard.clients.created}: {client.createdAt.toLocaleString()}</p>
         <p>{t.dashboard.clients.updated}: {client.updatedAt.toLocaleString()}</p>
         <p>ID: {client.id}</p>
@@ -672,19 +672,19 @@ function formatDevStage(stage: string, t: Translations): string {
 }
 
 /**
- * Tailwind classes for project stage pill (bg + text) for color-coding.
+ * Tailwind classes for project stage pill (bg + text) for color-coding; includes dark mode.
  */
 function getProjectStageStyles(stage: string): string {
   const styles: Record<string, string> = {
-    discovery: "bg-blue-500/12 text-blue-700",
-    design: "bg-violet-500/12 text-violet-700",
-    development: "bg-[#1C6ED5]/12 text-[#1C6ED5]",
-    qa: "bg-amber-500/12 text-amber-700",
-    deployment: "bg-teal-500/12 text-teal-700",
-    completed: "bg-emerald-500/12 text-emerald-700",
-    on_hold: "bg-[#8A8F98]/20 text-[#8A8F98]",
+    discovery: "bg-blue-500/12 text-blue-700 dark:bg-blue-500/25 dark:text-blue-300",
+    design: "bg-violet-500/12 text-violet-700 dark:bg-violet-500/25 dark:text-violet-300",
+    development: "bg-[#1C6ED5]/12 text-[#1C6ED5] dark:bg-[#1C6ED5]/25 dark:text-[#7eb8ff]",
+    qa: "bg-amber-500/12 text-amber-700 dark:bg-amber-500/25 dark:text-amber-300",
+    deployment: "bg-teal-500/12 text-teal-700 dark:bg-teal-500/25 dark:text-teal-300",
+    completed: "bg-emerald-500/12 text-emerald-700 dark:bg-emerald-500/25 dark:text-emerald-300",
+    on_hold: "bg-[#8A8F98]/20 text-[#8A8F98] dark:bg-white/15 dark:text-gray-400",
   };
-  return styles[stage] ?? "bg-[#0B132B]/10 text-[#0B132B]/80";
+  return styles[stage] ?? "bg-[#0B132B]/10 text-[#0B132B]/80 dark:bg-white/10 dark:text-gray-300";
 }
 
 /**
@@ -697,13 +697,13 @@ function maskCedula(cedula: string): string {
 }
 
 /**
- * Status badge component; label from i18n.
+ * Status badge component; label from i18n. Includes dark mode variants.
  */
 function StatusBadge({ status, t }: { status: string; t: Translations }) {
   const styles: Record<string, string> = {
-    active: "bg-emerald-500/12 text-emerald-700",
-    inactive: "bg-amber-500/12 text-amber-700",
-    churned: "bg-red-500/12 text-red-700",
+    active: "bg-emerald-500/12 text-emerald-700 dark:bg-emerald-500/25 dark:text-emerald-300",
+    inactive: "bg-amber-500/12 text-amber-700 dark:bg-amber-500/25 dark:text-amber-300",
+    churned: "bg-red-500/12 text-red-700 dark:bg-red-500/25 dark:text-red-300",
   };
   const label = status === "active" ? t.dashboard.clients.active : status === "inactive" ? t.dashboard.clients.inactive : status === "churned" ? t.dashboard.clients.churned : status;
 
@@ -717,15 +717,15 @@ function StatusBadge({ status, t }: { status: string; t: Translations }) {
 }
 
 /**
- * Ticket status badge; label from i18n.
+ * Ticket status badge; label from i18n. Includes dark mode variants.
  */
 function TicketStatus({ status, t }: { status: string; t: Translations }) {
   const styles: Record<string, string> = {
-    open: "bg-[#1C6ED5]/12 text-[#1C6ED5]",
-    in_progress: "bg-purple-500/12 text-purple-700",
-    waiting: "bg-amber-500/12 text-amber-700",
-    resolved: "bg-emerald-500/12 text-emerald-700",
-    closed: "bg-[#8A8F98]/20 text-[#8A8F98]",
+    open: "bg-[#1C6ED5]/12 text-[#1C6ED5] dark:bg-[#1C6ED5]/25 dark:text-[#7eb8ff]",
+    in_progress: "bg-purple-500/12 text-purple-700 dark:bg-purple-500/25 dark:text-purple-300",
+    waiting: "bg-amber-500/12 text-amber-700 dark:bg-amber-500/25 dark:text-amber-300",
+    resolved: "bg-emerald-500/12 text-emerald-700 dark:bg-emerald-500/25 dark:text-emerald-300",
+    closed: "bg-[#8A8F98]/20 text-[#8A8F98] dark:bg-white/15 dark:text-gray-400",
   };
   const statuses = t.dashboard.tickets.statuses as Record<string, string>;
   const label = statuses[status] ?? status.replace("_", " ");

@@ -36,13 +36,13 @@ export function ProjectLogForm({ projectId }: Props) {
         name="content"
         rows={2}
         placeholder="Add an update (e.g. Sprint completed, blocked on design approval...)"
-        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5] focus:border-transparent"
         required
       />
       <button
         type="submit"
         disabled={pending}
-        className="w-full sm:w-auto px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] transition font-medium disabled:opacity-60"
+        className="w-full sm:w-auto px-4 py-2 bg-[#1C6ED5] text-white text-sm rounded-lg hover:bg-[#1559B3] dark:hover:bg-[#1C6ED5]/90 transition font-medium disabled:opacity-60"
       >
         {pending ? "Adding..." : "Add log entry"}
       </button>

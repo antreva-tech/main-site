@@ -78,7 +78,7 @@ export function CredentialList({
   };
 
   return (
-    <ul className="divide-y divide-[#0B132B]/08" role="list">
+    <ul className="divide-y divide-[#0B132B]/08 dark:divide-white/10" role="list">
       {credentials.map((cred) => {
         const isDecrypted = !!decrypted[cred.id];
         const isDecrypting = isPending && decryptingId === cred.id;
@@ -89,19 +89,19 @@ export function CredentialList({
             className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
           >
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-[#0B132B]">{cred.label}</p>
-              <p className="mt-0.5 text-xs text-[#8A8F98]">
+              <p className="font-medium text-[#0B132B] dark:text-gray-100">{cred.label}</p>
+              <p className="mt-0.5 text-xs text-[#8A8F98] dark:text-gray-400">
                 Updated {formatRelativeTime(cred.updatedAt)}
               </p>
               {isDecrypted && (
                 <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <code className="block max-w-full rounded-lg border border-[#0B132B]/12 bg-[#0B132B]/[0.03] px-3 py-2 font-mono text-sm break-all text-[#0B132B]">
+                  <code className="block max-w-full rounded-lg border border-[#0B132B]/12 dark:border-white/15 bg-[#0B132B]/[0.03] dark:bg-white/[0.06] px-3 py-2 font-mono text-sm break-all text-[#0B132B] dark:text-gray-200">
                     {decrypted[cred.id]}
                   </code>
                   <button
                     type="button"
                     onClick={() => handleCopy(cred.id)}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-[#0B132B]/15 bg-white px-3 py-2 text-xs font-medium text-[#0B132B] hover:bg-[#0B132B]/05 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-[#0B132B]/15 dark:border-white/20 bg-white dark:bg-white/10 px-3 py-2 text-xs font-medium text-[#0B132B] dark:text-gray-100 hover:bg-[#0B132B]/05 dark:hover:bg-white/15 transition-colors"
                     aria-label="Copy credential value"
                   >
                     {copiedId === cred.id ? (
@@ -126,7 +126,7 @@ export function CredentialList({
                 disabled={isDecrypting}
                 className={
                   isDecrypted
-                    ? "rounded-xl border border-[#0B132B]/15 bg-white px-4 py-2.5 text-sm font-medium text-[#8A8F98] hover:bg-[#0B132B]/05 transition-colors disabled:opacity-50"
+                    ? "rounded-xl border border-[#0B132B]/15 dark:border-white/20 bg-white dark:bg-white/10 px-4 py-2.5 text-sm font-medium text-[#8A8F98] dark:text-gray-400 hover:bg-[#0B132B]/05 dark:hover:bg-white/15 transition-colors disabled:opacity-50"
                     : "rounded-xl bg-[#1C6ED5] px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-[#1559B3] transition-colors disabled:opacity-50"
                 }
                 aria-busy={isDecrypting}

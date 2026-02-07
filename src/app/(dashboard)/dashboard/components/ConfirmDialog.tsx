@@ -68,20 +68,20 @@ export function ConfirmDialog({
       onClick={handleOverlayClick}
     >
       <div
-        className="bg-white rounded-xl border border-gray-200 shadow-xl w-full max-w-md p-6"
+        className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 shadow-xl w-full max-w-md p-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="confirm-dialog-title" className="text-lg font-semibold text-gray-900 mb-2">
+        <h2 id="confirm-dialog-title" className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
           {title}
         </h2>
-        <p id="confirm-dialog-desc" className="text-gray-600 text-sm mb-6">
+        <p id="confirm-dialog-desc" className="text-gray-600 dark:text-gray-300 text-sm mb-6">
           {message}
         </p>
         <div className="flex justify-end gap-2">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition"
+            className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
           >
             {cancelLabel}
           </button>

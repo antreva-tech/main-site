@@ -42,7 +42,7 @@ export default async function PaymentsPage({
     <div>
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Payments</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Payments</h1>
       </div>
 
       {/* Filters */}
@@ -74,57 +74,57 @@ export default async function PaymentsPage({
       <div className="hidden md:block dashboard-card overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="bg-[#0B132B]">
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+            <tr className="bg-[#0B132B] dark:bg-gray-700">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Client
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Service
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Amount
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Method
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Date
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100/80">
+          <tbody className="divide-y divide-gray-100/80 dark:divide-gray-600">
             {payments.map((payment) => (
               <tr
                 key={payment.id}
-                className="hover:bg-[#1C6ED5]/[0.06] transition-colors duration-150"
+                className="hover:bg-[#1C6ED5]/[0.06] dark:hover:bg-white/[0.06] transition-colors duration-150"
               >
                 <td className="px-6 py-4">
                   <Link
                     href={`/dashboard/clients/${payment.schedule.subscription.client.id}`}
-                    className="font-medium text-gray-900 hover:text-[#1C6ED5]"
+                    className="font-medium text-gray-900 dark:text-gray-100 hover:text-[#1C6ED5]"
                   >
                     {payment.schedule.subscription.client.name}
                   </Link>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
+                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                   {payment.schedule.subscription.service.name}
                 </td>
                 <td className="px-6 py-4">
-                  <span className="font-medium">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
                     {payment.currency === "DOP" ? "RD$" : "$"}
                     {Number(payment.amount).toLocaleString()}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600 capitalize">
+                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 capitalize">
                   {payment.method.replace("_", " ")}
                 </td>
                 <td className="px-6 py-4">
                   <StatusBadge status={payment.status} />
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
+                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                   <Link
                     href={`/dashboard/payments/${payment.id}`}
                     className="hover:text-[#1C6ED5]"
@@ -136,7 +136,7 @@ export default async function PaymentsPage({
             ))}
             {payments.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                   No payments found
                 </td>
               </tr>
@@ -148,7 +148,7 @@ export default async function PaymentsPage({
       {/* Mobile: card list */}
       <div className="md:hidden space-y-3">
         {payments.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 px-4 py-12 text-center text-gray-500">
+          <div className="dashboard-card px-4 py-12 text-center text-gray-500 dark:text-gray-400">
             No payments found
           </div>
         ) : (
@@ -156,21 +156,21 @@ export default async function PaymentsPage({
             <Link
               key={payment.id}
               href={`/dashboard/payments/${payment.id}`}
-              className="block bg-white rounded-xl border border-gray-200 p-4 hover:bg-gray-50 transition"
+              className="block dashboard-card p-4 hover:bg-[#1C6ED5]/[0.06] dark:hover:bg-white/[0.06] transition"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium text-gray-900 truncate">
+                  <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
                     {payment.schedule.subscription.client.name}
                   </p>
-                  <p className="text-sm text-gray-500 truncate">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                     {payment.schedule.subscription.service.name}
                   </p>
                 </div>
                 <StatusBadge status={payment.status} />
               </div>
-              <div className="mt-2 flex items-center gap-3 text-sm text-gray-600">
-                <span className="font-medium">
+              <div className="mt-2 flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                <span className="font-medium text-gray-900 dark:text-gray-100">
                   {payment.currency === "DOP" ? "RD$" : "$"}
                   {Number(payment.amount).toLocaleString()}
                 </span>
@@ -186,13 +186,13 @@ export default async function PaymentsPage({
 }
 
 /**
- * Status badge component.
+ * Status badge component. Dark mode uses lighter text for contrast.
  */
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    pending_confirmation: "bg-yellow-100 text-yellow-700",
-    confirmed: "bg-green-100 text-green-700",
-    rejected: "bg-red-100 text-red-700",
+    pending_confirmation: "bg-yellow-100 text-yellow-700 dark:bg-amber-400/20 dark:text-amber-300",
+    confirmed: "bg-green-100 text-green-700 dark:bg-emerald-400/20 dark:text-emerald-300",
+    rejected: "bg-red-100 text-red-700 dark:bg-red-400/20 dark:text-red-300",
   };
 
   return (

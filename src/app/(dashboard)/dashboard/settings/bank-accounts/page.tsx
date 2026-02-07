@@ -24,19 +24,21 @@ export default async function BankAccountsPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Bank Accounts</h1>
-        <p className="text-gray-600 mt-1 text-sm sm:text-base">
+      <div className="mb-8">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-[#0B132B] dark:text-gray-100 tracking-tight">
+          Bank Accounts
+        </h1>
+        <p className="text-[#8A8F98] dark:text-gray-400 mt-1 text-sm sm:text-base">
           Antreva&apos;s receiving bank accounts for client payments. Account numbers are encrypted; only last 4 digits are stored for display.
         </p>
       </div>
 
       {/* Add account */}
-      <details className="mb-6 bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-[#1C6ED5] hover:bg-gray-50 list-none">
+      <details className="mb-6 dashboard-card overflow-hidden">
+        <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-[#1C6ED5] hover:bg-[#1C6ED5]/[0.06] dark:hover:bg-white/[0.06] list-none transition-colors">
           + Add Account
         </summary>
-        <form action={createBankAccount} className="p-4 sm:p-6 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <form action={createBankAccount} className="p-4 sm:p-6 border-t border-gray-100 dark:border-gray-600 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-xs text-gray-500 uppercase mb-1">Bank name *</label>
             <input
@@ -121,8 +123,8 @@ export default async function BankAccountsPage() {
           deleteBankAccount={deleteBankAccount}
         />
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-          <p className="text-gray-500">No bank accounts configured. Use &quot;+ Add Account&quot; above to add one.</p>
+        <div className="dashboard-card px-6 py-14 text-center text-[#8A8F98] dark:text-gray-400">
+          No bank accounts configured. Use &quot;+ Add Account&quot; above to add one.
         </div>
       )}
     </div>

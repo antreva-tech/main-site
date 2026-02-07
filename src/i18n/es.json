@@ -122,6 +122,8 @@
   },
   "dashboard": {
     "title": "Panel",
+    "darkMode": "Cambiar a modo oscuro",
+    "lightMode": "Cambiar a modo claro",
     "signOut": "Cerrar sesión",
     "nav": {
       "overview": "Resumen",
@@ -402,6 +404,9 @@
       "noTicketsFound": "No se encontraron tickets",
       "addComment": "Añadir comentario",
       "addCommentPlaceholder": "Añadir un comentario...",
+      "deleteComment": "Eliminar",
+      "deleteCommentConfirmTitle": "Eliminar comentario",
+      "deleteCommentConfirmMessage": "Esta acción no se puede deshacer.",
       "sending": "Enviando...",
       "subject": "Asunto",
       "priority": "Prioridad",

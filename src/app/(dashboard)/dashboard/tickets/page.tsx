@@ -26,7 +26,7 @@ export default async function TicketsPage({
     orderBy: { createdAt: "desc" },
     take: 50,
     include: {
-      client: { select: { id: true, name: true } },
+      client: { select: { id: true, name: true, company: true } },
       assignedTo: { select: { name: true } },
     },
   });
@@ -35,7 +35,7 @@ export default async function TicketsPage({
     <div>
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Support Tickets</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Support Tickets</h1>
       </div>
 
       {/* Filters */}
@@ -73,47 +73,50 @@ export default async function TicketsPage({
       <div className="hidden md:block dashboard-card overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="bg-[#0B132B]">
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+            <tr className="bg-[#0B132B] dark:bg-gray-700">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Subject
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Client
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Priority
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Assigned
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
                 Created
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100/80">
+          <tbody className="divide-y divide-gray-100/80 dark:divide-gray-600">
             {tickets.map((ticket) => (
               <tr
                 key={ticket.id}
-                className="hover:bg-[#1C6ED5]/[0.06] transition-colors duration-150"
+                className="hover:bg-[#1C6ED5]/[0.06] dark:hover:bg-white/[0.06] transition-colors duration-150"
               >
                 <td className="px-6 py-4">
                   <Link
                     href={`/dashboard/tickets/${ticket.id}`}
-                    className="font-medium text-gray-900 hover:text-[#1C6ED5]"
+                    className="font-medium text-gray-900 dark:text-gray-100 hover:text-[#1C6ED5]"
                   >
                     {ticket.subject}
                   </Link>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
+                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                   <Link
                     href={`/dashboard/clients/${ticket.client.id}`}
-                    className="hover:text-[#1C6ED5]"
+                    className="hover:text-[#1C6ED5] block"
                   >
-                    {ticket.client.name}
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{ticket.client.name}</span>
+                    {ticket.client.company && (
+                      <span className="block text-xs text-gray-500 dark:text-gray-400 mt-0.5">{ticket.client.company}</span>
+                    )}
                   </Link>
                 </td>
                 <td className="px-6 py-4">
@@ -122,17 +125,17 @@ export default async function TicketsPage({
                 <td className="px-6 py-4">
                   <PriorityBadge priority={ticket.priority} />
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
+                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                   {ticket.assignedTo?.name || "Unassigned"}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
+                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                   {ticket.createdAt.toLocaleDateString()}
                 </td>
               </tr>
             ))}
             {tickets.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                   No tickets found
                 </td>
               </tr>
@@ -144,7 +147,7 @@ export default async function TicketsPage({
       {/* Mobile: card list */}
       <div className="md:hidden space-y-3">
         {tickets.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 px-4 py-12 text-center text-gray-500">
+          <div className="dashboard-card px-4 py-12 text-center text-gray-500 dark:text-gray-400">
             No tickets found
           </div>
         ) : (
@@ -152,16 +155,19 @@ export default async function TicketsPage({
             <Link
               key={ticket.id}
               href={`/dashboard/tickets/${ticket.id}`}
-              className="block bg-white rounded-xl border border-gray-200 p-4 hover:bg-gray-50 transition"
+              className="block dashboard-card p-4 hover:bg-[#1C6ED5]/[0.06] dark:hover:bg-white/[0.06] transition"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium text-gray-900 truncate">{ticket.subject}</p>
-                  <p className="text-sm text-gray-500 truncate">{ticket.client.name}</p>
+                  <p className="font-medium text-gray-900 dark:text-gray-100 truncate">{ticket.subject}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{ticket.client.name}</p>
+                  {ticket.client.company && (
+                    <p className="text-xs text-gray-400 dark:text-gray-500 truncate">{ticket.client.company}</p>
+                  )}
                 </div>
                 <StatusBadge status={ticket.status} />
               </div>
-              <div className="mt-2 flex items-center gap-3 text-sm text-gray-600">
+              <div className="mt-2 flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
                 <PriorityBadge priority={ticket.priority} />
                 <span>{ticket.assignedTo?.name || "Unassigned"}</span>
                 <span>{ticket.createdAt.toLocaleDateString()}</span>
@@ -174,13 +180,14 @@ export default async function TicketsPage({
   );
 }
 
+/** Status badge. Dark mode uses lighter text for contrast. */
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    open: "bg-blue-100 text-blue-700",
-    in_progress: "bg-purple-100 text-purple-700",
-    waiting: "bg-yellow-100 text-yellow-700",
-    resolved: "bg-green-100 text-green-700",
-    closed: "bg-gray-100 text-gray-500",
+    open: "bg-blue-100 text-blue-700 dark:bg-blue-400/20 dark:text-blue-300",
+    in_progress: "bg-purple-100 text-purple-700 dark:bg-purple-400/20 dark:text-purple-300",
+    waiting: "bg-yellow-100 text-yellow-700 dark:bg-amber-400/20 dark:text-amber-300",
+    resolved: "bg-green-100 text-green-700 dark:bg-emerald-400/20 dark:text-emerald-300",
+    closed: "bg-gray-100 text-gray-500 dark:bg-gray-500/25 dark:text-gray-400",
   };
 
   return (
@@ -190,12 +197,13 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
+/** Priority badge. Dark mode uses lighter shades for contrast. */
 function PriorityBadge({ priority }: { priority: string }) {
   const styles: Record<string, string> = {
-    low: "text-gray-500",
-    medium: "text-blue-600",
-    high: "text-orange-600",
-    urgent: "text-red-600 font-semibold",
+    low: "text-gray-500 dark:text-gray-400",
+    medium: "text-blue-600 dark:text-blue-400",
+    high: "text-orange-600 dark:text-orange-400",
+    urgent: "text-red-600 dark:text-red-400 font-semibold",
   };
 
   return <span className={`text-xs ${styles[priority] || styles.medium}`}>{priority}</span>;

@@ -99,14 +99,14 @@ function DraggableLeadCard({
   return (
     <div
       ref={setNodeRef}
-      className={`bg-white rounded-xl border border-gray-200 overflow-hidden ${isDragging ? "opacity-50 shadow-lg" : "hover:shadow-md hover:border-gray-300"} transition`}
+      className={`bg-white dark:bg-gray-800/95 rounded-xl border border-gray-200 dark:border-gray-500/70 overflow-hidden shadow-sm dark:shadow-md dark:shadow-black/25 ${isDragging ? "opacity-50 shadow-lg" : "hover:shadow-md hover:border-gray-300 dark:hover:border-gray-400 dark:hover:shadow-lg dark:hover:shadow-black/30"} transition`}
     >
       <div className="flex">
         {!isWon && (
           <button
             type="button"
             aria-label="Drag to move"
-            className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 cursor-grab active:cursor-grabbing touch-none"
+            className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700/80 cursor-grab active:cursor-grabbing touch-none"
             {...listeners}
             {...attributes}
           >
@@ -120,19 +120,19 @@ function DraggableLeadCard({
           onClick={onView}
           className={`flex-1 min-w-0 text-left p-3 pr-2 focus:outline-none focus:ring-2 focus:ring-[#1C6ED5] focus:ring-inset rounded-r-xl ${isWon ? "rounded-l-xl" : ""}`}
         >
-          <h4 className="font-medium text-gray-900 truncate">{lead.name}</h4>
+          <h4 className="font-medium text-gray-900 dark:text-gray-100 truncate">{lead.name}</h4>
           {lead.company && (
-            <p className="text-sm text-gray-500 truncate">{lead.company}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-300 truncate">{lead.company}</p>
           )}
           {lead.phone && (
-            <p className="text-xs text-gray-500 truncate">{lead.phone}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-300 truncate">{lead.phone}</p>
           )}
           <div className="mt-2 flex items-center justify-between text-xs">
-            <span className={lead.source === "other" && lead.sourceOther ? "text-gray-400" : "text-gray-400 capitalize"}>
+            <span className={lead.source === "other" && lead.sourceOther ? "text-gray-400 dark:text-gray-400" : "text-gray-400 dark:text-gray-400 capitalize"}>
               {sourceDisplay(lead.source, lead.sourceOther)}
             </span>
             {lead.expectedValue != null && lead.expectedValue > 0 && (
-              <span className="font-medium text-green-600">
+              <span className="font-medium text-green-600 dark:text-green-400">
                 RD${lead.expectedValue.toLocaleString()}
               </span>
             )}
@@ -211,15 +211,15 @@ export function PipelineBoard({ stages, leadsByStage }: Props) {
                 aria-label={t.dashboard.pipeline.stages[stage.key]}
                 className={`flex-shrink-0 snap-start flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
                   isActive
-                    ? "bg-[#0B132B] text-white shadow-md"
-                    : "bg-white border border-gray-200 text-gray-700 hover:border-[#1C6ED5]/40 hover:bg-gray-50"
+                    ? "bg-[#0B132B] dark:bg-gray-700 text-white shadow-md"
+                    : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-[#1C6ED5]/40 dark:hover:border-[#1C6ED5]/50 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }`}
               >
                 <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${stage.color}`} />
                 <span>{t.dashboard.pipeline.stages[stage.key]}</span>
                 <span
                   className={`min-w-[1.25rem] text-center text-xs rounded-full px-1.5 py-0.5 ${
-                    isActive ? "bg-white/20" : "bg-gray-100 text-gray-500"
+                    isActive ? "bg-white/20" : "bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-300"
                   }`}
                 >
                   {count}
@@ -232,9 +232,9 @@ export function PipelineBoard({ stages, leadsByStage }: Props) {
         {/* Lead list for selected stage - scrollable on mobile so list is not clipped. */}
         <div className="mt-4 flex-1 min-h-0 overflow-y-auto overflow-x-hidden space-y-3 pb-4">
           {leads.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-gray-200 px-6 py-12 text-center">
-              <p className="text-gray-500 text-sm">{t.dashboard.pipeline.noLeadsInStage} {stageLabel}</p>
-              <p className="text-gray-400 text-xs mt-1">{t.dashboard.pipeline.addLeadOrSwitch}</p>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-600 px-6 py-12 text-center">
+              <p className="text-gray-500 dark:text-gray-400 text-sm">{t.dashboard.pipeline.noLeadsInStage} {stageLabel}</p>
+              <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">{t.dashboard.pipeline.addLeadOrSwitch}</p>
             </div>
           ) : (
             leads.map((lead) => (
@@ -256,13 +256,13 @@ export function PipelineBoard({ stages, leadsByStage }: Props) {
               <DroppableColumn
                 key={stage.key}
                 stageKey={stage.key}
-                className="flex-shrink-0 min-w-[260px] w-72 bg-gray-100 rounded-xl flex flex-col h-full min-h-0"
+                className="flex-shrink-0 min-w-[260px] w-72 bg-gray-100 dark:bg-gray-800/80 rounded-xl flex flex-col h-full min-h-0"
               >
-                <div className="p-3 border-b border-gray-200 flex-shrink-0">
+                <div className="p-3 border-b border-gray-200 dark:border-gray-600 flex-shrink-0">
                   <div className="flex items-center gap-2">
                     <div className={`w-3 h-3 rounded-full flex-shrink-0 ${stage.color}`} />
-                    <h3 className="font-semibold text-gray-700 truncate">{t.dashboard.pipeline.stages[stage.key]}</h3>
-                    <span className="ml-auto text-sm text-gray-500 flex-shrink-0">
+                    <h3 className="font-semibold text-gray-700 dark:text-gray-200 truncate">{t.dashboard.pipeline.stages[stage.key]}</h3>
+                    <span className="ml-auto text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
                       {(leadsByStage[stage.key] ?? []).length}
                     </span>
                   </div>
@@ -276,7 +276,7 @@ export function PipelineBoard({ stages, leadsByStage }: Props) {
                     />
                   ))}
                   {(leadsByStage[stage.key] ?? []).length === 0 && (
-                    <p className="text-center text-sm text-gray-400 py-8">{t.dashboard.pipeline.noLeads}</p>
+                    <p className="text-center text-sm text-gray-400 dark:text-gray-500 py-8">{t.dashboard.pipeline.noLeads}</p>
                   )}
                 </div>
               </DroppableColumn>
@@ -285,20 +285,20 @@ export function PipelineBoard({ stages, leadsByStage }: Props) {
 
           <DragOverlay dropAnimation={null}>
             {activeLead ? (
-              <div className="bg-white rounded-xl border-2 border-[#1C6ED5] shadow-xl p-3 w-72 opacity-95 cursor-grabbing">
-                <h4 className="font-medium text-gray-900 truncate">{activeLead.name}</h4>
+              <div className="bg-white dark:bg-gray-800/95 rounded-xl border-2 border-[#1C6ED5] shadow-xl dark:shadow-2xl dark:shadow-black/40 p-3 w-72 opacity-95 cursor-grabbing">
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 truncate">{activeLead.name}</h4>
                 {activeLead.company && (
-                  <p className="text-sm text-gray-500 truncate">{activeLead.company}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-300 truncate">{activeLead.company}</p>
                 )}
                 {activeLead.phone && (
-                  <p className="text-xs text-gray-500 truncate">{activeLead.phone}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-300 truncate">{activeLead.phone}</p>
                 )}
-                <div className="mt-2 flex items-center justify-between text-xs text-gray-400">
+                <div className="mt-2 flex items-center justify-between text-xs text-gray-400 dark:text-gray-400">
                   <span className={activeLead.source === "other" && activeLead.sourceOther ? "" : "capitalize"}>
                     {sourceDisplay(activeLead.source, activeLead.sourceOther)}
                   </span>
                   {activeLead.expectedValue != null && activeLead.expectedValue > 0 && (
-                    <span className="font-medium text-green-600">
+                    <span className="font-medium text-green-600 dark:text-green-400">
                       RD${activeLead.expectedValue.toLocaleString()}
                     </span>
                   )}
@@ -372,25 +372,25 @@ function LeadCard({
     return (
       <Link
         href={`/dashboard/pipeline/${lead.id}`}
-        className="block bg-white rounded-2xl border border-gray-200 p-4 active:bg-gray-50 transition shadow-sm hover:shadow-md hover:border-gray-300 min-h-[88px]"
+        className="block bg-white dark:bg-gray-800/95 rounded-2xl border border-gray-200 dark:border-gray-500/70 p-4 active:bg-gray-50 dark:active:bg-gray-700 transition shadow-sm dark:shadow-md dark:shadow-black/25 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-400 dark:hover:shadow-lg dark:hover:shadow-black/30 min-h-[88px]"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <p className="font-semibold text-gray-900 truncate">{lead.name}</p>
+            <p className="font-semibold text-gray-900 dark:text-gray-100 truncate">{lead.name}</p>
             {lead.company && (
-              <p className="text-sm text-gray-500 truncate mt-0.5">{lead.company}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-300 truncate mt-0.5">{lead.company}</p>
             )}
             {lead.phone && (
-              <p className="text-sm text-gray-500 truncate mt-0.5">{lead.phone}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-300 truncate mt-0.5">{lead.phone}</p>
             )}
           </div>
           {lead.expectedValue != null && lead.expectedValue > 0 && (
-            <span className="flex-shrink-0 text-sm font-semibold text-green-600">
+            <span className="flex-shrink-0 text-sm font-semibold text-green-600 dark:text-green-400">
               RD${lead.expectedValue.toLocaleString()}
             </span>
           )}
         </div>
-        <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
+        <div className="mt-3 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
           <span className={lead.source === "other" && lead.sourceOther ? "" : "capitalize"}>
             {sourceDisplay(lead.source, lead.sourceOther)}
           </span>
@@ -405,21 +405,21 @@ function LeadCard({
       <button
         type="button"
         onClick={onView}
-        className="w-full text-left bg-white p-3 rounded-xl border border-gray-200 hover:shadow-md hover:border-gray-300 transition focus:outline-none focus:ring-2 focus:ring-[#1C6ED5] focus:ring-offset-1"
+        className="w-full text-left bg-white dark:bg-gray-800/95 p-3 rounded-xl border border-gray-200 dark:border-gray-500/70 shadow-sm dark:shadow-md dark:shadow-black/25 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-400 transition focus:outline-none focus:ring-2 focus:ring-[#1C6ED5] focus:ring-offset-1 dark:focus:ring-offset-gray-800"
       >
-        <h4 className="font-medium text-gray-900 truncate">{lead.name}</h4>
+        <h4 className="font-medium text-gray-900 dark:text-gray-100 truncate">{lead.name}</h4>
         {lead.company && (
-          <p className="text-sm text-gray-500 truncate">{lead.company}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-300 truncate">{lead.company}</p>
         )}
         {lead.phone && (
-          <p className="text-xs text-gray-500 truncate">{lead.phone}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-300 truncate">{lead.phone}</p>
         )}
         <div className="mt-2 flex items-center justify-between text-xs">
-          <span className={lead.source === "other" && lead.sourceOther ? "text-gray-400" : "text-gray-400 capitalize"}>
+          <span className={lead.source === "other" && lead.sourceOther ? "text-gray-400 dark:text-gray-400" : "text-gray-400 dark:text-gray-400 capitalize"}>
             {sourceDisplay(lead.source, lead.sourceOther)}
           </span>
           {lead.expectedValue != null && lead.expectedValue > 0 && (
-            <span className="font-medium text-green-600">
+            <span className="font-medium text-green-600 dark:text-green-400">
               RD${lead.expectedValue.toLocaleString()}
             </span>
           )}
@@ -431,21 +431,21 @@ function LeadCard({
   return (
     <Link
       href={`/dashboard/pipeline/${lead.id}`}
-      className="block bg-white p-3 rounded-xl border border-gray-200 hover:shadow-md hover:border-gray-300 transition"
+      className="block bg-white dark:bg-gray-800/95 p-3 rounded-xl border border-gray-200 dark:border-gray-500/70 shadow-sm dark:shadow-md dark:shadow-black/25 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-400 transition"
     >
-      <h4 className="font-medium text-gray-900 truncate">{lead.name}</h4>
+      <h4 className="font-medium text-gray-900 dark:text-gray-100 truncate">{lead.name}</h4>
       {lead.company && (
-        <p className="text-sm text-gray-500 truncate">{lead.company}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-300 truncate">{lead.company}</p>
       )}
       {lead.phone && (
-        <p className="text-xs text-gray-500 truncate">{lead.phone}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-300 truncate">{lead.phone}</p>
       )}
       <div className="mt-2 flex items-center justify-between text-xs">
-        <span className={lead.source === "other" && lead.sourceOther ? "text-gray-400" : "text-gray-400 capitalize"}>
+        <span className={lead.source === "other" && lead.sourceOther ? "text-gray-400 dark:text-gray-400" : "text-gray-400 dark:text-gray-400 capitalize"}>
           {sourceDisplay(lead.source, lead.sourceOther)}
         </span>
         {lead.expectedValue != null && lead.expectedValue > 0 && (
-          <span className="font-medium text-green-600">
+          <span className="font-medium text-green-600 dark:text-green-400">
             RD${lead.expectedValue.toLocaleString()}
           </span>
         )}

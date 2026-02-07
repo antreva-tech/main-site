@@ -58,12 +58,12 @@ export default async function DevelopmentProjectPage({
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
-        <h1 className="text-xl font-bold text-gray-900">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 p-4 sm:p-6 mb-6">
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
           {project.client.company || project.client.name}
         </h1>
         {project.client.company && (
-          <p className="text-sm text-gray-500 mt-1">{project.client.name}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{project.client.name}</p>
         )}
         <Link
           href={`/dashboard/clients/${project.client.id}`}
@@ -81,25 +81,25 @@ export default async function DevelopmentProjectPage({
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 p-4 sm:p-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
           Activity log
         </h2>
         <ProjectLogForm projectId={project.id} />
 
         <ul className="mt-6 space-y-3">
           {project.logs.length === 0 ? (
-            <li className="text-sm text-gray-500 py-4">No log entries yet.</li>
+            <li className="text-sm text-gray-500 dark:text-gray-400 py-4">No log entries yet.</li>
           ) : (
             project.logs.map((log) => (
               <li
                 key={log.id}
-                className="p-3 bg-gray-50 rounded-lg border border-gray-100"
+                className="p-3 bg-gray-50 dark:bg-gray-700/60 rounded-lg border border-gray-100 dark:border-gray-600"
               >
-                <p className="text-sm text-gray-900 whitespace-pre-wrap">
+                <p className="text-sm text-gray-900 dark:text-gray-200 whitespace-pre-wrap">
                   {log.content}
                 </p>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                   {log.createdBy.name} ·{" "}
                   {log.createdAt.toLocaleString()}
                 </p>

@@ -27,7 +27,7 @@ type Props = {
 };
 
 const linkButtonClass =
-  "inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 bg-[#1C6ED5]/[0.08] text-[#1C6ED5] hover:bg-[#1C6ED5]/15 hover:border-[#1C6ED5]/50 transition-all";
+  "inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg border border-[#1C6ED5]/30 dark:border-[#1C6ED5]/40 bg-[#1C6ED5]/[0.08] dark:bg-[#1C6ED5]/20 text-[#1C6ED5] dark:text-[#7eb8ff] hover:bg-[#1C6ED5]/15 dark:hover:bg-[#1C6ED5]/30 hover:border-[#1C6ED5]/50 transition-all";
 
 export function DemoSiteList({ demos, canManage }: Props) {
   const { t } = useLanguage();
@@ -46,7 +46,7 @@ export function DemoSiteList({ demos, canManage }: Props) {
 
   if (demos.length === 0) {
     return (
-      <div className="dashboard-card p-8 text-center text-[#8A8F98]">
+      <div className="dashboard-card p-8 text-center text-[#8A8F98] dark:text-gray-400">
         <p>No demo sites yet. {canManage ? "Add one using the button above." : ""}</p>
       </div>
     );
@@ -61,9 +61,9 @@ export function DemoSiteList({ demos, canManage }: Props) {
             className="dashboard-card p-4 sm:p-5 flex flex-col gap-3"
           >
             <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-[#0B132B] truncate">{demo.name}</h3>
+              <h3 className="font-semibold text-[#0B132B] dark:text-gray-100 truncate">{demo.name}</h3>
               {demo.description && (
-                <p className="text-sm text-[#8A8F98] mt-1 line-clamp-2">
+                <p className="text-sm text-[#8A8F98] dark:text-gray-400 mt-1 line-clamp-2">
                   {demo.description}
                 </p>
               )}
@@ -101,14 +101,14 @@ export function DemoSiteList({ demos, canManage }: Props) {
                   <button
                     type="button"
                     onClick={() => setEditing(demo)}
-                    className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition"
+                    className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-white/20 bg-white dark:bg-white/10 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/15 transition"
                   >
                     Edit
                   </button>
                   <button
                     type="button"
                     onClick={() => setDeleting(demo)}
-                    className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition"
+                    className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg border border-red-200 dark:border-red-500/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition"
                   >
                     Delete
                   </button>
@@ -154,29 +154,35 @@ function DemoLoginBlock({
   if (!username && !password) return null;
   const { userLabel, passwordLabel } = t.dashboard.demos;
   return (
-    <div className="mt-3 pt-3 border-t border-[#0B132B]/[0.08]">
-      <p className="text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">
+    <div className="mt-3 pt-3 border-t border-[#0B132B]/[0.08] dark:border-white/10">
+      <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">
         {t.dashboard.demos.demoLogin}
       </p>
       <div className="flex flex-col gap-1.5 text-sm">
         {username && (
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[#8A8F98] shrink-0">{userLabel}:</span>
-            <span className="text-[#0B132B]/90 font-mono truncate" title={username}>
+            <span className="text-[#8A8F98] dark:text-gray-400 shrink-0">{userLabel}:</span>
+            <span className="text-[#0B132B]/90 dark:text-gray-200 font-mono truncate" title={username}>
               {username}
             </span>
           </div>
         )}
         {password && (
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[#8A8F98] shrink-0">{passwordLabel}:</span>
-            <code className={showPassword ? "text-[#0B132B]/90 font-mono" : "text-[#8A8F98] font-mono"}>
+            <span className="text-[#8A8F98] dark:text-gray-400 shrink-0">{passwordLabel}:</span>
+            <code
+              className={
+                showPassword
+                  ? "text-[#0B132B]/90 dark:text-gray-200 font-mono"
+                  : "text-[#8A8F98] dark:text-gray-400 font-mono"
+              }
+            >
               {showPassword ? password : "••••••••"}
             </code>
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="text-xs font-medium text-[#1C6ED5] hover:text-[#1559B3]"
+              className="text-xs font-medium text-[#1C6ED5] dark:text-[#7eb8ff] hover:text-[#1559B3] dark:hover:text-[#9ec9ff]"
             >
               {showPassword ? t.dashboard.demos.hidePassword : t.dashboard.demos.showPassword}
             </button>

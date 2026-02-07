@@ -70,7 +70,7 @@ export function InviteUserButton({ roles }: Props) {
           setError(null);
           setOpen(true);
         }}
-        className="w-full sm:w-auto px-4 py-2.5 bg-[#1C6ED5] text-white rounded-lg hover:bg-[#1559B3] transition text-center font-medium"
+        className="w-full sm:w-auto px-5 py-2.5 bg-[#1C6ED5] text-white rounded-xl font-medium shadow-sm hover:bg-[#1559B3] hover:shadow transition-all duration-200 text-center"
       >
         + Invite User
       </button>

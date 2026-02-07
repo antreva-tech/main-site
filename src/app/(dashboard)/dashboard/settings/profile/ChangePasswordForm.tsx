@@ -17,14 +17,14 @@ export function ChangePasswordForm() {
   return (
     <form action={formAction} className="space-y-4">
       {state?.error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+        <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
           {state.error}
         </p>
       )}
       <div>
         <label
           htmlFor="currentPassword"
-          className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5"
+          className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5"
         >
           Current Password
         </label>
@@ -34,13 +34,13 @@ export function ChangePasswordForm() {
           type="password"
           required
           autoComplete="current-password"
-          className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+          className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-gray-500 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 bg-white dark:bg-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
         />
       </div>
       <div>
         <label
           htmlFor="newPassword"
-          className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5"
+          className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5"
         >
           New Password
         </label>
@@ -50,14 +50,14 @@ export function ChangePasswordForm() {
           type="password"
           required
           autoComplete="new-password"
-          className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+          className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-gray-500 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 bg-white dark:bg-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
         />
-        <p className="text-xs text-[#8A8F98] mt-1">{PASSWORD_REQUIREMENTS}</p>
+        <p className="text-xs text-[#8A8F98] dark:text-gray-400 mt-1">{PASSWORD_REQUIREMENTS}</p>
       </div>
       <div>
         <label
           htmlFor="confirmPassword"
-          className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5"
+          className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5"
         >
           Confirm New Password
         </label>
@@ -67,7 +67,7 @@ export function ChangePasswordForm() {
           type="password"
           required
           autoComplete="new-password"
-          className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+          className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-gray-500 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 bg-white dark:bg-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
         />
       </div>
       <button

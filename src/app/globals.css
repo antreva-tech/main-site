@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/** Class-based dark mode for dashboard: add .dark to an ancestor to enable dark: variants. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /**
  * Antreva Tech — Tailwind-first CSS
  * Use Tailwind utilities for layout, spacing, typography, and colors.
@@ -314,6 +317,19 @@ html {
     font-weight: 600;
     color: var(--color-midnight-navy);
     letter-spacing: -0.01em;
+  }
+
+  /* Dark mode overrides for dashboard utilities (light rules unchanged above). */
+  .dark .dashboard-card {
+    background: #1f2937;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+  .dark .dashboard-section-title {
+    color: #f3f4f6;
+  }
+  .dark .page-title {
+    color: #f3f4f6;
   }
 
   /** Page title: list and detail pages. Use on <h1> for consistent hierarchy and brand. */

@@ -33,15 +33,17 @@ export default async function RolesPage() {
     <div>
       <Link
         href="/dashboard/settings/users"
-        className="inline-flex items-center gap-1.5 text-sm text-[#1C6ED5] hover:text-[#0B132B] mb-4"
+        className="inline-flex items-center gap-1.5 text-sm text-[#1C6ED5] hover:text-[#0B132B] dark:hover:text-gray-200 mb-4"
       >
         <span aria-hidden>←</span>
         User Management
       </Link>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Role Management</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-[#0B132B] dark:text-gray-100 tracking-tight">
+          Role Management
+        </h1>
       </div>
-      <p className="text-sm text-gray-600 mb-6">
+      <p className="text-sm text-[#8A8F98] dark:text-gray-400 mb-6">
         Edit role names and permissions. Only CEO and CTO can access this section.
       </p>
       <RoleManagementTable

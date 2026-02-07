@@ -12,6 +12,7 @@ import { cookies } from "next/headers";
 import { getSession } from "@/lib/auth";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { DashboardShell } from "./DashboardShell";
 
 const LOCALE_COOKIE = "locale";
@@ -41,7 +42,9 @@ export default async function DashboardLayout({
   return (
     <AuthProvider user={session}>
       <LanguageProvider defaultLocale={defaultLocale}>
-        <DashboardShell user={session}>{children}</DashboardShell>
+        <ThemeProvider>
+          <DashboardShell user={session}>{children}</DashboardShell>
+        </ThemeProvider>
       </LanguageProvider>
     </AuthProvider>
   );

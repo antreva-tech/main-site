@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 import { put } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { logCreate, logUpdate } from "@/lib/audit";
+import { logCreate, logUpdate, logDelete } from "@/lib/audit";
 import type { TicketStatus, TicketPriority } from "@prisma/client";
 
 /** Allowed image types for ticket attachments (Vercel Blob). */
@@ -232,4 +232,66 @@ export async function addComment(ticketId: string, formData: FormData) {
 
   revalidatePath(`/dashboard/tickets/${ticketId}`);
   return comment;
+}
+
+/**
+ * Updates a comment. Only the comment author can edit their own comment.
+ */
+export async function updateComment(commentId: string, content: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const comment = await prisma.ticketComment.findUnique({ where: { id: commentId } });
+  if (!comment) throw new Error("Comment not found");
+  if (comment.authorId !== session.id) throw new Error("You can only edit your own comments");
+  if (comment.authorType !== "staff") throw new Error("Only staff comments can be edited");
+
+  const trimmed = content.trim();
+  if (!trimmed) throw new Error("Comment cannot be empty");
+
+  const updated = await prisma.ticketComment.update({
+    where: { id: commentId },
+    data: { content: trimmed },
+  });
+
+  await logUpdate(session.id, "ticket", comment.ticketId, { commentId, content: comment.content }, { content: trimmed });
+  await prisma.ticket.update({
+    where: { id: comment.ticketId },
+    data: { updatedAt: new Date() },
+  });
+
+  revalidatePath(`/dashboard/tickets/${comment.ticketId}`);
+  return updated;
+}
+
+/**
+ * Deletes a comment. Only the comment author can delete their own comment.
+ * The original comment (first on the ticket) cannot be deleted.
+ */
+export async function deleteComment(commentId: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const comment = await prisma.ticketComment.findUnique({ where: { id: commentId } });
+  if (!comment) throw new Error("Comment not found");
+  if (comment.authorId !== session.id) throw new Error("You can only delete your own comments");
+  if (comment.authorType !== "staff") throw new Error("Only staff comments can be deleted");
+
+  const ticketId = comment.ticketId;
+  const oldestComment = await prisma.ticketComment.findFirst({
+    where: { ticketId },
+    orderBy: { createdAt: "asc" },
+    select: { id: true },
+  });
+  if (oldestComment?.id === commentId) {
+    throw new Error("You cannot delete the original comment that opened the ticket");
+  }
+  await prisma.ticketComment.delete({ where: { id: commentId } });
+  await logDelete(session.id, "ticket", ticketId, { commentId, content: comment.content });
+  await prisma.ticket.update({
+    where: { id: ticketId },
+    data: { updatedAt: new Date() },
+  });
+
+  revalidatePath(`/dashboard/tickets/${ticketId}`);
 }

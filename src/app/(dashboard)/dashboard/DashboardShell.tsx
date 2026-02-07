@@ -11,6 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import type { SessionUser } from "@/lib/auth";
 
 /** Nav item key for main nav (matches t.dashboard.nav). development is CTO-only. */
@@ -51,6 +52,7 @@ function closeDrawer(setOpen: (open: boolean) => void) {
  */
 export function DashboardShell({ user, children }: DashboardShellProps) {
   const { t } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settingsExpanded, setSettingsExpanded] = useState(false);
@@ -65,7 +67,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
   }, [pathname]);
 
   return (
-    <div className="h-screen min-h-0 bg-gray-50 bg-grid-pattern flex overflow-hidden">
+    <div className="h-screen min-h-0 bg-gray-50 dark:bg-gray-900 bg-grid-pattern dark:bg-none flex overflow-hidden">
       {/* Mobile backdrop: close drawer on tap */}
       {sidebarOpen && (
         <div
@@ -184,22 +186,39 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
       </aside>
 
       <main className="flex-1 min-w-0 ml-0 lg:ml-64 flex flex-col">
-        <header className="flex-shrink-0 sticky top-0 z-10 bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
+        <header className="flex-shrink-0 sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
               <button
                 type="button"
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden flex-shrink-0 p-2 -ml-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#1C6ED5]"
+                className="lg:hidden flex-shrink-0 p-2 -ml-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1C6ED5]"
                 aria-label={t.dashboard.title}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
-              <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">{t.dashboard.title}</h1>
+              <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 truncate">{t.dashboard.title}</h1>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                aria-label={theme === "dark" ? t.dashboard.lightMode : t.dashboard.darkMode}
+                title={theme === "dark" ? t.dashboard.lightMode : t.dashboard.darkMode}
+              >
+                {theme === "dark" ? (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                )}
+              </button>
               <Link
                 href="/logout"
                 prefetch={false}
@@ -210,7 +229,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
             </div>
           </div>
         </header>
-        <div className="flex-1 min-w-0 min-h-0 flex flex-col p-4 sm:p-6 bg-gray-50 bg-grid-pattern overflow-auto">
+        <div className="flex-1 min-w-0 min-h-0 flex flex-col p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 bg-grid-pattern dark:bg-none overflow-auto">
           {children}
         </div>
       </main>

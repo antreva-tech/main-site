@@ -34,7 +34,7 @@ export function ShowOnSiteCheckbox({ clientId, showOnWebsite, label = "Show on s
         className="rounded border-gray-300 text-[#1C6ED5] focus:ring-[#1C6ED5] disabled:opacity-50"
         aria-label={label}
       />
-      <span className="text-sm text-[#0B132B]/80 select-none">
+      <span className="text-sm text-[#0B132B]/80 dark:text-gray-300 select-none">
         {showOnWebsite ? "On site" : "—"}
       </span>
     </label>

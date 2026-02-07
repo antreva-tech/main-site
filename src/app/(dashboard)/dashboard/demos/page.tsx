@@ -33,10 +33,10 @@ export default async function DemosPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-[#0B132B] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-[#0B132B] dark:text-gray-100 tracking-tight">
             Demo Sites
           </h1>
-          <p className="mt-1 text-sm text-[#8A8F98]">
+          <p className="mt-1 text-sm text-[#8A8F98] dark:text-gray-400">
             Quick links to demo sites for sales calls and presentations.
           </p>
         </div>

@@ -49,10 +49,10 @@ export default async function CredentialsPage({
       {/* Header: title, description, CTA */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-[#0B132B] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-[#0B132B] dark:text-gray-100 tracking-tight">
             Support Credentials
           </h1>
-          <p className="mt-1 text-sm text-[#8A8F98]">
+          <p className="mt-1 text-sm text-[#8A8F98] dark:text-gray-400">
             Client access credentials. Decrypt only when needed for active support.
           </p>
         </div>
@@ -66,19 +66,19 @@ export default async function CredentialsPage({
 
       {/* SOC 2 notice: compact, brand-aligned (navy border, not generic yellow) */}
       <div
-        className="flex items-start gap-3 rounded-xl border border-[#0B132B]/15 bg-[#0B132B]/[0.03] p-4"
+        className="flex items-start gap-3 rounded-xl border border-[#0B132B]/15 dark:border-white/15 bg-[#0B132B]/[0.03] dark:bg-white/[0.06] p-4"
         role="alert"
         aria-label="SOC 2 compliance notice"
       >
         <span
-          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-[#1C6ED5]/10 text-[#1C6ED5]"
+          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-[#1C6ED5]/10 dark:bg-[#1C6ED5]/20 text-[#1C6ED5] dark:text-[#7eb8ff]"
           aria-hidden
         >
           <LockIcon />
         </span>
         <div>
-          <p className="text-sm font-semibold text-[#0B132B]">SOC 2 Notice</p>
-          <p className="mt-0.5 text-sm text-[#8A8F98]">
+          <p className="text-sm font-semibold text-[#0B132B] dark:text-gray-100">SOC 2 Notice</p>
+          <p className="mt-0.5 text-sm text-[#8A8F98] dark:text-gray-400">
             All credential access is logged. Only decrypt when necessary for active support work.
           </p>
         </div>
@@ -90,7 +90,7 @@ export default async function CredentialsPage({
           {clientId && (
             <Link
               href="/dashboard/credentials"
-              className="text-sm text-[#1C6ED5] hover:underline"
+              className="text-sm text-[#1C6ED5] dark:text-[#7eb8ff] hover:underline"
             >
               ← View all credentials
             </Link>
@@ -139,7 +139,7 @@ export default async function CredentialsPage({
 
           {/* Summary for many clients */}
           {filteredClients.length > 1 && (
-            <p className="text-center text-sm text-[#8A8F98]">
+            <p className="text-center text-sm text-[#8A8F98] dark:text-gray-400">
               {totalCredentials} credential{totalCredentials !== 1 ? "s" : ""} across{" "}
               {filteredClients.length} client{filteredClients.length !== 1 ? "s" : ""}
             </p>
@@ -159,13 +159,13 @@ function EmptyState({ hasClientFilter }: { hasClientFilter: boolean }) {
   return (
     <div className="dashboard-card flex flex-col items-center justify-center px-6 py-16 text-center">
       <span
-        className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0B132B]/10 text-[#8A8F98]"
+        className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0B132B]/10 dark:bg-white/10 text-[#8A8F98] dark:text-gray-400"
         aria-hidden
       >
         <KeyIcon />
       </span>
-      <h2 className="text-lg font-semibold text-[#0B132B]">No credentials yet</h2>
-      <p className="mt-2 max-w-sm text-sm text-[#8A8F98]">
+      <h2 className="text-lg font-semibold text-[#0B132B] dark:text-gray-100">No credentials yet</h2>
+      <p className="mt-2 max-w-sm text-sm text-[#8A8F98] dark:text-gray-400">
         {hasClientFilter
           ? "This client has no support credentials. Add them from the client detail page."
           : "Add support credentials from a client's detail page."}

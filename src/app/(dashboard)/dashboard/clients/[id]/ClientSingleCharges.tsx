@@ -25,14 +25,15 @@ type Props = {
   deleteSingleCharge: (formData: FormData) => Promise<void>;
 };
 
+/** Status pill with dark mode variants. */
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    pending: "bg-amber-500/12 text-amber-700",
-    paid: "bg-emerald-500/12 text-emerald-700",
-    cancelled: "bg-red-500/12 text-red-700",
+    pending: "bg-amber-500/12 text-amber-700 dark:bg-amber-500/25 dark:text-amber-300",
+    paid: "bg-emerald-500/12 text-emerald-700 dark:bg-emerald-500/25 dark:text-emerald-300",
+    cancelled: "bg-red-500/12 text-red-700 dark:bg-red-500/25 dark:text-red-300",
   };
   return (
-    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${styles[status] ?? "bg-[#0B132B]/10 text-[#0B132B]/80"}`}>
+    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${styles[status] ?? "bg-[#0B132B]/10 text-[#0B132B]/80 dark:bg-white/10 dark:text-gray-300"}`}>
       {status}
     </span>
   );
@@ -70,18 +71,18 @@ export function ClientSingleCharges({
         {charges.map((charge) => (
           <div
             key={charge.id}
-            className="p-4 rounded-xl border border-[#0B132B]/[0.08] bg-white/80 hover:bg-white hover:border-[#1C6ED5]/20 transition-all duration-200"
+            className="p-4 rounded-xl border border-[#0B132B]/[0.08] dark:border-white/10 bg-white/80 dark:bg-white/[0.06] hover:bg-white dark:hover:bg-white/[0.1] hover:border-[#1C6ED5]/20 dark:hover:border-[#1C6ED5]/30 transition-all duration-200"
           >
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div>
-                <p className="font-semibold text-[#0B132B]">{charge.description}</p>
-                <p className="text-sm text-[#8A8F98] mt-0.5">
+                <p className="font-semibold text-[#0B132B] dark:text-gray-100">{charge.description}</p>
+                <p className="text-sm text-[#8A8F98] dark:text-gray-400 mt-0.5">
                   {formatDate(charge.chargedAt)}
                   {charge.notes && ` · ${charge.notes}`}
                 </p>
               </div>
               <div className="flex items-center gap-3 text-right flex-wrap">
-                <p className="font-semibold text-[#0B132B]">
+                <p className="font-semibold text-[#0B132B] dark:text-gray-100">
                   {charge.currency === "DOP" ? "RD$" : "$"}
                   {Number(charge.amount).toLocaleString()}
                 </p>
@@ -89,7 +90,7 @@ export function ClientSingleCharges({
                 <button
                   type="button"
                   onClick={() => setEditingCharge(toModalCharge(charge))}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-[#0B132B]/[0.12] bg-white text-[#0B132B] hover:bg-[#1C6ED5]/[0.06] hover:border-[#1C6ED5]/30 transition-all"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-[#0B132B]/[0.12] dark:border-white/20 bg-white dark:bg-white/10 text-[#0B132B] dark:text-gray-100 hover:bg-[#1C6ED5]/[0.06] dark:hover:bg-[#1C6ED5]/20 hover:border-[#1C6ED5]/30 transition-all"
                 >
                   Edit
                 </button>
