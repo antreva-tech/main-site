@@ -431,6 +431,7 @@ model Ticket {
   updatedAt    DateTime       @updatedAt
 
   comments              TicketComment[]
+  attachments           TicketAttachment[]
   whatsAppConversations WhatsAppConversation[]
 
   @@index([clientId])
@@ -439,6 +440,17 @@ model Ticket {
   @@index([assignedToId])
   @@index([createdAt(sort: Desc)])
   @@index([clientId, status])
+}
+
+/// Ticket attachment (images uploaded when creating or updating a ticket).
+model TicketAttachment {
+  id        String   @id @default(cuid())
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  url       String   // Vercel Blob or other public URL
+  createdAt DateTime @default(now())
+
+  @@index([ticketId])
 }
 
 enum TicketStatus {
@@ -466,8 +478,20 @@ model TicketComment {
   author     User?             @relation(fields: [authorId], references: [id])
   authorType TicketAuthorType  @default(staff)
   createdAt  DateTime          @default(now())
+  attachments TicketCommentAttachment[]
 
   @@index([ticketId])
+}
+
+/// Comment attachment (images uploaded with a ticket comment).
+model TicketCommentAttachment {
+  id        String        @id @default(cuid())
+  commentId String
+  comment   TicketComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  url       String
+  createdAt DateTime      @default(now())
+
+  @@index([commentId])
 }
 
 enum TicketAuthorType {

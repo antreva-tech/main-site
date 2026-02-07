@@ -401,10 +401,13 @@
       "backToTickets": "Back to Tickets",
       "noTicketsFound": "No tickets found",
       "addComment": "Add Comment",
+      "addCommentPlaceholder": "Add a comment...",
       "sending": "Sending...",
       "subject": "Subject",
       "priority": "Priority",
       "initialMessage": "Initial message (optional)",
+      "attachImages": "Attach images",
+      "attachImagesHint": "JPEG, PNG, WebP, GIF. Max 5 MB each.",
       "priorities": {
         "low": "Low",
         "medium": "Medium",

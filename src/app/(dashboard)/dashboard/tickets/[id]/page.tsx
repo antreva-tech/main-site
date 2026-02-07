@@ -5,6 +5,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getAssignableUsers } from "../actions";
 import { TicketStatusSelect } from "./TicketStatusSelect";
 import { CommentForm } from "./CommentForm";
 
@@ -18,20 +19,24 @@ export default async function TicketDetailPage({
 }) {
   const { id } = await params;
 
-  const ticket = await prisma.ticket.findUnique({
-    where: { id },
-    include: {
-      client: { select: { id: true, name: true, email: true } },
-      assignedTo: { select: { name: true } },
-      createdBy: { select: { name: true } },
-      comments: {
-        orderBy: { createdAt: "asc" },
-        include: {
-          author: { select: { name: true } },
+  const [ticket, assignableUsers] = await Promise.all([
+    prisma.ticket.findUnique({
+      where: { id },
+      include: {
+        client: { select: { id: true, name: true, email: true } },
+        assignedTo: { select: { name: true } },
+        createdBy: { select: { name: true } },
+        attachments: { orderBy: { createdAt: "asc" } },
+        comments: {
+          orderBy: { createdAt: "asc" },
+          include: {
+            author: { select: { name: true } },
+          },
         },
       },
-    },
-  });
+    }),
+    getAssignableUsers(),
+  ]);
 
   if (!ticket) {
     notFound();
@@ -65,7 +70,12 @@ export default async function TicketDetailPage({
               <span className="truncate sm:inline">{ticket.client.email}</span>
             </p>
           </div>
-          <TicketStatusSelect ticketId={ticket.id} currentStatus={ticket.status} />
+          <TicketStatusSelect
+            ticketId={ticket.id}
+            currentStatus={ticket.status}
+            assignedToId={ticket.assignedToId}
+            assignableUsers={assignableUsers}
+          />
         </div>
 
         {/* Meta */}
@@ -83,6 +93,31 @@ export default async function TicketDetailPage({
             <span>{ticket.createdBy.name}</span>
           </div>
         </div>
+
+        {/* Attachments */}
+        {ticket.attachments.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <span className="text-gray-500 text-sm">Attachments ({ticket.attachments.length})</span>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {ticket.attachments.map((att) => (
+                <a
+                  key={att.id}
+                  href={att.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block rounded-lg border border-gray-200 overflow-hidden hover:border-[#1C6ED5] transition"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={att.url}
+                    alt="Ticket attachment"
+                    className="h-20 w-20 object-cover"
+                  />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Comments */}

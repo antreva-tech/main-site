@@ -66,6 +66,17 @@ export function AddTicketForm({ clientId, createTicket }: Props) {
               placeholder={t.dashboard.clients.initialMessagePlaceholder}
             />
           </div>
+          <div className="mb-4">
+            <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.tickets.attachImages}</label>
+            <input
+              type="file"
+              name="attachments"
+              multiple
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="w-full px-3 py-2 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#1C6ED5]/10 file:text-[#1C6ED5]"
+            />
+            <p className="mt-1 text-xs text-[#8A8F98]">{t.dashboard.tickets.attachImagesHint}</p>
+          </div>
           <div className="flex gap-2">
             <button
               type="button"
