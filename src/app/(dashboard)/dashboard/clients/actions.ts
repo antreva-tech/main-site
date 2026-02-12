@@ -19,29 +19,29 @@ const LOGO_MAX_BYTES = 2 * 1024 * 1024; // 2 MB
 
 /**
  * Uploads a client logo to Vercel Blob. Expects formData with "file" (File).
- * Returns the public blob URL or an error message.
+ * Returns the public blob URL or an error message. Never throws so the client always gets a serializable response.
  * Requires BLOB_READ_WRITE_TOKEN (set when you add a Blob store in Vercel project Storage).
  */
 export async function uploadClientLogo(
   formData: FormData
 ): Promise<{ url?: string; error?: string }> {
-  const session = await getSession();
-  if (!session) return { error: "Unauthorized" };
-
-  const file = formData.get("file") as File | null;
-  if (!file || !(file instanceof File)) return { error: "No file provided" };
-
-  const type = (file.type || "").toLowerCase();
-  if (!type || !LOGO_CONTENT_TYPES.includes(type)) {
-    return { error: "Allowed types: JPEG, PNG, WebP, SVG" };
-  }
-  if (file.size > LOGO_MAX_BYTES) return { error: "Logo must be under 2 MB" };
-
-  const ext = file.name.split(".").pop()?.toLowerCase() || "png";
-  const slug = file.name.replace(/\.[^.]+$/, "").replace(/\W+/g, "-").slice(0, 30) || "logo";
-  const pathname = `client-logos/${Date.now()}-${slug}.${ext}`;
-
   try {
+    const session = await getSession();
+    if (!session) return { error: "Unauthorized" };
+
+    const file = formData.get("file");
+    if (!file || !(file instanceof File)) return { error: "No file provided" };
+
+    const type = (file.type || "").toLowerCase();
+    if (!type || !LOGO_CONTENT_TYPES.includes(type)) {
+      return { error: "Allowed types: JPEG, PNG, WebP, SVG" };
+    }
+    if (file.size > LOGO_MAX_BYTES) return { error: "Logo must be under 2 MB" };
+
+    const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+    const slug = file.name.replace(/\.[^.]+$/, "").replace(/\W+/g, "-").slice(0, 30) || "logo";
+    const pathname = `client-logos/${Date.now()}-${slug}.${ext}`;
+
     const blob = await put(pathname, file, {
       access: "public",
       addRandomSuffix: true,
@@ -50,7 +50,10 @@ export async function uploadClientLogo(
     return { url: blob.url };
   } catch (e) {
     console.error("Vercel Blob upload failed:", e);
-    return { error: "Upload failed. Check BLOB_READ_WRITE_TOKEN." };
+    const message = e && typeof e === "object" && "message" in e && typeof (e as { message: unknown }).message === "string"
+      ? (e as { message: string }).message
+      : "Upload failed. Check BLOB_READ_WRITE_TOKEN.";
+    return { error: message };
   }
 }
 
@@ -190,27 +193,39 @@ export async function updateClientStatus(clientId: string, status: ClientStatus)
 
 /**
  * Updates only the client's logo URL (e.g. after uploading to Vercel Blob).
+ * Returns a result object so the client always receives a serializable response (avoids 400/unexpected response).
  */
-export async function updateClientLogo(clientId: string, logoUrl: string | null) {
-  const session = await getSession();
-  if (!session) throw new Error("Unauthorized");
+export async function updateClientLogo(
+  clientId: string,
+  logoUrl: string | null
+): Promise<{ success?: boolean; error?: string }> {
+  try {
+    const session = await getSession();
+    if (!session) return { error: "Unauthorized" };
 
-  const client = await prisma.client.findUnique({ where: { id: clientId } });
-  if (!client) throw new Error("Client not found");
+    if (!clientId || typeof clientId !== "string") return { error: "Client ID required" };
 
-  await prisma.client.update({
-    where: { id: clientId },
-    data: { logoUrl },
-  });
+    const client = await prisma.client.findUnique({ where: { id: clientId } });
+    if (!client) return { error: "Client not found" };
 
-  await logUpdate(session.id, "client", clientId,
-    { logoUrl: client.logoUrl },
-    { logoUrl }
-  );
+    await prisma.client.update({
+      where: { id: clientId },
+      data: { logoUrl },
+    });
 
-  revalidatePath("/dashboard/clients");
-  revalidatePath(`/dashboard/clients/${clientId}`);
-  revalidatePath("/");
+    await logUpdate(session.id, "client", clientId,
+      { logoUrl: client.logoUrl },
+      { logoUrl }
+    );
+
+    revalidatePath("/dashboard/clients");
+    revalidatePath(`/dashboard/clients/${clientId}`);
+    revalidatePath("/");
+    return { success: true };
+  } catch (e) {
+    console.error("updateClientLogo failed:", e);
+    return { error: e instanceof Error ? e.message : "Failed to update logo" };
+  }
 }
 
 /**

@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      /** Allow logo uploads up to 2MB; multipart overhead needs extra headroom. Redeploy required for change to apply. */
+      bodySizeLimit: 3 * 1024 * 1024, // 3 MiB
+    },
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [384, 640, 750, 828, 1080, 1200],

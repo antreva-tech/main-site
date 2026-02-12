@@ -28,7 +28,11 @@ export function ClientLogoUpload({ clientId, logoUrl: initialLogoUrl }: Props) {
     startUploadTransition(async () => {
       const result = await uploadClientLogo(fd);
       if (result.url) {
-        await updateClientLogo(clientId, result.url);
+        const updateResult = await updateClientLogo(clientId, result.url);
+        if (updateResult.error) {
+          setError(updateResult.error);
+          return;
+        }
         setLogoUrl(result.url);
       } else {
         setError(result.error ?? "Upload failed");
@@ -40,7 +44,11 @@ export function ClientLogoUpload({ clientId, logoUrl: initialLogoUrl }: Props) {
   const handleRemove = () => {
     setError(null);
     startRemoveTransition(async () => {
-      await updateClientLogo(clientId, null);
+      const result = await updateClientLogo(clientId, null);
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
       setLogoUrl(null);
     });
   };
