@@ -717,22 +717,22 @@ function StatusBadge({ status, t }: { status: string; t: Translations }) {
 }
 
 /**
- * Ticket status badge; label from i18n. Includes dark mode variants.
+ * Ticket status badge; label from i18n. Dark mode variants tuned for contrast.
  */
 function TicketStatus({ status, t }: { status: string; t: Translations }) {
   const styles: Record<string, string> = {
-    open: "bg-[#1C6ED5]/12 text-[#1C6ED5] dark:bg-[#1C6ED5]/25 dark:text-[#7eb8ff]",
-    in_progress: "bg-purple-500/12 text-purple-700 dark:bg-purple-500/25 dark:text-purple-300",
-    waiting: "bg-amber-500/12 text-amber-700 dark:bg-amber-500/25 dark:text-amber-300",
-    resolved: "bg-emerald-500/12 text-emerald-700 dark:bg-emerald-500/25 dark:text-emerald-300",
-    closed: "bg-[#8A8F98]/20 text-[#8A8F98] dark:bg-white/15 dark:text-gray-400",
+    open: "bg-[#1C6ED5]/15 text-[#1C6ED5] dark:bg-[#1C6ED5]/25 dark:text-[#7eb8ff]",
+    in_progress: "bg-purple-500/15 text-purple-700 dark:bg-purple-500/30 dark:text-purple-200",
+    waiting: "bg-amber-500/15 text-amber-700 dark:bg-amber-500/30 dark:text-amber-200",
+    resolved: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/30 dark:text-emerald-200",
+    closed: "bg-[#8A8F98]/20 text-[#6b7280] dark:bg-white/20 dark:text-gray-300",
   };
   const statuses = t.dashboard.tickets.statuses as Record<string, string>;
-  const label = statuses[status] ?? status.replace("_", " ");
+  const label = statuses[status] ?? status.replace(/_/g, " ");
 
   return (
     <span
-      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${styles[status] || styles.open}`}
+      className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${styles[status] ?? styles.open}`}
     >
       {label}
     </span>

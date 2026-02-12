@@ -260,19 +260,27 @@ export default async function TicketsPage({
   );
 }
 
-/** Status badge. Dark mode uses lighter text for contrast. */
+/** Status badge. Labels and colors aligned with client detail TicketStatus. */
+const TICKET_STATUS_LABELS: Record<string, string> = {
+  open: "Open",
+  in_progress: "In Progress",
+  waiting: "Waiting",
+  resolved: "Resolved",
+  closed: "Closed",
+};
+
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    open: "bg-blue-100 text-blue-700 dark:bg-blue-400/20 dark:text-blue-300",
-    in_progress: "bg-purple-100 text-purple-700 dark:bg-purple-400/20 dark:text-purple-300",
-    waiting: "bg-yellow-100 text-yellow-700 dark:bg-amber-400/20 dark:text-amber-300",
-    resolved: "bg-green-100 text-green-700 dark:bg-emerald-400/20 dark:text-emerald-300",
-    closed: "bg-gray-100 text-gray-500 dark:bg-gray-500/25 dark:text-gray-400",
+    open: "bg-[#1C6ED5]/15 text-[#1C6ED5] dark:bg-[#1C6ED5]/25 dark:text-[#7eb8ff]",
+    in_progress: "bg-purple-500/15 text-purple-700 dark:bg-purple-500/30 dark:text-purple-200",
+    waiting: "bg-amber-500/15 text-amber-700 dark:bg-amber-500/30 dark:text-amber-200",
+    resolved: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/30 dark:text-emerald-200",
+    closed: "bg-[#8A8F98]/20 text-[#6b7280] dark:bg-white/20 dark:text-gray-300",
   };
 
   return (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || styles.open}`}>
-      {status.replace("_", " ")}
+    <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${styles[status] ?? styles.open}`}>
+      {TICKET_STATUS_LABELS[status] ?? status.replace(/_/g, " ")}
     </span>
   );
 }
