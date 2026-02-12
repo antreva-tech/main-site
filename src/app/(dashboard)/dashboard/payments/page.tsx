@@ -3,25 +3,58 @@
  */
 
 import Link from "next/link";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { FilterLink } from "../components/FilterLink";
+import { SortableTh } from "../components/SortableTh";
+
+const PAYMENT_SORT_KEYS = ["client", "service", "amount", "method", "status", "date"] as const;
+type PaymentSortKey = (typeof PAYMENT_SORT_KEYS)[number];
+
+/** Build Prisma orderBy for payments list (nested relations for client/service). */
+function getPaymentOrderBy(
+  sortBy: string | undefined,
+  order: "asc" | "desc"
+): Prisma.PaymentOrderByWithRelationInput {
+  const dir = order as "asc" | "desc";
+  switch (sortBy) {
+    case "client":
+      return { schedule: { subscription: { client: { name: dir } } } };
+    case "service":
+      return { schedule: { subscription: { service: { name: dir } } } };
+    case "amount":
+      return { amount: dir };
+    case "method":
+      return { method: dir };
+    case "status":
+      return { status: dir };
+    case "date":
+      return { paidAt: dir };
+    default:
+      return { paidAt: "desc" };
+  }
+}
 
 /**
- * Payments page with filters.
+ * Payments page with filters and sortable columns.
  */
 export default async function PaymentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; sortBy?: string; order?: string }>;
 }) {
   const params = await searchParams;
   const statusFilter = params.status;
+  const sortBy = (PAYMENT_SORT_KEYS.includes(params.sortBy as PaymentSortKey)
+    ? params.sortBy
+    : undefined) as PaymentSortKey | undefined;
+  const order = (params.order === "asc" || params.order === "desc" ? params.order : "desc") as "asc" | "desc";
 
   const payments = await prisma.payment.findMany({
     where: statusFilter
       ? { status: statusFilter as "pending_confirmation" | "confirmed" | "rejected" }
       : undefined,
-    orderBy: { createdAt: "desc" },
+    orderBy: getPaymentOrderBy(sortBy ?? "date", order),
     take: 50,
     include: {
       schedule: {
@@ -70,29 +103,71 @@ export default async function PaymentsPage({
         </FilterLink>
       </div>
 
-      {/* Desktop: premium table — navy header, subtle row hover (matches clients list) */}
+      {/* Desktop: premium table — navy header, sortable columns */}
       <div className="hidden md:block dashboard-card overflow-hidden">
         <table className="w-full">
           <thead>
             <tr className="bg-[#0B132B] dark:bg-gray-700">
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              <SortableTh
+                basePath="/dashboard/payments"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="client"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["date"]}
+              >
                 Client
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/payments"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="service"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["date"]}
+              >
                 Service
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/payments"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="amount"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["date"]}
+              >
                 Amount
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/payments"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="method"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["date"]}
+              >
                 Method
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/payments"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="status"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["date"]}
+              >
                 Status
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/payments"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="date"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["date"]}
+              >
                 Date
-              </th>
+              </SortableTh>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100/80 dark:divide-gray-600">

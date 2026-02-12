@@ -3,24 +3,59 @@
  */
 
 import Link from "next/link";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { FilterLink } from "../components/FilterLink";
+import { SortableTh } from "../components/SortableTh";
 import { ShowOnSiteCheckbox } from "./ShowOnSiteCheckbox";
 
+const CLIENT_SORT_KEYS = ["name", "onSite", "status", "started", "subscriptions", "tickets", "project"] as const;
+type ClientSortKey = (typeof CLIENT_SORT_KEYS)[number];
+
+/** Build Prisma orderBy for clients list. */
+function getClientOrderBy(
+  sortBy: string | undefined,
+  order: "asc" | "desc"
+): Prisma.ClientOrderByWithRelationInput {
+  const dir = order as "asc" | "desc";
+  switch (sortBy) {
+    case "name":
+      return { name: dir };
+    case "onSite":
+      return { showOnWebsite: dir };
+    case "status":
+      return { status: dir };
+    case "started":
+      return { startedAt: dir };
+    case "subscriptions":
+      return { subscriptions: { _count: dir } };
+    case "tickets":
+      return { tickets: { _count: dir } };
+    case "project":
+      return { developmentProject: { stage: dir } };
+    default:
+      return { createdAt: dir };
+  }
+}
+
 /**
- * Clients list page with filters.
+ * Clients list page with filters and sortable columns.
  */
 export default async function ClientsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; sortBy?: string; order?: string }>;
 }) {
   const params = await searchParams;
   const statusFilter = params.status;
+  const sortBy = (CLIENT_SORT_KEYS.includes(params.sortBy as ClientSortKey)
+    ? params.sortBy
+    : undefined) as ClientSortKey | undefined;
+  const order = (params.order === "asc" || params.order === "desc" ? params.order : "desc") as "asc" | "desc";
 
   const clients = await prisma.client.findMany({
     where: statusFilter ? { status: statusFilter as "active" | "inactive" | "churned" } : undefined,
-    orderBy: { createdAt: "desc" },
+    orderBy: getClientOrderBy(sortBy ?? "started", order),
     select: {
       id: true,
       name: true,
@@ -78,32 +113,81 @@ export default async function ClientsPage({
         </FilterLink>
       </div>
 
-      {/* Desktop: premium table — navy header, subtle row hover */}
+      {/* Desktop: premium table — navy header, sortable columns */}
       <div className="hidden md:block dashboard-card overflow-hidden">
         <table className="w-full">
           <thead>
             <tr className="bg-[#0B132B] dark:bg-gray-700">
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              <SortableTh
+                basePath="/dashboard/clients"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="name"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["started"]}
+              >
                 Client
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/clients"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="onSite"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["started"]}
+              >
                 On site
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/clients"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="status"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["started"]}
+              >
                 Status
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/clients"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="started"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["started"]}
+              >
                 Started
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/clients"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="subscriptions"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["started"]}
+              >
                 Subscriptions
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/clients"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="tickets"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["started"]}
+              >
                 Tickets
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/clients"
+                searchParams={{ status: statusFilter, sortBy, order }}
+                sortKey="project"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["started"]}
+              >
                 Project
-              </th>
+              </SortableTh>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100/80 dark:divide-gray-600">

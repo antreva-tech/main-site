@@ -3,20 +3,49 @@
  */
 
 import Link from "next/link";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { FilterLink } from "../components/FilterLink";
+import { SortableTh, type TicketSortKey } from "../components/SortableTh";
+
+const SORT_KEYS: TicketSortKey[] = ["subject", "client", "status", "priority", "assigned", "created"];
+
+/** Build Prisma orderBy for tickets list; preserves include typing. */
+function getOrderBy(
+  sortBy: string | undefined,
+  order: "asc" | "desc"
+): Prisma.TicketOrderByWithRelationInput {
+  const dir = order as "asc" | "desc";
+  switch (sortBy) {
+    case "subject":
+      return { subject: dir };
+    case "client":
+      return { client: { name: dir } };
+    case "status":
+      return { status: dir };
+    case "priority":
+      return { priority: dir };
+    case "assigned":
+      return { assignedTo: { name: dir } };
+    case "created":
+    default:
+      return { createdAt: dir };
+  }
+}
 
 /**
- * Tickets page with filters.
+ * Tickets page with filters and sortable columns.
  */
 export default async function TicketsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; clientId?: string }>;
+  searchParams: Promise<{ status?: string; clientId?: string; sortBy?: string; order?: string }>;
 }) {
   const params = await searchParams;
   const statusFilter = params.status;
   const clientIdFilter = params.clientId;
+  const sortBy = (SORT_KEYS.includes(params.sortBy as TicketSortKey) ? params.sortBy : undefined) as TicketSortKey | undefined;
+  const order = (params.order === "asc" || params.order === "desc" ? params.order : "desc") as "asc" | "desc";
 
   const ticketStatus = statusFilter as "open" | "in_progress" | "waiting" | "resolved" | "closed" | undefined;
   const tickets = await prisma.ticket.findMany({
@@ -26,7 +55,7 @@ export default async function TicketsPage({
         : { status: { not: "closed" } }),
       ...(clientIdFilter ? { clientId: clientIdFilter } : {}),
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: getOrderBy(sortBy ?? "created", order),
     take: 50,
     include: {
       client: { select: { id: true, name: true, company: true } },
@@ -78,29 +107,71 @@ export default async function TicketsPage({
         </FilterLink>
       </div>
 
-      {/* Desktop: premium table — navy header, subtle row hover (matches clients list) */}
+      {/* Desktop: premium table — navy header, sortable columns */}
       <div className="hidden md:block dashboard-card overflow-hidden">
         <table className="w-full">
           <thead>
             <tr className="bg-[#0B132B] dark:bg-gray-700">
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              <SortableTh
+                basePath="/dashboard/tickets"
+                searchParams={{ status: statusFilter, clientId: clientIdFilter, sortBy, order }}
+                sortKey="subject"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["created"]}
+              >
                 Subject
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/tickets"
+                searchParams={{ status: statusFilter, clientId: clientIdFilter, sortBy, order }}
+                sortKey="client"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["created"]}
+              >
                 Client
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/tickets"
+                searchParams={{ status: statusFilter, clientId: clientIdFilter, sortBy, order }}
+                sortKey="status"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["created"]}
+              >
                 Status
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/tickets"
+                searchParams={{ status: statusFilter, clientId: clientIdFilter, sortBy, order }}
+                sortKey="priority"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["created"]}
+              >
                 Priority
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/tickets"
+                searchParams={{ status: statusFilter, clientId: clientIdFilter, sortBy, order }}
+                sortKey="assigned"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["created"]}
+              >
                 Assigned
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-white/90 dark:text-gray-100 uppercase tracking-wider">
+              </SortableTh>
+              <SortableTh
+                basePath="/dashboard/tickets"
+                searchParams={{ status: statusFilter, clientId: clientIdFilter, sortBy, order }}
+                sortKey="created"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                defaultDescKeys={["created"]}
+              >
                 Created
-              </th>
+              </SortableTh>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100/80 dark:divide-gray-600">
