@@ -18,9 +18,12 @@ export default async function TicketsPage({
   const statusFilter = params.status;
   const clientIdFilter = params.clientId;
 
+  const ticketStatus = statusFilter as "open" | "in_progress" | "waiting" | "resolved" | "closed" | undefined;
   const tickets = await prisma.ticket.findMany({
     where: {
-      ...(statusFilter ? { status: statusFilter as "open" | "in_progress" | "waiting" | "resolved" | "closed" } : {}),
+      ...(ticketStatus
+        ? { status: ticketStatus }
+        : { status: { not: "closed" } }),
       ...(clientIdFilter ? { clientId: clientIdFilter } : {}),
     },
     orderBy: { createdAt: "desc" },
@@ -66,6 +69,12 @@ export default async function TicketsPage({
           active={statusFilter === "resolved"}
         >
           Resolved
+        </FilterLink>
+        <FilterLink
+          href="/dashboard/tickets?status=closed"
+          active={statusFilter === "closed"}
+        >
+          Closed
         </FilterLink>
       </div>
 
