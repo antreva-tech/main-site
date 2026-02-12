@@ -646,7 +646,7 @@ export default async function ClientDetailPage({
             ))}
           </div>
         ) : (
-          <p className="text-[#8A8F98] text-sm py-6 text-center">
+          <p className="text-[#8A8F98] dark:text-gray-400 text-sm py-6 text-center">
             {t.dashboard.clients.noTicketsYet}
           </p>
         )}

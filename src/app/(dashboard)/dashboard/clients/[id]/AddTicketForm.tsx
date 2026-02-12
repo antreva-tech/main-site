@@ -29,26 +29,26 @@ export function AddTicketForm({ clientId, createTicket }: Props) {
       ) : (
         <form
           action={createTicket}
-          className="mb-6 p-4 sm:p-5 rounded-xl bg-[#0B132B]/[0.03] border border-[#0B132B]/[0.06]"
+          className="mb-6 p-4 sm:p-5 rounded-xl bg-[#0B132B]/[0.03] dark:bg-white/[0.06] border border-[#0B132B]/[0.06] dark:border-white/10"
           onSubmit={() => setShowForm(false)}
         >
-          <p className="text-sm font-semibold text-[#0B132B]/90 mb-3">{t.dashboard.clients.createSupportTicketHeading}</p>
+          <p className="text-sm font-semibold text-[#0B132B]/90 dark:text-gray-100 mb-3">{t.dashboard.clients.createSupportTicketHeading}</p>
           <input type="hidden" name="clientId" value={clientId} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.subject}</label>
+              <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.clients.subject}</label>
               <input
                 name="subject"
                 required
-                className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+                className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 dark:bg-white/5 placeholder:text-[#8A8F98] placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
                 placeholder={t.dashboard.clients.subjectPlaceholder}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.tickets.priority}</label>
+              <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.tickets.priority}</label>
               <select
                 name="priority"
-                className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] min-h-[44px] transition-colors"
+                className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 dark:bg-white/5 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] min-h-[44px] transition-colors"
               >
                 <option value="low">{t.dashboard.tickets.priorities.low}</option>
                 <option value="medium">{t.dashboard.tickets.priorities.medium}</option>
@@ -58,30 +58,30 @@ export function AddTicketForm({ clientId, createTicket }: Props) {
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.tickets.initialMessage}</label>
+            <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.tickets.initialMessage}</label>
             <textarea
               name="content"
               rows={2}
-              className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+              className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 dark:bg-white/5 placeholder:text-[#8A8F98] placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
               placeholder={t.dashboard.clients.initialMessagePlaceholder}
             />
           </div>
           <div className="mb-4">
-            <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.tickets.attachImages}</label>
+            <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.tickets.attachImages}</label>
             <input
               type="file"
               name="attachments"
               multiple
               accept="image/jpeg,image/png,image/webp,image/gif"
-              className="w-full px-3 py-2 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#1C6ED5]/10 file:text-[#1C6ED5]"
+              className="w-full px-3 py-2 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-300 dark:bg-white/5 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#1C6ED5]/10 file:text-[#1C6ED5] file:dark:bg-[#1C6ED5] file:dark:text-white"
             />
-            <p className="mt-1 text-xs text-[#8A8F98]">{t.dashboard.tickets.attachImagesHint}</p>
+            <p className="mt-1 text-xs text-[#8A8F98] dark:text-gray-400">{t.dashboard.tickets.attachImagesHint}</p>
           </div>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="min-h-[44px] px-4 py-2.5 border border-[#0B132B]/[0.12] text-[#0B132B] text-sm rounded-xl font-medium hover:bg-[#0B132B]/[0.04] transition"
+              className="min-h-[44px] px-4 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 text-[#0B132B] dark:text-gray-200 text-sm rounded-xl font-medium hover:bg-[#0B132B]/[0.04] dark:hover:bg-white/10 transition"
             >
               {t.dashboard.common.cancel}
             </button>
