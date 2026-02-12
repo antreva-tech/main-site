@@ -438,7 +438,7 @@ export default async function ClientDetailPage({
             deleteClientContact={deleteClientContact}
           />
         ) : (
-          <p className="text-[#8A8F98] text-sm mb-5">{t.dashboard.clients.noContactsYet}</p>
+          <p className="text-[#8A8F98] dark:text-gray-400 text-sm mb-5">{t.dashboard.clients.noContactsYet}</p>
         )}
         <AddContactForm clientId={client.id} createClientContact={createClientContact} />
       </div>
@@ -566,7 +566,7 @@ export default async function ClientDetailPage({
         <div className="flex items-center justify-between mb-5">
           <h2 className="dashboard-section-title text-lg">{t.dashboard.clients.singleCharges}</h2>
         </div>
-        <p className="text-sm text-[#8A8F98] mb-5">
+        <p className="text-sm text-[#8A8F98] dark:text-gray-400 mb-5">
           {t.dashboard.clients.singleChargesHint}
         </p>
         <div className="mb-5">
@@ -588,7 +588,7 @@ export default async function ClientDetailPage({
             deleteSingleCharge={deleteSingleCharge}
           />
         ) : (
-          <p className="text-[#8A8F98] text-sm py-6 text-center">
+          <p className="text-[#8A8F98] dark:text-gray-400 text-sm py-6 text-center">
             {t.dashboard.clients.noSingleChargesYet}
           </p>
         )}
@@ -597,7 +597,7 @@ export default async function ClientDetailPage({
       {/* Admin credentials */}
       <div className="dashboard-card p-5 sm:p-6">
         <h2 className="dashboard-section-title text-lg mb-1">{t.dashboard.clients.adminCredentials}</h2>
-        <p className="text-sm text-[#8A8F98] mb-5">
+        <p className="text-sm text-[#8A8F98] dark:text-gray-400 mb-5">
           {t.dashboard.clients.adminCredentialsHint}
         </p>
         {client.supportCredentials.length > 0 ? (
@@ -608,7 +608,7 @@ export default async function ClientDetailPage({
             deleteCredential={deleteCredential}
           />
         ) : (
-          <p className="text-[#8A8F98] text-sm mb-4">{t.dashboard.clients.noCredentialsYet}</p>
+          <p className="text-[#8A8F98] dark:text-gray-400 text-sm mb-4">{t.dashboard.clients.noCredentialsYet}</p>
         )}
         <AddCredentialForm clientId={client.id} createCredential={createCredential} />
       </div>

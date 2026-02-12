@@ -88,41 +88,41 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
         >
           <input type="hidden" name="clientId" value={client.id} />
           <div className="sm:col-span-2">
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.nameRequired}</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-0.5">{t.dashboard.clients.nameRequired}</label>
             <input
               name="name"
               required
               defaultValue={client.name}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm text-gray-900 dark:text-gray-100 dark:bg-white/5 placeholder:text-gray-400 placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.clients.clientNamePlaceholder}
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.emailRequired}</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-0.5">{t.dashboard.clients.emailRequired}</label>
             <input
               type="email"
               name="email"
               required
               defaultValue={client.email}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm text-gray-900 dark:text-gray-100 dark:bg-white/5 placeholder:text-gray-400 placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.clients.emailPlaceholder}
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.company}</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-0.5">{t.dashboard.clients.company}</label>
             <input
               name="company"
               defaultValue={client.company ?? ""}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm text-gray-900 dark:text-gray-100 dark:bg-white/5 placeholder:text-gray-400 placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.clients.companyPlaceholder}
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.common.lineOfBusiness}</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-0.5">{t.dashboard.common.lineOfBusiness}</label>
             <select
               name="lineOfBusiness"
               defaultValue={client.lineOfBusiness ?? ""}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm text-gray-900 dark:text-gray-100 dark:bg-white/5 focus:ring-2 focus:ring-[#1C6ED5]"
             >
               <option value="">—</option>
               {LINE_OF_BUSINESS_VALUES.map((value) => (
@@ -133,22 +133,22 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
             </select>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.websiteUrl}</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-0.5">{t.dashboard.clients.websiteUrl}</label>
             <input
               type="url"
               name="websiteUrl"
               defaultValue={client.websiteUrl ?? ""}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm text-gray-900 dark:text-gray-100 dark:bg-white/5 placeholder:text-gray-400 placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.clients.websitePlaceholder}
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.adminPortalUrl}</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-0.5">{t.dashboard.clients.adminPortalUrl}</label>
             <input
               type="url"
               name="adminPortalUrl"
               defaultValue={client.adminPortalUrl ?? ""}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm text-gray-900 dark:text-gray-100 dark:bg-white/5 placeholder:text-gray-400 placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.clients.adminPortalPlaceholder}
             />
           </div>
@@ -158,24 +158,24 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
               id="showOnWebsite"
               name="showOnWebsite"
               defaultChecked={client.showOnWebsite}
-              className="rounded border-gray-300 text-[#1C6ED5] focus:ring-[#1C6ED5]"
+              className="rounded border-gray-300 dark:border-gray-500 text-[#1C6ED5] focus:ring-[#1C6ED5]"
             />
-            <label htmlFor="showOnWebsite" className="text-sm text-gray-700">
+            <label htmlFor="showOnWebsite" className="text-sm text-gray-700 dark:text-gray-300">
               {t.dashboard.clients.showOnWebsiteLabel}
             </label>
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.logoLabel}</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-0.5">{t.dashboard.clients.logoLabel}</label>
             <input
               type="url"
               name="logoUrl"
               value={logoUrl}
               onChange={(e) => setLogoUrl(e.target.value)}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm text-gray-900 dark:text-gray-100 dark:bg-white/5 placeholder:text-gray-400 placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.clients.logoPlaceholder}
             />
             <div className="mt-2 flex items-center gap-2 flex-wrap">
-              <label className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+              <label className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10 cursor-pointer">
                 <input
                   type="file"
                   accept=".jpg,.jpeg,.png,.webp,.svg,image/jpeg,image/png,image/webp,image/svg+xml"
@@ -186,33 +186,33 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
                 {isUploading ? t.dashboard.clients.uploadUploading : t.dashboard.clients.uploadButton}
               </label>
               {logoUrl && (
-                <span className="text-xs text-gray-500 truncate max-w-[180px]" title={logoUrl}>
+                <span className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[180px]" title={logoUrl}>
                   {t.dashboard.clients.storedInBlob}
                 </span>
               )}
             </div>
             {logoUploadError && (
-              <p className="mt-1 text-xs text-red-600" role="alert">
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400" role="alert">
                 {logoUploadError}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.phone}</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-0.5">{t.dashboard.clients.phone}</label>
             <input
               type="tel"
               name="phone"
               defaultValue={client.phone ?? ""}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm text-gray-900 dark:text-gray-100 dark:bg-white/5 placeholder:text-gray-400 placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.clients.phonePlaceholder}
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.status}</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-0.5">{t.dashboard.clients.status}</label>
             <select
               name="status"
               defaultValue={client.status}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm text-gray-900 dark:text-gray-100 dark:bg-white/5 focus:ring-2 focus:ring-[#1C6ED5]"
             >
               <option value="active">{t.dashboard.clients.active}</option>
               <option value="inactive">{t.dashboard.clients.inactive}</option>
@@ -220,30 +220,30 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
             </select>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.cedulaLabel}</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-0.5">{t.dashboard.clients.cedulaLabel}</label>
             <input
               name="cedula"
               defaultValue={client.cedula ?? ""}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm text-gray-900 dark:text-gray-100 dark:bg-white/5 placeholder:text-gray-400 placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.clients.cedulaPlaceholder}
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.rncLabel}</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-0.5">{t.dashboard.clients.rncLabel}</label>
             <input
               name="rnc"
               defaultValue={client.rnc ?? ""}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm text-gray-900 dark:text-gray-100 dark:bg-white/5 placeholder:text-gray-400 placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.clients.rncPlaceholder}
             />
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-xs text-gray-500 uppercase mb-0.5">{t.dashboard.clients.notes}</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-0.5">{t.dashboard.clients.notes}</label>
             <textarea
               name="notes"
               rows={2}
               defaultValue={client.notes ?? ""}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-white/20 rounded-md text-sm text-gray-900 dark:text-gray-100 dark:bg-white/5 placeholder:text-gray-400 placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.clients.notesPlaceholder}
             />
           </div>
@@ -257,7 +257,7 @@ export function EditClientDetailsModal({ client, updateClient }: Props) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition font-medium"
+              className="px-4 py-2 border border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-200 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-white/10 transition font-medium"
             >
               {t.dashboard.common.cancel}
             </button>

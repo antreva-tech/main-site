@@ -29,42 +29,42 @@ export function AddContactForm({ clientId, createClientContact }: Props) {
       ) : (
         <form
           action={createClientContact}
-          className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 sm:p-5 rounded-xl bg-[#0B132B]/[0.03] border border-[#0B132B]/[0.06]"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 sm:p-5 rounded-xl bg-[#0B132B]/[0.03] dark:bg-white/[0.06] border border-[#0B132B]/[0.06] dark:border-white/10"
           onSubmit={() => setShowForm(false)}
         >
           <input type="hidden" name="clientId" value={clientId} />
           <div className="sm:col-span-2">
-            <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.nameRequired}</label>
+            <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.clients.nameRequired}</label>
             <input
               name="name"
               required
-              className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+              className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 dark:bg-white/5 placeholder:text-[#8A8F98] placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
               placeholder={t.dashboard.clients.contactNamePlaceholder}
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.title}</label>
+            <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.clients.title}</label>
             <input
               name="title"
-              className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+              className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 dark:bg-white/5 placeholder:text-[#8A8F98] placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
               placeholder={t.dashboard.clients.titlePlaceholder}
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.email}</label>
+            <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.clients.email}</label>
             <input
               type="email"
               name="email"
-              className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+              className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 dark:bg-white/5 placeholder:text-[#8A8F98] placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
               placeholder={t.dashboard.clients.emailPlaceholder}
             />
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-xs font-semibold text-[#8A8F98] uppercase tracking-wider mb-1.5">{t.dashboard.clients.phone}</label>
+            <label className="block text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-1.5">{t.dashboard.clients.phone}</label>
             <input
               type="tel"
               name="phone"
-              className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] rounded-lg text-sm text-[#0B132B] focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
+              className="w-full px-3 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 rounded-lg text-sm text-[#0B132B] dark:text-gray-100 dark:bg-white/5 placeholder:text-[#8A8F98] placeholder:dark:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5]/40 focus:border-[#1C6ED5] transition-colors"
               placeholder={t.dashboard.clients.phonePlaceholder}
             />
           </div>
@@ -72,7 +72,7 @@ export function AddContactForm({ clientId, createClientContact }: Props) {
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="min-h-[44px] px-4 py-2.5 border border-[#0B132B]/[0.12] text-[#0B132B] text-sm rounded-xl font-medium hover:bg-[#0B132B]/[0.04] transition"
+              className="min-h-[44px] px-4 py-2.5 border border-[#0B132B]/[0.12] dark:border-white/20 text-[#0B132B] dark:text-gray-200 text-sm rounded-xl font-medium hover:bg-[#0B132B]/[0.04] dark:hover:bg-white/10 transition"
             >
               {t.dashboard.common.cancel}
             </button>
