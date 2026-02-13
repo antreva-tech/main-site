@@ -1,7 +1,9 @@
 "use client";
 
 /**
- * Form to update development project stage and notes. CTO only (enforced in action).
+ * Form to update development project stage (and optionally notes if CTO).
+ * Developer: stage selector only.
+ * CTO: stage + notes.
  */
 
 import { useTransition } from "react";
@@ -22,15 +24,18 @@ type Props = {
   projectId: string;
   currentStage: DevelopmentStage;
   currentNotes: string;
+  /** CTO can edit notes; Developer cannot. */
+  canEditNotes: boolean;
 };
 
 /**
- * Renders stage select and notes textarea; submits via server action.
+ * Renders stage select and (for CTO) notes textarea; submits via server action.
  */
 export function ProjectStageForm({
   projectId,
   currentStage,
   currentNotes,
+  canEditNotes,
 }: Props) {
   const [pending, startTransition] = useTransition();
 
@@ -59,18 +64,30 @@ export function ProjectStageForm({
           ))}
         </select>
       </div>
-      <div>
-        <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">
-          Notes
-        </label>
-        <textarea
-          name="notes"
-          rows={3}
-          defaultValue={currentNotes}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5] focus:border-transparent"
-          placeholder="Internal notes about this project..."
-        />
-      </div>
+
+      {/* Notes: editable for CTO, read-only display for Developer */}
+      {canEditNotes ? (
+        <div>
+          <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">
+            Notes
+          </label>
+          <textarea
+            name="notes"
+            rows={3}
+            defaultValue={currentNotes}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-[#1C6ED5] focus:border-transparent"
+            placeholder="Internal notes about this project..."
+          />
+        </div>
+      ) : currentNotes ? (
+        <div>
+          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Notes</p>
+          <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap bg-gray-50 dark:bg-gray-700/60 rounded-lg p-3 border border-gray-100 dark:border-gray-600">
+            {currentNotes}
+          </p>
+        </div>
+      ) : null}
+
       <button
         type="submit"
         disabled={pending}

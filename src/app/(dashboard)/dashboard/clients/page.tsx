@@ -61,11 +61,19 @@ export default async function ClientsPage({
       name: true,
       company: true,
       email: true,
+      phone: true,
+      lineOfBusiness: true,
       status: true,
       showOnWebsite: true,
       startedAt: true,
       developmentProject: {
-        select: { stage: true },
+        select: { id: true, stage: true },
+      },
+      lead: {
+        select: {
+          whatsappEnabled: true,
+          paymentHandling: true,
+        },
       },
       _count: {
         select: { subscriptions: true, tickets: true },
@@ -148,6 +156,8 @@ export default async function ClientsPage({
               >
                 Status
               </SortableTh>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">LoB</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">Payment</th>
               <SortableTh
                 basePath="/dashboard/clients"
                 searchParams={{ status: statusFilter, sortBy, order }}
@@ -166,7 +176,7 @@ export default async function ClientsPage({
                 currentOrder={order}
                 defaultDescKeys={["started"]}
               >
-                Subscriptions
+                Subs
               </SortableTh>
               <SortableTh
                 basePath="/dashboard/clients"
@@ -204,9 +214,18 @@ export default async function ClientsPage({
                     <p className="font-semibold text-[#0B132B] dark:text-gray-100 group-hover:text-[#1C6ED5] transition-colors">
                       {client.name}
                     </p>
-                    <p className="text-sm text-[#8A8F98] dark:text-gray-400 mt-0.5">
-                      {client.company || client.email}
-                    </p>
+                    <div className="flex items-center gap-2 text-sm text-[#8A8F98] dark:text-gray-400 mt-0.5">
+                      {client.phone && (
+                        <span className="flex items-center gap-1">
+                          {client.phone}
+                          {client.lead?.whatsappEnabled && (
+                            <span className="text-[#25D366] text-[10px] font-bold" title="WhatsApp">WA</span>
+                          )}
+                        </span>
+                      )}
+                      {client.phone && client.email && <span>·</span>}
+                      {client.email && <span className="truncate">{client.email}</span>}
+                    </div>
                   </Link>
                 </td>
                 <td className="px-6 py-4">
@@ -219,6 +238,14 @@ export default async function ClientsPage({
                 <td className="px-6 py-4">
                   <StatusBadge status={client.status} />
                 </td>
+                <td className="px-4 py-4 text-xs text-[#0B132B]/80 dark:text-gray-300 capitalize">
+                  {client.lineOfBusiness ? client.lineOfBusiness.replace(/_/g, " ") : "—"}
+                </td>
+                <td className="px-4 py-4 text-xs text-[#0B132B]/80 dark:text-gray-300">
+                  {client.lead?.paymentHandling
+                    ? formatPaymentHandling(client.lead.paymentHandling)
+                    : "—"}
+                </td>
                 <td className="px-6 py-4 text-sm text-[#0B132B]/80 dark:text-gray-300">
                   {client.startedAt.toLocaleDateString()}
                 </td>
@@ -230,11 +257,12 @@ export default async function ClientsPage({
                 </td>
                 <td className="px-6 py-4 text-sm">
                   {client.developmentProject ? (
-                    <span
-                      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getProjectStageStyles(client.developmentProject.stage)}`}
+                    <Link
+                      href={`/dashboard/development/${client.developmentProject.id}`}
+                      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold hover:opacity-80 transition ${getProjectStageStyles(client.developmentProject.stage)}`}
                     >
                       {formatDevStage(client.developmentProject.stage)}
-                    </span>
+                    </Link>
                   ) : (
                     <span className="text-[#8A8F98] dark:text-gray-400">—</span>
                   )}
@@ -243,7 +271,7 @@ export default async function ClientsPage({
             ))}
             {clients.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-6 py-16 text-center text-[#8A8F98] dark:text-gray-400">
+                <td colSpan={9} className="px-6 py-16 text-center text-[#8A8F98] dark:text-gray-400">
                   No clients found
                 </td>
               </tr>
@@ -307,6 +335,19 @@ export default async function ClientsPage({
       </div>
     </div>
   );
+}
+
+/**
+ * Human-readable payment handling label.
+ */
+function formatPaymentHandling(value: string): string {
+  const labels: Record<string, string> = {
+    CASH: "Cash",
+    BANK_TRANSFER: "Bank",
+    CARD: "Card",
+    MIXED: "Mixed",
+  };
+  return labels[value] ?? value;
 }
 
 /**

@@ -105,8 +105,27 @@ model Lead {
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 
+  // --- Intake fields (required only when transitioning to WON) ---
+  // NOTE: company and phone are the existing Lead fields reused for intake
+  hasLogo             Boolean          @default(false)
+  logoBlobUrl         String?          /// Vercel Blob public URL
+  logoDownloadUrl     String?          /// Vercel Blob force-download URL
+  logoPathname        String?          /// Vercel Blob pathname
+  logoContentType     String?
+  logoSize            Int?
+  hasDomain           Boolean          @default(false)
+  domain              String?
+  addressToUse        String?
+  whatsappEnabled     Boolean          @default(false)
+  businessDescription String?          @db.Text
+  serviceOutcome      String?          @db.Text
+  adminEaseNotes      String?          @db.Text
+  paymentHandling     PaymentHandling?
+  wonAt               DateTime?        /// Timestamp when lead was moved to WON
+
   // Relations
   whatsAppConversations WhatsAppConversation[]
+  developmentProject    DevelopmentProject? @relation("LeadDevelopmentProject")
 
   @@index([stage])
   @@index([source])
@@ -130,6 +149,13 @@ enum LeadStage {
   negotiation
   won
   lost
+}
+
+enum PaymentHandling {
+  CASH
+  BANK_TRANSFER
+  CARD
+  MIXED
 }
 
 // =============================================================================
@@ -509,10 +535,31 @@ model DevelopmentProject {
   id        String           @id @default(cuid())
   clientId  String           @unique
   client    Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  leadId    String?          @unique  /// Link back to originating lead (dedupe WON creation)
+  lead      Lead?            @relation("LeadDevelopmentProject", fields: [leadId], references: [id])
   stage     DevelopmentStage @default(discovery)
   notes     String?          @db.Text
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
+
+  // --- Intake snapshot (immutable copy from lead at WON time) ---
+  intakeBusinessName        String?
+  intakeHasLogo             Boolean          @default(false)
+  intakeLogoBlobUrl         String?
+  intakeLogoDownloadUrl     String?
+  intakeLogoPathname        String?
+  intakeLogoContentType     String?
+  intakeLogoSize            Int?
+  intakeHasDomain           Boolean          @default(false)
+  intakeDomain              String?
+  intakeAddressToUse        String?
+  intakePhoneNumber         String?
+  intakeWhatsappEnabled     Boolean          @default(false)
+  intakeBusinessDescription String?          @db.Text
+  intakeServiceOutcome      String?          @db.Text
+  intakeAdminEaseNotes      String?          @db.Text
+  intakeLineOfBusiness      String?
+  intakePaymentHandling     String?
 
   logs DevelopmentProjectLog[]
 

@@ -32,6 +32,26 @@ function requireCTO(session: { title: string | null }) {
 }
 
 /**
+ * Returns true if user is CTO or Developer (by title or roleName).
+ */
+function isDeveloperOrCTO(session: { title: string | null; roleName?: string }) {
+  return (
+    session.title === "CTO" ||
+    session.title === "Developer" ||
+    session.roleName?.toLowerCase() === "developer"
+  );
+}
+
+/**
+ * Throws if user is not CTO or Developer.
+ */
+function requireDevOrCTO(session: { title: string | null; roleName?: string }) {
+  if (!isDeveloperOrCTO(session)) {
+    throw new Error("Only the CTO or developers can perform this action.");
+  }
+}
+
+/**
  * Creates a development project for a client. CTO only.
  */
 export async function createDevelopmentProject(clientId: string) {
@@ -66,7 +86,9 @@ export async function createDevelopmentProject(clientId: string) {
 }
 
 /**
- * Updates a development project's stage and/or notes. CTO only.
+ * Updates a development project's stage and optionally notes.
+ * Developer: can only change stage.
+ * CTO: can change stage + notes.
  */
 export async function updateDevelopmentProject(
   projectId: string,
@@ -74,7 +96,7 @@ export async function updateDevelopmentProject(
 ) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
-  requireCTO(session);
+  requireDevOrCTO(session);
 
   const project = await prisma.developmentProject.findUnique({
     where: { id: projectId },
@@ -82,16 +104,22 @@ export async function updateDevelopmentProject(
   });
   if (!project) throw new Error("Project not found");
 
+  const isCTO = session.title === "CTO";
+
   const stageRaw = formData.get("stage") as string | null;
   const stage: DevelopmentStage | undefined =
     stageRaw && DEV_STAGES.includes(stageRaw as DevelopmentStage)
       ? (stageRaw as DevelopmentStage)
       : undefined;
-  const notes = (formData.get("notes") as string) || null;
 
   const data: { stage?: DevelopmentStage; notes?: string | null } = {};
   if (stage != null) data.stage = stage;
-  if (notes !== undefined) data.notes = notes || null;
+
+  // Only CTO can update notes
+  if (isCTO) {
+    const notes = (formData.get("notes") as string) || null;
+    if (notes !== undefined) data.notes = notes || null;
+  }
 
   const updated = await prisma.developmentProject.update({
     where: { id: projectId },
@@ -113,7 +141,7 @@ export async function updateDevelopmentProject(
 }
 
 /**
- * Updates only the project stage (e.g. from board). CTO only.
+ * Updates only the project stage (e.g. from board). CTO or Developer.
  */
 export async function updateDevelopmentProjectStage(
   projectId: string,
@@ -121,7 +149,7 @@ export async function updateDevelopmentProjectStage(
 ) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
-  requireCTO(session);
+  requireDevOrCTO(session);
 
   if (!DEV_STAGES.includes(stage)) throw new Error("Invalid stage");
 
@@ -150,12 +178,12 @@ export async function updateDevelopmentProjectStage(
 }
 
 /**
- * Adds a log entry to a development project. CTO only.
+ * Adds a log entry to a development project. CTO or Developer.
  */
 export async function addDevelopmentProjectLog(projectId: string, content: string) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
-  requireCTO(session);
+  requireDevOrCTO(session);
 
   const project = await prisma.developmentProject.findUnique({
     where: { id: projectId },
@@ -205,4 +233,58 @@ export async function deleteDevelopmentProject(projectId: string) {
 
   revalidatePath("/dashboard/development");
   revalidatePath(`/dashboard/clients/${clientId}`);
+}
+
+/** Intake snapshot field keys editable on a DevelopmentProject. */
+const INTAKE_TEXT_FIELDS = [
+  "intakeBusinessName",
+  "intakePhoneNumber",
+  "intakeAddressToUse",
+  "intakeDomain",
+  "intakeLineOfBusiness",
+  "intakePaymentHandling",
+  "intakeBusinessDescription",
+  "intakeServiceOutcome",
+  "intakeAdminEaseNotes",
+] as const;
+
+/**
+ * Updates the intake snapshot fields on a development project. CTO only.
+ * Allows filling in missing intake data or correcting values.
+ */
+export async function updateIntakeSnapshot(
+  projectId: string,
+  formData: FormData
+): Promise<{ error?: string } | undefined> {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  requireCTO(session);
+
+  const project = await prisma.developmentProject.findUnique({
+    where: { id: projectId },
+  });
+  if (!project) return { error: "Project not found" };
+
+  const data: Record<string, string | boolean | null> = {};
+
+  for (const key of INTAKE_TEXT_FIELDS) {
+    const raw = formData.get(key) as string | null;
+    if (raw !== null) {
+      data[key] = raw.trim() || null;
+    }
+  }
+
+  // Boolean fields
+  data.intakeHasDomain = formData.get("intakeHasDomain") === "true";
+  data.intakeWhatsappEnabled = formData.get("intakeWhatsappEnabled") === "true";
+
+  await prisma.developmentProject.update({
+    where: { id: projectId },
+    data,
+  });
+
+  await logUpdate(session.id, "development_project", projectId, { intake: "before" }, { intake: "updated" });
+
+  revalidatePath(`/dashboard/development/${projectId}`);
+  return undefined;
 }

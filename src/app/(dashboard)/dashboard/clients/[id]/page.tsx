@@ -68,7 +68,16 @@ interface ClientWithRelations {
     notes: string | null;
   }>;
   tickets: Array<{ id: string; subject: string; status: string; priority: string; createdAt: Date }>;
-  lead: { id: string; source: string; referralFrom: string | null } | null;
+  lead: {
+    id: string;
+    source: string;
+    referralFrom: string | null;
+    logoBlobUrl: string | null;
+    logoDownloadUrl: string | null;
+    logoContentType: string | null;
+    logoSize: number | null;
+    hasLogo: boolean;
+  } | null;
   supportCredentials: Array<{ id: string; label: string }>;
   developmentProject: { id: string; stage: string } | null;
   _count: { supportCredentials: number; subscriptions: number; singleCharges: number; tickets: number };
@@ -123,7 +132,16 @@ export default async function ClientDetailPage({
           },
         },
         lead: {
-          select: { id: true, source: true, referralFrom: true },
+          select: {
+            id: true,
+            source: true,
+            referralFrom: true,
+            logoBlobUrl: true,
+            logoDownloadUrl: true,
+            logoContentType: true,
+            logoSize: true,
+            hasLogo: true,
+          },
         },
         supportCredentials: {
           orderBy: { label: "asc" },
@@ -330,6 +348,35 @@ export default async function ClientDetailPage({
               <p className="text-sm text-[#0B132B]/90 dark:text-gray-200">{client.lineOfBusiness ? (t.dashboard.common.lineOfBusinessOptions as Record<string, string>)[client.lineOfBusiness] ?? client.lineOfBusiness.replace(/_/g, " ") : "—"}</p>
             </div>
               </div>
+
+              {/* Lead intake logo — preview + download */}
+              {client.lead?.hasLogo && client.lead.logoBlobUrl && (
+                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-[#0B132B]/[0.08] dark:border-white/10">
+                  <p className="text-xs font-semibold text-[#8A8F98] dark:text-gray-400 uppercase tracking-wider mb-3">Business Logo</p>
+                  <div className="flex items-start gap-4">
+                    <img
+                      src={client.lead.logoBlobUrl}
+                      alt="Business logo"
+                      className="w-16 h-16 rounded-lg border border-[#0B132B]/[0.08] dark:border-white/15 object-contain bg-white dark:bg-gray-700"
+                    />
+                    <div className="text-sm space-y-1">
+                      {client.lead.logoContentType && <p className="text-[#8A8F98] dark:text-gray-400">Type: {client.lead.logoContentType}</p>}
+                      {client.lead.logoSize != null && <p className="text-[#8A8F98] dark:text-gray-400">Size: {(client.lead.logoSize / 1024).toFixed(1)} KB</p>}
+                      {client.lead.logoDownloadUrl && (
+                        <a
+                          href={client.lead.logoDownloadUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#1C6ED5] text-white rounded-lg hover:bg-[#1559B3] transition mt-1"
+                        >
+                          Download Logo
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Notes */}
               {client.notes && (

@@ -1,6 +1,7 @@
 /**
- * Development Project Detail Page (CTO only).
- * Stage selector, notes, and activity log.
+ * Development Project Detail Page.
+ * CTO: full edit (stage, notes, intake snapshot).
+ * Developer: stage selector + activity log (read-only notes and intake).
  */
 
 import { notFound, redirect } from "next/navigation";
@@ -9,9 +10,10 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ProjectStageForm } from "./ProjectStageForm";
 import { ProjectLogForm } from "./ProjectLogForm";
+import { IntakeSnapshotPanel, type IntakeData } from "./IntakeSnapshotPanel";
 
 /**
- * Project detail: CTO only. Shows stage, notes, and log entries.
+ * Project detail page with role-based editing.
  */
 export default async function DevelopmentProjectPage({
   params,
@@ -20,7 +22,13 @@ export default async function DevelopmentProjectPage({
 }) {
   const session = await getSession();
   if (!session) redirect("/login");
-  if (session.title !== "CTO") redirect("/dashboard");
+
+  const isCTO = session.title === "CTO";
+  const isDev =
+    session.title === "Developer" ||
+    session.roleName?.toLowerCase() === "developer";
+
+  if (!isCTO && !isDev) redirect("/dashboard");
 
   const { id } = await params;
 
@@ -47,6 +55,26 @@ export default async function DevelopmentProjectPage({
 
   if (!project) notFound();
 
+  /** Intake data for the snapshot panel. */
+  const intakeData: IntakeData = {
+    intakeBusinessName: project.intakeBusinessName,
+    intakePhoneNumber: project.intakePhoneNumber,
+    intakeAddressToUse: project.intakeAddressToUse,
+    intakeHasDomain: project.intakeHasDomain,
+    intakeDomain: project.intakeDomain,
+    intakeWhatsappEnabled: project.intakeWhatsappEnabled,
+    intakeLineOfBusiness: project.intakeLineOfBusiness,
+    intakePaymentHandling: project.intakePaymentHandling,
+    intakeBusinessDescription: project.intakeBusinessDescription,
+    intakeServiceOutcome: project.intakeServiceOutcome,
+    intakeAdminEaseNotes: project.intakeAdminEaseNotes,
+    intakeHasLogo: project.intakeHasLogo,
+    intakeLogoBlobUrl: project.intakeLogoBlobUrl,
+    intakeLogoDownloadUrl: project.intakeLogoDownloadUrl,
+    intakeLogoContentType: project.intakeLogoContentType,
+    intakeLogoSize: project.intakeLogoSize,
+  };
+
   return (
     <div className="max-w-3xl">
       <div className="mb-4">
@@ -58,6 +86,7 @@ export default async function DevelopmentProjectPage({
         </Link>
       </div>
 
+      {/* Header + Stage/Notes form */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 p-4 sm:p-6 mb-6">
         <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
           {project.client.company || project.client.name}
@@ -77,10 +106,19 @@ export default async function DevelopmentProjectPage({
             projectId={project.id}
             currentStage={project.stage}
             currentNotes={project.notes ?? ""}
+            canEditNotes={isCTO}
           />
         </div>
       </div>
 
+      {/* Client Intake Snapshot — CTO can edit, Developer read-only */}
+      <IntakeSnapshotPanel
+        projectId={project.id}
+        data={intakeData}
+        canEdit={isCTO}
+      />
+
+      {/* Activity Log — both CTO and Developer can add entries */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
           Activity log

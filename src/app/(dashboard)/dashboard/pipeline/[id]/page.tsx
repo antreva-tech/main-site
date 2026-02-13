@@ -121,6 +121,80 @@ export default async function LeadDetailPage({
           </div>
         )}
 
+        {/* Intake Fields (show when intake-specific data exists) */}
+        {(lead.addressToUse || lead.businessDescription || lead.serviceOutcome) && (
+          <div className="mt-6 pt-6 border-t border-gray-100">
+            <p className="text-xs text-gray-500 uppercase mb-3 font-semibold">Business Intake</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {lead.phone && (
+                <div>
+                  <p className="text-xs text-gray-500 uppercase">Phone</p>
+                  <p className="text-[#0B132B]">{lead.phone}</p>
+                  {lead.whatsappEnabled && (
+                    <span className="text-xs text-[#25D366] font-medium">WhatsApp enabled</span>
+                  )}
+                </div>
+              )}
+              {lead.addressToUse && (
+                <div>
+                  <p className="text-xs text-gray-500 uppercase">Address</p>
+                  <p className="text-[#0B132B]">{lead.addressToUse}</p>
+                </div>
+              )}
+              {lead.domain && (
+                <div>
+                  <p className="text-xs text-gray-500 uppercase">Domain</p>
+                  <p className="text-[#0B132B]">{lead.domain}</p>
+                </div>
+              )}
+              {lead.paymentHandling && (
+                <div>
+                  <p className="text-xs text-gray-500 uppercase">Payment Handling</p>
+                  <p className="text-[#0B132B] capitalize">{lead.paymentHandling.replace(/_/g, " ").toLowerCase()}</p>
+                </div>
+              )}
+            </div>
+            {lead.businessDescription && (
+              <div className="mt-3">
+                <p className="text-xs text-gray-500 uppercase">Business Description</p>
+                <p className="text-gray-700 whitespace-pre-wrap text-sm">{lead.businessDescription}</p>
+              </div>
+            )}
+            {lead.serviceOutcome && (
+              <div className="mt-3">
+                <p className="text-xs text-gray-500 uppercase">Service Outcome</p>
+                <p className="text-gray-700 whitespace-pre-wrap text-sm">{lead.serviceOutcome}</p>
+              </div>
+            )}
+
+            {/* Logo preview + download */}
+            {lead.hasLogo && lead.logoBlobUrl && (
+              <div className="mt-4 flex items-start gap-4">
+                <img
+                  src={lead.logoBlobUrl}
+                  alt="Business logo"
+                  className="w-16 h-16 rounded-lg border border-gray-200 object-contain bg-white"
+                />
+                <div className="text-sm space-y-1">
+                  {lead.logoContentType && <p className="text-gray-500">Type: {lead.logoContentType}</p>}
+                  {lead.logoSize != null && <p className="text-gray-500">Size: {(lead.logoSize / 1024).toFixed(1)} KB</p>}
+                  {lead.logoDownloadUrl && (
+                    <a
+                      href={lead.logoDownloadUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-[#1C6ED5] text-white rounded-lg hover:bg-[#1559B3] transition mt-1"
+                    >
+                      Download Logo
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Lost Reason */}
         {lead.stage === "lost" && lead.lostReason && (
           <div className="mt-6 p-4 bg-red-50 rounded-lg">

@@ -364,7 +364,30 @@
       "qa": "QA",
       "deployment": "Despliegue",
       "completed": "Completado",
-      "on_hold": "En pausa"
+      "on_hold": "En pausa",
+      "clientIntake": "Datos del cliente",
+      "businessLogo": "Logo del negocio",
+      "downloadLogo": "Descargar logo"
+    },
+    "intake": {
+      "title": "Datos del negocio",
+      "businessName": "Nombre del negocio",
+      "logo": "Logo",
+      "hasLogo": "El negocio tiene logo",
+      "domain": "Dominio",
+      "hasDomain": "Tiene dominio",
+      "address": "Dirección a usar",
+      "phone": "Teléfono del negocio",
+      "whatsapp": "WhatsApp habilitado",
+      "businessDescription": "Descripción del negocio",
+      "serviceOutcome": "Resultado del servicio",
+      "adminEaseNotes": "Notas de administración",
+      "lineOfBusiness": "Línea de negocio",
+      "paymentHandling": "Manejo de pagos",
+      "saveIntake": "Guardar datos",
+      "saving": "Guardando...",
+      "incompleteForWon": "Faltan campos de intake. Complete el formulario antes de convertir a Ganado.",
+      "cancel": "Cancelar"
     },
     "demos": {
       "addDemoSite": "Añadir sitio demo",

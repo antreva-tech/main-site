@@ -364,7 +364,30 @@
       "qa": "QA",
       "deployment": "Deployment",
       "completed": "Completed",
-      "on_hold": "On Hold"
+      "on_hold": "On Hold",
+      "clientIntake": "Client Intake",
+      "businessLogo": "Business Logo",
+      "downloadLogo": "Download Logo"
+    },
+    "intake": {
+      "title": "Business Intake",
+      "businessName": "Business Name",
+      "logo": "Logo",
+      "hasLogo": "Business has a logo",
+      "domain": "Domain",
+      "hasDomain": "Has domain",
+      "address": "Address to use",
+      "phone": "Business Phone",
+      "whatsapp": "WhatsApp enabled",
+      "businessDescription": "Business Description",
+      "serviceOutcome": "Service Outcome",
+      "adminEaseNotes": "Admin / Ease Notes",
+      "lineOfBusiness": "Line of Business",
+      "paymentHandling": "Payment Handling",
+      "saveIntake": "Save Intake",
+      "saving": "Saving...",
+      "incompleteForWon": "Some intake fields are still missing. Please complete the intake form before converting to Won.",
+      "cancel": "Cancel"
     },
     "demos": {
       "addDemoSite": "Add Demo Site",
