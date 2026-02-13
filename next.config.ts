@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /**
+   * Allow admin subdomain to make requests in local development.
+   * Enables admin.localhost:3000 for subdomain testing.
+   */
+  allowedDevOrigins: ["admin.localhost"],
   experimental: {
     serverActions: {
       /** Allow logo uploads up to 2MB; multipart overhead needs extra headroom. Redeploy required for change to apply. */
