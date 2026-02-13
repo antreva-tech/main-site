@@ -61,61 +61,61 @@ export function EditLeadModal({ lead, open, onClose }: Props) {
         className="grid grid-cols-1 sm:grid-cols-2 gap-3"
       >
         <div className="sm:col-span-2">
-          <label className="block text-xs text-gray-500 uppercase mb-1">
+          <label className="block text-xs text-gray-500 dark:text-[#8A8F98] uppercase mb-1">
             {t.dashboard.pipeline.contactName} *
           </label>
           <input
             name="name"
             required
             defaultValue={lead.name}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-[#8A8F98] rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-[#8A8F98] focus:ring-2 focus:ring-[#1C6ED5]"
             placeholder={t.dashboard.pipeline.contactName}
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-500 uppercase mb-1">
+          <label className="block text-xs text-gray-500 dark:text-[#8A8F98] uppercase mb-1">
             {t.dashboard.pipeline.companyName}
           </label>
           <input
             name="company"
             defaultValue={lead.company ?? ""}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-[#8A8F98] rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-[#8A8F98] focus:ring-2 focus:ring-[#1C6ED5]"
             placeholder={t.dashboard.pipeline.companyName}
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-500 uppercase mb-1">
+          <label className="block text-xs text-gray-500 dark:text-[#8A8F98] uppercase mb-1">
             {t.dashboard.pipeline.email}
           </label>
           <input
             type="email"
             name="email"
             defaultValue={lead.email ?? ""}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-[#8A8F98] rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-[#8A8F98] focus:ring-2 focus:ring-[#1C6ED5]"
             placeholder="email@example.com"
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-500 uppercase mb-1">
+          <label className="block text-xs text-gray-500 dark:text-[#8A8F98] uppercase mb-1">
             {t.dashboard.pipeline.phone}
           </label>
           <input
             type="tel"
             name="phone"
             defaultValue={lead.phone ?? ""}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-[#8A8F98] rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-[#8A8F98] focus:ring-2 focus:ring-[#1C6ED5]"
             placeholder="+1 809 555 1234"
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-500 uppercase mb-1">
+          <label className="block text-xs text-gray-500 dark:text-[#8A8F98] uppercase mb-1">
             {t.dashboard.pipeline.source}
           </label>
           <select
             name="source"
             value={source}
             onChange={(e) => setSource(e.target.value as LeadSource)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-[#8A8F98] rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#1C6ED5]"
           >
             <option value="website">Website</option>
             <option value="referral">Referral</option>
@@ -126,38 +126,38 @@ export function EditLeadModal({ lead, open, onClose }: Props) {
         </div>
         {source === "other" && (
           <div className="sm:col-span-2">
-            <label className="block text-xs text-gray-500 uppercase mb-1">
+            <label className="block text-xs text-gray-500 dark:text-[#8A8F98] uppercase mb-1">
               {t.dashboard.pipeline.sourceOtherPlaceholder}
             </label>
             <input
               name="sourceOther"
               defaultValue={lead.sourceOther ?? ""}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-[#8A8F98] rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-[#8A8F98] focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.pipeline.sourceOtherPlaceholder}
             />
           </div>
         )}
         {source === "referral" && (
           <div className="sm:col-span-2">
-            <label className="block text-xs text-gray-500 uppercase mb-1">
+            <label className="block text-xs text-gray-500 dark:text-[#8A8F98] uppercase mb-1">
               {t.dashboard.pipeline.referralFromPlaceholder}
             </label>
             <input
               name="referralFrom"
               defaultValue={lead.referralFrom ?? ""}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-[#8A8F98] rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-[#8A8F98] focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.pipeline.referralFromPlaceholder}
             />
           </div>
         )}
         <div>
-          <label className="block text-xs text-gray-500 uppercase mb-1">
+          <label className="block text-xs text-gray-500 dark:text-[#8A8F98] uppercase mb-1">
             {t.dashboard.common.lineOfBusiness}
           </label>
           <select
             name="lineOfBusiness"
             defaultValue={lead.lineOfBusiness ?? ""}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-[#8A8F98] rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#1C6ED5]"
           >
             <option value="">—</option>
             {LINE_OF_BUSINESS_VALUES.map((value) => (
@@ -168,14 +168,14 @@ export function EditLeadModal({ lead, open, onClose }: Props) {
           </select>
         </div>
         <div>
-          <label className="block text-xs text-gray-500 uppercase mb-1">
+          <label className="block text-xs text-gray-500 dark:text-[#8A8F98] uppercase mb-1">
             {t.dashboard.pipeline.stage}
           </label>
           <select
             name="stage"
             value={stage}
             onChange={(e) => setStage(e.target.value as LeadStage)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-[#8A8F98] rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#1C6ED5]"
           >
             {SOURCE_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -185,7 +185,7 @@ export function EditLeadModal({ lead, open, onClose }: Props) {
           </select>
         </div>
         <div>
-          <label className="block text-xs text-gray-500 uppercase mb-1">
+          <label className="block text-xs text-gray-500 dark:text-[#8A8F98] uppercase mb-1">
             {t.dashboard.pipeline.estimatedValue}
           </label>
           <input
@@ -193,32 +193,32 @@ export function EditLeadModal({ lead, open, onClose }: Props) {
             name="expectedValue"
             step="0.01"
             defaultValue={lead.expectedValue ?? ""}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-[#8A8F98] rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-[#8A8F98] focus:ring-2 focus:ring-[#1C6ED5]"
             placeholder="0.00"
           />
         </div>
         {stage === "lost" && (
           <div className="sm:col-span-2">
-            <label className="block text-xs text-gray-500 uppercase mb-1">
+            <label className="block text-xs text-gray-500 dark:text-[#8A8F98] uppercase mb-1">
               {t.dashboard.pipeline.lostReason}
             </label>
             <input
               name="lostReason"
               defaultValue={lead.lostReason ?? ""}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-[#8A8F98] rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-[#8A8F98] focus:ring-2 focus:ring-[#1C6ED5]"
               placeholder={t.dashboard.pipeline.lostReason}
             />
           </div>
         )}
         <div className="sm:col-span-2">
-          <label className="block text-xs text-gray-500 uppercase mb-1">
+          <label className="block text-xs text-gray-500 dark:text-[#8A8F98] uppercase mb-1">
             {t.dashboard.pipeline.notes}
           </label>
           <textarea
             name="notes"
             rows={2}
             defaultValue={lead.notes ?? ""}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#1C6ED5]"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-[#8A8F98] rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-[#8A8F98] focus:ring-2 focus:ring-[#1C6ED5]"
             placeholder={t.dashboard.pipeline.notes}
           />
         </div>
@@ -233,7 +233,7 @@ export function EditLeadModal({ lead, open, onClose }: Props) {
           <button
             type="button"
             onClick={onClose}
-            className="px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition font-medium"
+            className="px-3 py-1.5 border border-gray-300 dark:border-[#8A8F98] text-gray-700 dark:text-[#8A8F98] text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition font-medium"
           >
             {t.dashboard.common.cancel}
           </button>
