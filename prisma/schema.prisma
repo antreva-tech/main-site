@@ -309,6 +309,8 @@ model SingleCharge {
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
+  payments    Payment[]          // One-time charges linked to payment records
+
   @@index([clientId])
   @@index([chargedAt(sort: Desc)])
 }
@@ -385,6 +387,10 @@ model Payment {
   method                 PaymentMethod @default(bank_transfer)
   status                 PaymentStatus @default(pending_confirmation)
   
+  // Optional link to one-time charge (for single-charge payment cards)
+  singleChargeId         String?
+  singleCharge           SingleCharge? @relation(fields: [singleChargeId], references: [id])
+  
   // Bank transfer fields
   receivingBankAccountId String?
   receivingBankAccount   BankAccount?  @relation(fields: [receivingBankAccountId], references: [id])
@@ -404,6 +410,7 @@ model Payment {
   updatedAt              DateTime      @updatedAt
 
   @@index([scheduleId])
+  @@index([singleChargeId])
   @@index([paidAt])
   @@index([method])
   @@index([status])

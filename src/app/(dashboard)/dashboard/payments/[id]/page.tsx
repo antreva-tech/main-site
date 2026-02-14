@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { PaymentActions } from "./PaymentActions";
+import { InvoiceActions } from "./InvoiceActions";
 
 /**
  * Payment detail page.
@@ -25,12 +26,13 @@ export default async function PaymentDetailPage({
         include: {
           subscription: {
             include: {
-              client: { select: { id: true, name: true, email: true } },
+              client: { select: { id: true, name: true, email: true, phone: true, company: true } },
               service: { select: { name: true } },
             },
           },
         },
       },
+      singleCharge: { select: { id: true, description: true } },
       receivingBankAccount: { select: { bankName: true, accountNumberLast4: true } },
       confirmedBy: { select: { name: true } },
     },
@@ -178,7 +180,20 @@ export default async function PaymentDetailPage({
         )}
       </div>
 
-      {/* Actions */}
+      {/* Invoice Actions (WhatsApp + PDF) for pending payments */}
+      {payment.status === "pending_confirmation" && (
+        <InvoiceActions
+          paymentId={payment.id}
+          clientPhone={client.phone}
+          clientName={client.name}
+          amount={Number(payment.amount)}
+          currency={payment.currency}
+          serviceName={payment.schedule.subscription.service.name}
+          singleChargeLabel={payment.singleCharge?.description ?? null}
+        />
+      )}
+
+      {/* Confirm / Reject Actions */}
       {payment.status === "pending_confirmation" && (
         <PaymentActions paymentId={payment.id} />
       )}

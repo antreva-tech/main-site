@@ -68,7 +68,7 @@ export default async function DashboardPage() {
       {/* KPI cards: only those the user can read */}
       {kpiKeys.length > 0 && (
         <div
-          className={`grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 ${kpiKeys.length === 2 ? "lg:grid-cols-2" : ""} ${kpiKeys.length === 3 ? "lg:grid-cols-3" : ""} ${kpiKeys.length === 4 ? "lg:grid-cols-4" : ""} ${kpiKeys.length >= 5 ? "lg:grid-cols-5" : ""}`}
+          className={`grid grid-cols-2 md:grid-cols-2 gap-3 sm:gap-6 mb-8 ${kpiKeys.length === 2 ? "lg:grid-cols-2" : ""} ${kpiKeys.length === 3 ? "lg:grid-cols-3" : ""} ${kpiKeys.length === 4 ? "lg:grid-cols-4" : ""} ${kpiKeys.length >= 5 ? "lg:grid-cols-5" : ""}`}
         >
           {kpiKeys.includes("pipeline") && (
             <Suspense fallback={<StatCardSkeleton />}>

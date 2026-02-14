@@ -6,8 +6,8 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
-import { logUpdate } from "@/lib/audit";
+import { getSession, requirePermission } from "@/lib/auth";
+import { logCreate, logUpdate } from "@/lib/audit";
 import type { PaymentStatus } from "@/generated/prisma/client";
 
 /**
@@ -132,4 +132,114 @@ export async function recordPayment(formData: FormData) {
 
   revalidatePath("/dashboard/payments");
   return payment;
+}
+
+/** Return type for createPendingPaymentCard (used with useActionState). */
+export type CreatePaymentCardState = { error?: string; paymentId?: string } | null;
+
+/**
+ * Creates a pending payment card for a client subscription or one-time charge.
+ * - subscription charge: creates a PaymentSchedule + Payment.
+ * - single charge: creates a SingleCharge + PaymentSchedule + Payment.
+ * Requires `payments.write` permission.
+ */
+export async function createPendingPaymentCard(
+  _prevState: CreatePaymentCardState,
+  formData: FormData
+): Promise<CreatePaymentCardState> {
+  const session = await getSession();
+  if (!session) return { error: "Not authenticated" };
+
+  requirePermission(session, "payments.write");
+
+  // --- Parse & validate common fields ---
+  const chargeType = formData.get("chargeType") as string;
+  if (chargeType !== "subscription" && chargeType !== "single") {
+    return { error: "Charge type must be 'subscription' or 'single'" };
+  }
+
+  const subscriptionId = formData.get("subscriptionId") as string;
+  if (!subscriptionId) return { error: "Subscription is required" };
+
+  const bankAccountId = formData.get("bankAccountId") as string;
+  if (!bankAccountId) return { error: "Bank account is required" };
+
+  const amountRaw = formData.get("amount") as string;
+  const amount = parseFloat(amountRaw);
+  if (Number.isNaN(amount) || amount <= 0) return { error: "A positive amount is required" };
+
+  const currency = formData.get("currency") as "DOP" | "USD";
+  if (currency !== "DOP" && currency !== "USD") return { error: "Currency must be DOP or USD" };
+
+  // --- Validate subscription exists and is active ---
+  const subscription = await prisma.clientSubscription.findUnique({
+    where: { id: subscriptionId },
+    include: { client: true, service: true },
+  });
+  if (!subscription || subscription.status !== "active") {
+    return { error: "Active subscription not found" };
+  }
+
+  // --- Validate bank account ---
+  const bankAccount = await prisma.bankAccount.findUnique({ where: { id: bankAccountId } });
+  if (!bankAccount || !bankAccount.isActive) return { error: "Bank account not found or inactive" };
+
+  // --- Single charge fields ---
+  let singleChargeId: string | null = null;
+  let chargeLabel = subscription.service.name;
+
+  if (chargeType === "single") {
+    const label = (formData.get("chargeLabel") as string)?.trim();
+    if (!label) return { error: "A label is required for single charges" };
+    chargeLabel = label;
+
+    const singleCharge = await prisma.singleCharge.create({
+      data: {
+        clientId: subscription.clientId,
+        description: label,
+        amount,
+        currency,
+        status: "pending",
+      },
+    });
+    singleChargeId = singleCharge.id;
+  }
+
+  // --- Create PaymentSchedule ---
+  const schedule = await prisma.paymentSchedule.create({
+    data: {
+      subscriptionId,
+      dueDate: new Date(),
+      amount,
+      currency,
+      status: "pending",
+    },
+  });
+
+  // --- Create pending Payment ---
+  const payment = await prisma.payment.create({
+    data: {
+      scheduleId: schedule.id,
+      amount,
+      currency,
+      method: "bank_transfer",
+      status: "pending_confirmation",
+      receivingBankAccountId: bankAccountId,
+      singleChargeId,
+      notes: chargeType === "single" ? chargeLabel : null,
+    },
+  });
+
+  await logCreate(session.id, "payment", payment.id, {
+    chargeType,
+    subscriptionId,
+    bankAccountId,
+    amount,
+    currency,
+    singleChargeId,
+  });
+
+  revalidatePath("/dashboard/payments");
+  revalidatePath("/dashboard");
+  return { paymentId: payment.id };
 }

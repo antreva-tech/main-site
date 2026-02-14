@@ -5,8 +5,11 @@
 import Link from "next/link";
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { getSession, hasPermission } from "@/lib/auth";
 import { FilterLink } from "../components/FilterLink";
 import { SortableTh } from "../components/SortableTh";
+import { CreatePaymentCardForm } from "./CreatePaymentCardForm";
+import { getActiveSubscriptions, getActiveBankAccounts } from "./data";
 
 const PAYMENT_SORT_KEYS = ["client", "service", "amount", "method", "status", "date"] as const;
 type PaymentSortKey = (typeof PAYMENT_SORT_KEYS)[number];
@@ -50,6 +53,13 @@ export default async function PaymentsPage({
     : undefined) as PaymentSortKey | undefined;
   const order = (params.order === "asc" || params.order === "desc" ? params.order : "desc") as "asc" | "desc";
 
+  const session = await getSession();
+  const canWrite = session ? hasPermission(session, "payments.write") : false;
+
+  const [subscriptions, bankAccounts] = canWrite
+    ? await Promise.all([getActiveSubscriptions(), getActiveBankAccounts()])
+    : [[], []];
+
   const payments = await prisma.payment.findMany({
     where: statusFilter
       ? { status: statusFilter as "pending_confirmation" | "confirmed" | "rejected" }
@@ -73,9 +83,15 @@ export default async function PaymentsPage({
 
   return (
     <div>
-      {/* Header */}
-      <div className="mb-6">
+      {/* Header + Create button: stack on mobile, row on sm+ */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Payments</h1>
+        {canWrite && (
+          <CreatePaymentCardForm
+            subscriptions={subscriptions}
+            bankAccounts={bankAccounts}
+          />
+        )}
       </div>
 
       {/* Filters */}
