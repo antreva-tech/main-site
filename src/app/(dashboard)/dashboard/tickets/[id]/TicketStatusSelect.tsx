@@ -8,14 +8,15 @@
 import { useTransition, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateTicketStatus, assignTicket } from "../actions";
-import type { TicketStatus } from "@prisma/client";
+import type { TicketStatus } from "@/generated/prisma/client";
 import { AssignTicketModal } from "./AssignTicketModal";
 
 const STATUSES: { key: TicketStatus; label: string }[] = [
   { key: "open", label: "Open" },
   { key: "in_progress", label: "In Progress" },
   { key: "waiting", label: "Waiting" },
-  { key: "resolved", label: "Resolved" },
+  { key: "qa", label: "QA" },
+  { key: "review", label: "Review" },
   { key: "closed", label: "Closed" },
 ];
 

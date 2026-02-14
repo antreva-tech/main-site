@@ -7,6 +7,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { getAssignableUsers } from "../actions";
+import { formatDateTime } from "@/lib/date";
 import { TicketStatusSelect } from "./TicketStatusSelect";
 import { CommentForm } from "./CommentForm";
 import { TicketCommentItem } from "./TicketCommentItem";
@@ -155,9 +156,9 @@ export default async function TicketDetailPage({
 
       {/* Metadata */}
       <div className="text-xs text-gray-400 dark:text-gray-500">
-        <p>Created: {ticket.createdAt.toLocaleString()}</p>
-        <p>Updated: {ticket.updatedAt.toLocaleString()}</p>
-        {ticket.resolvedAt && <p>Resolved: {ticket.resolvedAt.toLocaleString()}</p>}
+        <p>Created: {formatDateTime(ticket.createdAt)}</p>
+        <p>Updated: {formatDateTime(ticket.updatedAt)}</p>
+        {ticket.resolvedAt && <p>Resolved: {formatDateTime(ticket.resolvedAt)}</p>}
         <p>ID: {ticket.id}</p>
       </div>
     </div>

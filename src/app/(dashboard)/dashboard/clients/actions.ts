@@ -11,7 +11,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { normalizePhoneForStorage } from "@/lib/phone";
 import { logCreate, logUpdate, logDelete } from "@/lib/audit";
-import type { ClientStatus, SubscriptionStatus, SingleChargeStatus, LineOfBusiness } from "@prisma/client";
+import type { ClientStatus, SubscriptionStatus, SingleChargeStatus, LineOfBusiness } from "@/generated/prisma/client";
 
 /** Allowed image types for client logos (Vercel Blob). */
 const LOGO_CONTENT_TYPES = ["image/jpeg", "image/png", "image/webp", "image/svg+xml"];
@@ -309,7 +309,7 @@ export async function createSubscription(formData: FormData) {
 
 /**
  * Updates a client subscription.
- * Expects formData: subscriptionId, clientId, serviceId, amount, currency, billingCycle, startDate, endDate (optional), status.
+ * Expects formData: subscriptionId, clientId, serviceId, amount, currency, billingCycle, startDate, endDate (optional), paymentDayOfMonth (optional, 1–31), status.
  */
 export async function updateSubscription(formData: FormData) {
   const session = await getSession();
@@ -331,6 +331,7 @@ export async function updateSubscription(formData: FormData) {
   const billingCycle = formData.get("billingCycle") as "monthly" | "quarterly" | "annual" | "one_time";
   const startDateRaw = formData.get("startDate") as string;
   const endDateRaw = (formData.get("endDate") as string)?.trim() || null;
+  const paymentDayRaw = (formData.get("paymentDayOfMonth") as string)?.trim() || null;
   const statusRaw = formData.get("status") as string;
 
   if (!serviceId) throw new Error("Service is required");
@@ -344,6 +345,12 @@ export async function updateSubscription(formData: FormData) {
   if (Number.isNaN(startDate.getTime())) throw new Error("Valid start date is required");
   const endDate = endDateRaw ? new Date(endDateRaw) : null;
   if (endDate !== null && Number.isNaN(endDate.getTime())) throw new Error("Invalid end date");
+  let paymentDayOfMonth: number | null = null;
+  if (paymentDayRaw) {
+    const d = parseInt(paymentDayRaw, 10);
+    if (Number.isNaN(d) || d < 1 || d > 31) throw new Error("Payment day of month must be 1–31");
+    paymentDayOfMonth = d;
+  }
   const validStatuses: SubscriptionStatus[] = ["active", "paused", "cancelled", "expired"];
   const status = validStatuses.includes(statusRaw as SubscriptionStatus)
     ? (statusRaw as SubscriptionStatus)
@@ -361,6 +368,7 @@ export async function updateSubscription(formData: FormData) {
       billingCycle,
       startDate,
       endDate,
+      paymentDayOfMonth,
       status,
     },
   });

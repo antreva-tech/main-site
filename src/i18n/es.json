@@ -266,6 +266,7 @@
       "singleCharges": "Cargos únicos",
       "singleChargesHint": "Cargos únicos (tarifas de configuración, migraciones, proyectos puntuales).",
       "recentTickets": "Tickets recientes",
+      "recentOpenTickets": "Tickets abiertos recientes",
       "noContactsYet": "Sin contactos adicionales aún.",
       "noCredentialsYet": "Sin credenciales aún.",
       "noSubscriptionsYet": "Sin suscripciones aún",
@@ -446,7 +447,8 @@
         "open": "Abierto",
         "in_progress": "En progreso",
         "waiting": "En espera",
-        "resolved": "Resuelto",
+        "qa": "QA",
+        "review": "Revisión",
         "closed": "Cerrado"
       }
     },

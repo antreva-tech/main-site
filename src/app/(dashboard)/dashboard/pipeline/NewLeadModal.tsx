@@ -8,7 +8,7 @@
 import { useTransition } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { createLead } from "./actions";
-import type { LeadSource } from "@prisma/client";
+import type { LeadSource } from "@/generated/prisma/client";
 import { useState } from "react";
 import { LINE_OF_BUSINESS_VALUES } from "@/lib/lineOfBusiness";
 

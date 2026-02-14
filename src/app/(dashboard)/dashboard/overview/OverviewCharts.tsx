@@ -32,6 +32,16 @@ const CHART_COLORS = {
   amber: "#f59e0b",
 } as const;
 
+/** Pipeline stage colors: early (blue) → proposal/negotiation (violet/amber) → won (green), lost (muted). */
+const PIPELINE_STAGE_COLORS: Record<string, string> = {
+  new: "#1C6ED5",
+  qualified: "#3b82f6",
+  proposal: "#8b5cf6",
+  negotiation: CHART_COLORS.amber,
+  won: CHART_COLORS.green,
+  lost: "#64748b",
+};
+
 /** Dark mode chart colors: grid, axes, text, tooltip. */
 const DARK_CHART = {
   grid: "#374151",
@@ -89,6 +99,7 @@ function PipelineBarChart({
   const tooltipStyle = isDark
     ? { backgroundColor: DARK_CHART.tooltipBg, border: `1px solid ${DARK_CHART.tooltipBorder}`, borderRadius: "8px", color: DARK_CHART.text }
     : { backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: "8px" };
+  const tooltipLabelItemStyle = isDark ? { color: DARK_CHART.text } : undefined;
   return (
     <ResponsiveContainer width="100%" height={260}>
       <BarChart data={sorted} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
@@ -107,6 +118,8 @@ function PipelineBarChart({
         />
         <Tooltip
           contentStyle={tooltipStyle}
+          labelStyle={tooltipLabelItemStyle}
+          itemStyle={tooltipLabelItemStyle}
           formatter={(value: number | undefined, name: string | undefined) => [
             value ?? 0,
             name === "count" ? "Leads" : "Value (DOP)",
@@ -116,12 +129,11 @@ function PipelineBarChart({
             return p ? `${p.label} — ${p.value > 0 ? `RD$${p.value.toLocaleString()}` : ""}` : "";
           }}
         />
-        <Bar
-          dataKey="count"
-          fill={CHART_COLORS.primary}
-          radius={[4, 4, 0, 0]}
-          name="count"
-        />
+        <Bar dataKey="count" radius={[4, 4, 0, 0]} name="count">
+          {sorted.map((entry) => (
+            <Cell key={entry.stage} fill={PIPELINE_STAGE_COLORS[entry.stage] ?? CHART_COLORS.primary} />
+          ))}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );
@@ -143,6 +155,7 @@ function RevenuePieChart({ data, isDark }: { data: RevenueDatum[]; isDark: boole
   const tooltipStyle = isDark
     ? { backgroundColor: DARK_CHART.tooltipBg, border: `1px solid ${DARK_CHART.tooltipBorder}`, borderRadius: "8px", color: DARK_CHART.text }
     : { backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: "8px" };
+  const tooltipLabelItemStyle = isDark ? { color: DARK_CHART.text } : undefined;
   const labelFill = isDark ? DARK_CHART.text : undefined;
   return (
     <ResponsiveContainer width="100%" height={260}>
@@ -157,7 +170,8 @@ function RevenuePieChart({ data, isDark }: { data: RevenueDatum[]; isDark: boole
           outerRadius={90}
           paddingAngle={2}
           label={({ name, percent, cx, cy, midAngle = 0, outerRadius = 90 }) => {
-            const r = Number(outerRadius) + 20;
+            const labelOffset = 58;
+            const r = Number(outerRadius) + labelOffset;
             const rad = (midAngle * Math.PI) / 180;
             const x = (cx as number) + r * Math.cos(rad);
             const y = (cy as number) + r * Math.sin(rad);
@@ -174,6 +188,8 @@ function RevenuePieChart({ data, isDark }: { data: RevenueDatum[]; isDark: boole
         </Pie>
         <Tooltip
           contentStyle={tooltipStyle}
+          labelStyle={tooltipLabelItemStyle}
+          itemStyle={tooltipLabelItemStyle}
           formatter={(value: number | undefined, name: string | undefined, item: { payload?: RevenueDatum }) => {
             const v = value ?? 0;
             const sym = item.payload?.currency === "DOP" ? "RD$" : "$";
@@ -213,6 +229,7 @@ function TicketsBarChart({ data, isDark }: { data: TicketsDatum[]; isDark: boole
   const tooltipStyle = isDark
     ? { backgroundColor: DARK_CHART.tooltipBg, border: `1px solid ${DARK_CHART.tooltipBorder}`, borderRadius: "8px", color: DARK_CHART.text }
     : { backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: "8px" };
+  const tooltipLabelItemStyle = isDark ? { color: DARK_CHART.text } : undefined;
   return (
     <ResponsiveContainer width="100%" height={260}>
       <BarChart data={sorted} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
@@ -229,7 +246,7 @@ function TicketsBarChart({ data, isDark }: { data: TicketsDatum[]; isDark: boole
           axisLine={false}
           allowDecimals={false}
         />
-        <Tooltip contentStyle={tooltipStyle} />
+        <Tooltip contentStyle={tooltipStyle} labelStyle={tooltipLabelItemStyle} itemStyle={tooltipLabelItemStyle} />
         <Bar dataKey="count" radius={[4, 4, 0, 0]} name="Tickets">
           {sorted.map((entry) => (
             <Cell key={entry.priority} fill={colorMap[entry.priority] ?? CHART_COLORS.slate} />

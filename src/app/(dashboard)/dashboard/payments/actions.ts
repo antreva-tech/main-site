@@ -8,7 +8,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { logUpdate } from "@/lib/audit";
-import type { PaymentStatus } from "@prisma/client";
+import type { PaymentStatus } from "@/generated/prisma/client";
 
 /**
  * Confirms a bank transfer payment.

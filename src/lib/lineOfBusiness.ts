@@ -3,7 +3,7 @@
  * Ordered list for consistent dropdowns; labels come from i18n (dashboard.common.lineOfBusinessOptions).
  */
 
-import type { LineOfBusiness } from "@prisma/client";
+import type { LineOfBusiness } from "@/generated/prisma/client";
 
 /** All line-of-business enum values in display order. */
 export const LINE_OF_BUSINESS_VALUES: LineOfBusiness[] = [

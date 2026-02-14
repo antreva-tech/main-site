@@ -266,6 +266,7 @@
       "singleCharges": "Single charges",
       "singleChargesHint": "One-time charges (setup fees, migrations, one-off projects).",
       "recentTickets": "Recent Tickets",
+      "recentOpenTickets": "Recent Open Tickets",
       "noContactsYet": "No additional contacts yet.",
       "noCredentialsYet": "No credentials yet.",
       "noSubscriptionsYet": "No subscriptions yet",
@@ -446,7 +447,8 @@
         "open": "Open",
         "in_progress": "In Progress",
         "waiting": "Waiting",
-        "resolved": "Resolved",
+        "qa": "QA",
+        "review": "Review",
         "closed": "Closed"
       }
     },

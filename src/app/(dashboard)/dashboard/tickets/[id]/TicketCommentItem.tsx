@@ -7,6 +7,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatDateTime } from "@/lib/date";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { updateComment, deleteComment } from "../actions";
 
@@ -80,7 +81,7 @@ export function TicketCommentItem({
         </span>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500 dark:text-gray-400">
-            {comment.createdAt.toLocaleString()}
+            {formatDateTime(comment.createdAt)}
           </span>
           {canEdit && !editing && (
             <>

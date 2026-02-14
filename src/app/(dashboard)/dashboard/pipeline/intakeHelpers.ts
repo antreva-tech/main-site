@@ -6,7 +6,7 @@
  * (no separate businessName/phoneNumber columns).
  */
 
-import type { PaymentHandling } from "@prisma/client";
+import type { PaymentHandling } from "@/generated/prisma/client";
 
 /** Shape of intake fields on a Lead record (subset used for validation). */
 export interface IntakeFields {

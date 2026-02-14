@@ -64,7 +64,7 @@ export function ConfirmDialog({
       aria-modal="true"
       aria-labelledby="confirm-dialog-title"
       aria-describedby="confirm-dialog-desc"
-      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50"
+      className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50"
       onClick={handleOverlayClick}
     >
       <div

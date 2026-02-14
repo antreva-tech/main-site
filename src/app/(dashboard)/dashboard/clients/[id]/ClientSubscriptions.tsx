@@ -18,6 +18,7 @@ type SubscriptionRow = {
   billingCycle: string;
   startDate: Date | string;
   endDate: Date | string | null;
+  paymentDayOfMonth: number | null;
   status: string;
 };
 
@@ -55,6 +56,7 @@ function toModalSub(sub: SubscriptionRow): SubscriptionForModal {
         ? (sub.endDate as Date).toISOString()
         : String(sub.endDate)
       : null,
+    paymentDayOfMonth: sub.paymentDayOfMonth,
   };
 }
 

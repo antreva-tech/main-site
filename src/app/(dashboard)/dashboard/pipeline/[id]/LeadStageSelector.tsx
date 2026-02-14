@@ -8,7 +8,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { updateLeadStage } from "../actions";
-import type { LeadStage } from "@prisma/client";
+import type { LeadStage } from "@/generated/prisma/client";
 
 /** Stages that can be set from this dropdown. Won is only set via Convert to Client. */
 const STAGES: { key: LeadStage; label: string }[] = [

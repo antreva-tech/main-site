@@ -13,7 +13,7 @@
 
 import { headers } from "next/headers";
 import { prisma } from "./prisma";
-import type { AuditEntityType, AuditAction } from "@prisma/client";
+import type { AuditEntityType, AuditAction } from "@/generated/prisma/client";
 
 /**
  * Metadata stored with audit log entries.

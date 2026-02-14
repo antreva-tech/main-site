@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { EditModal } from "../components/EditModal";
 import { updateDevelopmentProjectStage } from "./actions";
 import type { ProjectRow } from "./page";
-import type { DevelopmentStage } from "@prisma/client";
+import type { DevelopmentStage } from "@/generated/prisma/client";
 
 const STAGE_KEYS: DevelopmentStage[] = [
   "discovery",

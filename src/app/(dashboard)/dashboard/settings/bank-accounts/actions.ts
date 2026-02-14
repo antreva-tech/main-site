@@ -9,7 +9,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { encrypt } from "@/lib/encryption";
+import { encrypt, decrypt } from "@/lib/encryption";
 
 /** Last 4 digits for display (digits only from end of string). */
 function getLast4(value: string): string {
@@ -132,6 +132,26 @@ export async function updateBankAccount(formData: FormData) {
 
   revalidatePath("/dashboard/settings/bank-accounts");
   redirect("/dashboard/settings/bank-accounts");
+}
+
+/**
+ * Returns the decrypted full account number for a bank account.
+ * Requires users.manage permission. Use when user reveals banking info on the card.
+ */
+export async function getDecryptedAccountNumber(accountId: string): Promise<string> {
+  const session = await getSession();
+  if (!session?.permissions.includes("users.manage")) {
+    throw new Error("Unauthorized");
+  }
+
+  const account = await prisma.bankAccount.findUnique({
+    where: { id: accountId },
+    select: { accountNumber: true, accountNumberIv: true },
+  });
+
+  if (!account) throw new Error("Bank account not found");
+
+  return decrypt(account.accountNumber, account.accountNumberIv);
 }
 
 /**

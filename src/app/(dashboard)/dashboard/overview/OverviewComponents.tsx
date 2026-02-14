@@ -218,20 +218,24 @@ const STATUS_STYLES: Record<string, string> = {
   open: "bg-[#1C6ED5]/15 text-[#1C6ED5] dark:bg-[#1C6ED5]/25 dark:text-[#7eb8ff]",
   in_progress: "bg-purple-500/15 text-purple-700 dark:bg-purple-500/30 dark:text-purple-200",
   waiting: "bg-amber-500/15 text-amber-700 dark:bg-amber-500/30 dark:text-amber-200",
-  resolved: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/30 dark:text-emerald-200",
+  qa: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/30 dark:text-emerald-200",
+  review: "bg-sky-500/15 text-sky-700 dark:bg-sky-500/30 dark:text-sky-200",
   closed: "bg-[#8A8F98]/20 text-[#6b7280] dark:bg-white/20 dark:text-gray-300",
+  resolved: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/30 dark:text-emerald-200", // legacy
 };
 
 const STATUS_LABELS: Record<string, string> = {
   open: "Open",
   in_progress: "In Progress",
   waiting: "Waiting",
-  resolved: "Resolved",
+  qa: "QA",
+  review: "Review",
   closed: "Closed",
+  resolved: "QA", // legacy fallback
 };
 
 /**
- * Ticket status badge (open, in_progress, waiting, resolved, closed).
+ * Ticket status badge (open, in_progress, waiting, qa, review, closed).
  */
 export function StatusBadge({
   status,

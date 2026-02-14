@@ -11,7 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { EditModal } from "../components/EditModal";
 import { updateLead } from "./actions";
 import type { LeadRow } from "./PipelineBoard";
-import type { LeadStage, LeadSource } from "@prisma/client";
+import type { LeadStage, LeadSource } from "@/generated/prisma/client";
 import { LINE_OF_BUSINESS_VALUES } from "@/lib/lineOfBusiness";
 
 const SOURCE_OPTIONS: Array<{ value: LeadStage; labelKey: LeadStage }> = [

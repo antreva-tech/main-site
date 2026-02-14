@@ -8,7 +8,7 @@
 
 import { useTransition } from "react";
 import { updateDevelopmentProject } from "../actions";
-import type { DevelopmentStage } from "@prisma/client";
+import type { DevelopmentStage } from "@/generated/prisma/client";
 
 const STAGES: { value: DevelopmentStage; label: string }[] = [
   { value: "discovery", label: "Discovery" },

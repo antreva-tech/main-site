@@ -9,11 +9,16 @@
  * - SEED_CTO_EMAIL, SEED_CTO_NAME
  */
 
-import { PrismaClient, BillingType, Currency } from "@prisma/client";
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+import { PrismaClient, BillingType, Currency } from "../src/generated/prisma/client";
+import { PrismaNeon } from "@prisma/adapter-neon";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL ?? "";
+const adapter = new PrismaNeon({ connectionString });
+const prisma = new PrismaClient({ adapter });
 
 /** All permissions available in the system (admin = CEO/CTO only) */
 const ALL_PERMISSIONS = [

@@ -3,8 +3,9 @@
  */
 
 import Link from "next/link";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { formatDate } from "@/lib/date";
 import { FilterLink } from "../components/FilterLink";
 import { SortableTh, type TicketSortKey } from "../components/SortableTh";
 
@@ -47,7 +48,7 @@ export default async function TicketsPage({
   const sortBy = (SORT_KEYS.includes(params.sortBy as TicketSortKey) ? params.sortBy : undefined) as TicketSortKey | undefined;
   const order = (params.order === "asc" || params.order === "desc" ? params.order : "desc") as "asc" | "desc";
 
-  const ticketStatus = statusFilter as "open" | "in_progress" | "waiting" | "resolved" | "closed" | undefined;
+  const ticketStatus = statusFilter as "open" | "in_progress" | "waiting" | "qa" | "review" | "closed" | undefined;
   const tickets = await prisma.ticket.findMany({
     where: {
       ...(ticketStatus
@@ -94,10 +95,16 @@ export default async function TicketsPage({
           Waiting
         </FilterLink>
         <FilterLink
-          href="/dashboard/tickets?status=resolved"
-          active={statusFilter === "resolved"}
+          href="/dashboard/tickets?status=qa"
+          active={statusFilter === "qa"}
         >
-          Resolved
+          QA
+        </FilterLink>
+        <FilterLink
+          href="/dashboard/tickets?status=review"
+          active={statusFilter === "review"}
+        >
+          Review
         </FilterLink>
         <FilterLink
           href="/dashboard/tickets?status=closed"
@@ -209,7 +216,7 @@ export default async function TicketsPage({
                   {ticket.assignedTo?.name || "Unassigned"}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                  {ticket.createdAt.toLocaleDateString()}
+                  {formatDate(ticket.createdAt)}
                 </td>
               </tr>
             ))}
@@ -250,7 +257,7 @@ export default async function TicketsPage({
               <div className="mt-2 flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
                 <PriorityBadge priority={ticket.priority} />
                 <span>{ticket.assignedTo?.name || "Unassigned"}</span>
-                <span>{ticket.createdAt.toLocaleDateString()}</span>
+                <span>{formatDate(ticket.createdAt)}</span>
               </div>
             </Link>
           ))
@@ -265,8 +272,10 @@ const TICKET_STATUS_LABELS: Record<string, string> = {
   open: "Open",
   in_progress: "In Progress",
   waiting: "Waiting",
-  resolved: "Resolved",
+  qa: "QA",
+  review: "Review",
   closed: "Closed",
+  resolved: "QA", // legacy fallback
 };
 
 function StatusBadge({ status }: { status: string }) {
@@ -274,8 +283,10 @@ function StatusBadge({ status }: { status: string }) {
     open: "bg-[#1C6ED5]/15 text-[#1C6ED5] dark:bg-[#1C6ED5]/25 dark:text-[#7eb8ff]",
     in_progress: "bg-purple-500/15 text-purple-700 dark:bg-purple-500/30 dark:text-purple-200",
     waiting: "bg-amber-500/15 text-amber-700 dark:bg-amber-500/30 dark:text-amber-200",
-    resolved: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/30 dark:text-emerald-200",
+    qa: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/30 dark:text-emerald-200",
+    review: "bg-sky-500/15 text-sky-700 dark:bg-sky-500/30 dark:text-sky-200",
     closed: "bg-[#8A8F98]/20 text-[#6b7280] dark:bg-white/20 dark:text-gray-300",
+    resolved: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/30 dark:text-emerald-200", // legacy
   };
 
   return (

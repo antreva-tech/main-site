@@ -4,7 +4,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import { LeadStage } from "@prisma/client";
+import { LeadStage } from "@/generated/prisma/client";
 import { PipelinePageView } from "./PipelinePageView";
 import type { LeadRow, StageConfig } from "./PipelineBoard";
 

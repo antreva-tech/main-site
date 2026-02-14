@@ -12,7 +12,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { EditModal } from "../components/EditModal";
 import { updateLeadStage } from "./actions";
 import type { LeadRow } from "./PipelineBoard";
-import type { LeadStage } from "@prisma/client";
+import type { LeadStage } from "@/generated/prisma/client";
 
 const STAGE_KEYS: LeadStage[] = [
   "new",

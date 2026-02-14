@@ -9,7 +9,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { logCreate, logUpdate, logDelete } from "@/lib/audit";
-import type { DevelopmentStage } from "@prisma/client";
+import type { DevelopmentStage } from "@/generated/prisma/client";
 
 /** Valid development stages. */
 const DEV_STAGES: DevelopmentStage[] = [

@@ -179,7 +179,7 @@ async function OverviewChartsSection({
     }),
     prisma.ticket.groupBy({
       by: ["priority"],
-      where: { status: { in: ["open", "in_progress", "waiting"] } },
+      where: { status: { in: ["open", "in_progress", "waiting", "review"] } },
       _count: { id: true },
     }),
   ]);
@@ -362,7 +362,7 @@ async function TicketStats({ t }: { t: Translations }) {
     _count: { id: true },
   });
   const open = counts
-    .filter((c) => ["open", "in_progress", "waiting"].includes(c.status))
+    .filter((c) => ["open", "in_progress", "waiting", "review"].includes(c.status))
     .reduce((sum, c) => sum + c._count.id, 0);
   const urgent = await prisma.ticket.count({
     where: { priority: "urgent", status: { in: ["open", "in_progress"] } },
@@ -438,6 +438,7 @@ async function RecentLeads({
   primaryAction?: { label: string; href: string };
 }) {
   const leads = await prisma.lead.findMany({
+    where: { stage: { not: "won" } },
     take: 5,
     orderBy: { createdAt: "desc" },
     select: {
@@ -526,7 +527,7 @@ async function PendingPayments({ t }: { t: Translations }) {
 
 async function OpenTickets({ t }: { t: Translations }) {
   const tickets = await prisma.ticket.findMany({
-    where: { status: { in: ["open", "in_progress", "waiting"] } },
+    where: { status: { in: ["open", "in_progress", "waiting", "review"] } },
     take: 5,
     orderBy: { createdAt: "desc" },
     select: {

@@ -10,7 +10,7 @@ import { put } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { logCreate, logUpdate, logDelete } from "@/lib/audit";
-import type { TicketStatus, TicketPriority } from "@prisma/client";
+import type { TicketStatus, TicketPriority } from "@/generated/prisma/client";
 
 /** Allowed image types for ticket attachments (Vercel Blob). */
 const ATTACHMENT_CONTENT_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -107,7 +107,7 @@ export async function updateTicketStatus(ticketId: string, status: TicketStatus)
     where: { id: ticketId },
     data: {
       status,
-      resolvedAt: status === "resolved" || status === "closed" ? new Date() : null,
+      resolvedAt: status === "qa" || status === "closed" ? new Date() : null,
     },
   });
 

@@ -9,7 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { normalizePhoneForStorage } from "@/lib/phone";
 import { logCreate, logUpdate, logDelete } from "@/lib/audit";
-import type { LeadStage, LeadSource, LineOfBusiness, PaymentHandling } from "@prisma/client";
+import type { LeadStage, LeadSource, LineOfBusiness, PaymentHandling } from "@/generated/prisma/client";
 import { getMissingIntakeFields, buildIntakeSnapshot, PAYMENT_HANDLING_VALUES } from "./intakeHelpers";
 
 /** Valid lead stages for form/API. */

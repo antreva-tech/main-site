@@ -2,13 +2,12 @@
 // SOC 2 compliant design with RBAC, audit logging, and encryption
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // =============================================================================
@@ -264,10 +263,12 @@ model ClientSubscription {
   service      Service            @relation(fields: [serviceId], references: [id])
   amount       Decimal            @db.Decimal(12, 2)
   currency     Currency           @default(DOP)
-  billingCycle BillingCycle       @default(monthly)
-  startDate    DateTime
-  endDate      DateTime?
-  status       SubscriptionStatus @default(active)
+  billingCycle       BillingCycle       @default(monthly)
+  startDate          DateTime
+  endDate            DateTime?
+  /** Day of month (1–31) when payment is due; null = use start date day. */
+  paymentDayOfMonth  Int?
+  status             SubscriptionStatus @default(active)
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
 
@@ -483,7 +484,8 @@ enum TicketStatus {
   open
   in_progress
   waiting
-  resolved
+  qa
+  review
   closed
 }
 

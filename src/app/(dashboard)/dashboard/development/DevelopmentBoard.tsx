@@ -19,7 +19,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
-import type { DevelopmentStage } from "@prisma/client";
+import type { DevelopmentStage } from "@/generated/prisma/client";
 import { ProjectViewModal } from "./ProjectViewModal";
 import { updateDevelopmentProjectStage } from "./actions";
 import type { ProjectRow } from "./page";

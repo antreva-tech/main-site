@@ -20,7 +20,7 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { LeadStage } from "@prisma/client";
+import type { LeadStage } from "@/generated/prisma/client";
 import { EditLeadModal } from "./EditLeadModal";
 import { LeadViewModal } from "./LeadViewModal";
 import { ConvertToClientModal } from "./ConvertToClientModal";

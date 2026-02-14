@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import type { DevelopmentStage } from "@prisma/client";
+import type { DevelopmentStage } from "@/generated/prisma/client";
 import { DevelopmentBoard } from "./DevelopmentBoard";
 
 /** Stage config for columns (label + color). */
